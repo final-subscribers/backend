@@ -1,4 +1,5 @@
 package subscribers.clearbunyang.global.exception;
+/*
 
 import jakarta.annotation.Priority;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,3 +24,4 @@ public class GlobalExceptionHandler {
             .build();
     }
 }
+*/
