@@ -1,4 +1,5 @@
 package subscribers.clearbunyang.global.exception;
+/*
 
 import subscribers.global.exception.error.ErrorCode;
 
@@ -10,3 +11,4 @@ public abstract class CustomException extends RuntimeException {
         this.errorCode = errorCode;
     }
 }
+*/
