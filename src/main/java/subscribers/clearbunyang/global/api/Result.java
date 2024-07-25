@@ -21,16 +21,14 @@ public class Result {
             .build();
     }
 
-    //TODO: 메서드 이름을 변경하고 싶음
-    // Result 객체의 message 필드를 초기화하는 private 메서드인데 이를 더 분명하게 하면 좋을 거 같음
-    private static String getErrorMessageWithCode(ErrorCode errorCode) {
+    private static String concatErrorCodeAndMessage(ErrorCode errorCode) {
         return errorCode.getCode() + ", " + errorCode.getMessage();
     }
 
     public static Result Error(ErrorCode errorCode) {
         return Result.builder()
             .resultCode(errorCode.getStatus())
-            .resultMessage(getErrorMessageWithCode(errorCode))
+            .resultMessage(concatErrorCodeAndMessage(errorCode))
             .build();
     }
 
