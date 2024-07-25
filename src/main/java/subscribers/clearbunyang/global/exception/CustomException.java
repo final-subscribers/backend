@@ -1,8 +1,9 @@
 package subscribers.clearbunyang.global.exception;
-/*
 
-import subscribers.global.exception.error.ErrorCode;
+import lombok.Getter;
+import subscribers.clearbunyang.global.exception.error.ErrorCode;
 
+@Getter
 public abstract class CustomException extends RuntimeException {
     private final ErrorCode errorCode;
 
@@ -11,4 +12,3 @@ public abstract class CustomException extends RuntimeException {
         this.errorCode = errorCode;
     }
 }
-*/
