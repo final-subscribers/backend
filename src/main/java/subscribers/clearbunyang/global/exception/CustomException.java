@@ -1,7 +1,7 @@
 package subscribers.clearbunyang.global.exception;
 
 import lombok.Getter;
-import subscribers.clearbunyang.global.exception.error.ErrorCode;
+import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 
 @Getter
 public abstract class CustomException extends RuntimeException {

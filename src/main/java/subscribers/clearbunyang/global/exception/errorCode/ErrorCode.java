@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.global.exception.error;
+package subscribers.clearbunyang.global.exception.errorCode;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

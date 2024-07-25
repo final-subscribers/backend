@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
-import subscribers.clearbunyang.global.exception.error.ErrorCode;
+import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter

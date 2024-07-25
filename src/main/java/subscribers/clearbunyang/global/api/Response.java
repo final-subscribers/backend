@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import subscribers.clearbunyang.global.exception.error.ErrorCode;
+import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
