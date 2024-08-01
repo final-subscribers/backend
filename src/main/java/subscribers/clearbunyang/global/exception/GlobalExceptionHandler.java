@@ -1,5 +1,6 @@
 package subscribers.clearbunyang.global.exception;
 
+
 import jakarta.annotation.Priority;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,15 +14,11 @@ import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundExceptio
 public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public Response<Void> handleEntityNotFoundException(EntityNotFoundException e) {
-        return Response.<Void>builder()
-            .result(Result.Error(e.getErrorCode()))
-            .build();
+        return Response.<Void>builder().result(Result.Error(e.getErrorCode())).build();
     }
 
     @ExceptionHandler(InvalidValueException.class)
     public Response<Void> handleInvalidValueException(InvalidValueException e) {
-        return Response.<Void>builder()
-            .result(Result.Error(e.getErrorCode()))
-            .build();
+        return Response.<Void>builder().result(Result.Error(e.getErrorCode())).build();
     }
 }

@@ -1,5 +1,6 @@
 package subscribers.clearbunyang.s3;
 
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,8 +12,8 @@ public class FileController {
     private final FileService fileService;
 
     @PostMapping("/preSigned-url")
-    public String getPreSignedUrl(@RequestParam String directoryName, @RequestParam String fileName) {
-        return fileService.getPreSignedUrl(directoryName,fileName);
+    public String getPreSignedUrl(
+            @RequestParam String directoryName, @RequestParam String fileName) {
+        return fileService.getPreSignedUrl(directoryName, fileName);
     }
-
 }

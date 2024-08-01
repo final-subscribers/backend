@@ -1,5 +1,6 @@
 package subscribers.clearbunyang.global.exception;
 
+
 import lombok.Getter;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 

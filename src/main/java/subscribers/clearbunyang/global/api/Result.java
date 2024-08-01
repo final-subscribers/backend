@@ -1,5 +1,6 @@
 package subscribers.clearbunyang.global.api;
 
+
 import io.jsonwebtoken.lang.Assert;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,10 +16,7 @@ public class Result {
     private String resultMessage;
 
     public static Result OK() {
-        return Result.builder()
-            .resultCode(HttpStatus.OK.value())
-            .resultMessage("성공")
-            .build();
+        return Result.builder().resultCode(HttpStatus.OK.value()).resultMessage("성공").build();
     }
 
     private static String concatErrorCodeAndMessage(ErrorCode errorCode) {
@@ -27,9 +25,9 @@ public class Result {
 
     public static Result Error(ErrorCode errorCode) {
         return Result.builder()
-            .resultCode(errorCode.getStatus())
-            .resultMessage(concatErrorCodeAndMessage(errorCode))
-            .build();
+                .resultCode(errorCode.getStatus())
+                .resultMessage(concatErrorCodeAndMessage(errorCode))
+                .build();
     }
 
     @Builder

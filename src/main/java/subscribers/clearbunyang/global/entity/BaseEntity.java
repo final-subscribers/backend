@@ -1,5 +1,6 @@
 package subscribers.clearbunyang.global.entity;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -35,7 +36,7 @@ public class BaseEntity {
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name="updated_at")
+    @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updatedAt;
 }
