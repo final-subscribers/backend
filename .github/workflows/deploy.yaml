@@ -1,0 +1,51 @@
+name: subscribers CI/CD
+
+on:
+  push:
+    branches:
+      - feat/deploy
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Apply application file
+        run: |
+          touch ./src/main/resources/application.yaml
+          echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yaml
+          cat ./src/main/resources/application.yaml
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build the project
+        run: ./gradlew build -x test
+        shell: bash
+
+      - name: Build and push Docker image
+        env:
+          CR_PAT: ${{ secrets.GIT_TOKEN }}
+          IMAGE_TAG: latest
+        run: |
+          echo $CR_PAT | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+          docker build -t ghcr.io/$GITHUB_REPOSITORY:$IMAGE_TAG .
+          docker push ghcr.io/$GITHUB_REPOSITORY:$IMAGE_TAG
+
+      - name: Run Docker script on server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: chmod +x /home/ubuntu/cheongyak/deploy.sh && sh /home/ubuntu/cheongyak/deploy.sh
