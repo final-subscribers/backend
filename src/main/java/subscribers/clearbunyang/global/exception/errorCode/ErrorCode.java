@@ -1,5 +1,6 @@
 package subscribers.clearbunyang.global.exception.errorCode;
 
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,11 +23,9 @@ public enum ErrorCode {
     EXPIRED_TOKEN(400, "J002", "만료된 토큰 정보입니다."),
     UNSUPPORTED_TOKEN(400, "J003", "지원하지 않는 토큰 정보입니다."),
     CLAIMS_EMPTY_TOKEN(400, "J004", "토큰 정보가 비어있습니다."),
-
     ;
 
     private final Integer status;
     private final String code;
     private final String message;
-
 }

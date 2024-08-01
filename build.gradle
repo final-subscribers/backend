@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.2'
     id 'io.spring.dependency-management' version '1.1.6'
+    id 'com.diffplug.spotless' version '6.11.0'
+    id "it.nicolasfarabegoli.conventional-commits" version "3.1.3" // 커밋 컨벤션 강제 플러그인
 }
 
 group = 'subscribers'
@@ -54,3 +56,32 @@ tasks.named('test') {
 bootJar {
     archiveFileName = 'subscribers.jar'
 }
+
+// git hook 설정
+spotless {
+    java {
+        target("src/main/java/**/*.java")
+        googleJavaFormat().aosp()
+        importOrder()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+        formatAnnotations()
+    }
+}
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += '-parameters'
+}
+tasks.register('updateGitHooks', Copy) {
+    from('./scripts/pre-commit') {
+        rename 'pre-commit', 'pre-commit'
+    }
+    into('.git/hooks')
+    fileMode 0775
+
+    doFirst {
+        file('.git/hooks').mkdirs()
+    }
+}
+compileJava.dependsOn updateGitHooks

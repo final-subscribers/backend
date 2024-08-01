@@ -1,5 +1,6 @@
 package subscribers.clearbunyang.global.api;
 
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,21 +17,14 @@ public class Response<T> {
     private T body;
 
     public static Response<Object> OK() {
-        return Response.<Object>builder()
-            .result(Result.OK())
-            .build();
+        return Response.<Object>builder().result(Result.OK()).build();
     }
 
     public static <T> Response<T> OK(T data) {
-        return Response.<T>builder()
-            .result(Result.OK())
-            .body(data)
-            .build();
+        return Response.<T>builder().result(Result.OK()).body(data).build();
     }
 
     public static Response<Object> ERROR(ErrorCode errorCode) {
-        return Response.<Object>builder()
-            .result(Result.Error(errorCode))
-            .build();
+        return Response.<Object>builder().result(Result.Error(errorCode)).build();
     }
 }
