@@ -1,7 +1,8 @@
 package subscribers.clearbunyang.global.exception.Invalid;
 
-import subscribers.global.exception.CustomException;
-import subscribers.global.exception.error.ErrorCode;
+
+import subscribers.clearbunyang.global.exception.CustomException;
+import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 
 public class InvalidValueException extends CustomException {
     public InvalidValueException(ErrorCode errorCode){ super(errorCode); }

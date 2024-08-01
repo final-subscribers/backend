@@ -1,9 +1,10 @@
-package subscribers.clearbunyang.global.exception.error;
+package subscribers.clearbunyang.global.exception.errorCode;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public enum ErrorCode {
 
@@ -23,7 +24,6 @@ public enum ErrorCode {
     CLAIMS_EMPTY_TOKEN(400, "J004", "토큰 정보가 비어있습니다."),
 
     ;
-
 
     private final Integer status;
     private final String code;
