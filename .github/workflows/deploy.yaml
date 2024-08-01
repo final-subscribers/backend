@@ -3,7 +3,7 @@ name: subscribers CI/CD
 on:
   push:
     branches:
-      - feat/deploy
+      - main
 
 jobs:
   build-and-push:
