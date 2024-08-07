@@ -15,8 +15,6 @@ import subscribers.clearbunyang.domain.member.entity.Admin;
 import subscribers.clearbunyang.domain.member.entity.User;
 import subscribers.clearbunyang.domain.member.entity.enums.AdminState;
 import subscribers.clearbunyang.domain.member.entity.enums.MemberRole;
-import subscribers.clearbunyang.domain.member.entity.files.HousingFile;
-import subscribers.clearbunyang.domain.member.entity.files.RegistrationFile;
 import subscribers.clearbunyang.domain.member.model.request.AdminSignUpRequest;
 import subscribers.clearbunyang.domain.member.model.request.LoginRequest;
 import subscribers.clearbunyang.domain.member.model.request.UserSignUpRequest;
@@ -50,12 +48,6 @@ public class StandardAuthService {
             throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
         }
 
-        HousingFile housingFile =
-                HousingFile.builder().fileUrl(request.getHousingFileUrl()).build();
-
-        RegistrationFile registrationFile =
-                RegistrationFile.builder().fileUrl(request.getRegistrationFileUrl()).build();
-
         Admin admin =
                 Admin.builder()
                         .name(request.getName())
@@ -65,12 +57,9 @@ public class StandardAuthService {
                         .companyName(request.getCompanyName())
                         .registrationNumber(request.getRegistrationNumber())
                         .address(request.getAddress())
-                        .addressDetail(request.getAddressDetail())
                         .business(request.getBusiness())
                         .adminState(AdminState.PENDING)
                         .memberRole(MemberRole.ADMIN)
-                        .housingFile(housingFile)
-                        .registrationFile(registrationFile)
                         .build();
 
         adminRepository.save(admin);
@@ -93,7 +82,6 @@ public class StandardAuthService {
                         .password(passwordEncoder.encode(request.getPassword()))
                         .phoneNumber(request.getPhoneNumber())
                         .address(request.getAddress())
-                        .addressDetail(request.getAddressDetail())
                         .memberRole(MemberRole.USER)
                         .build();
 

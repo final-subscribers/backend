@@ -17,7 +17,6 @@ import subscribers.clearbunyang.global.util.CookieUtil;
 public class AuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProcessor jwtTokenProcessor;
-    // private final KakaoTokenProcessor kakaoTokenProcessor;
 
     @Override
     protected void doFilterInternal(
@@ -27,26 +26,12 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         String cookieName = CookieUtil.getCookieNames(request);
         log.info("cookieName: {}", cookieName);
 
-        String tokenType = determineTokenType(cookieName);
-
-        if (tokenType != null) {
-            switch (tokenType) {
-                case "Jwt":
-                    jwtTokenProcessor.processToken(request, response);
-                    break;
-                    // kakao case 추후 oauth 붙일 때 추가하기
-                default:
-                    log.warn("No processor found for token type: {}", tokenType);
-            }
+        if ("accessToken".equals(cookieName)) {
+            jwtTokenProcessor.processToken(request, response);
+        } else {
+            log.warn("No processor found for cookie name: {}", cookieName);
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private String determineTokenType(String cookieName) {
-        if (cookieName == null) return null;
-        if (cookieName.equals("accessToken")) return "Jwt";
-        // if (cookieName.equals("kakaoAccessToken")) return "Kakao";
-        return null;
     }
 }

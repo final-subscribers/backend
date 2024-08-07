@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.member.repository.AdminRepository;
-import subscribers.clearbunyang.domain.member.repository.CompanyRepository;
 import subscribers.clearbunyang.domain.member.repository.UserRepository;
 import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
@@ -23,7 +22,6 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final AdminRepository adminRepository;
-    private final CompanyRepository companyRepository;
     private final StandardAuthService standardAuthService;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -32,23 +30,15 @@ public class AuthService {
 
     @Transactional
     public String refreshToken(HttpServletRequest request, HttpServletResponse response) {
-
         String cookieName = CookieUtil.getCookieNames(request);
         log.info("로그인 방식: {}", cookieName);
 
-        if (cookieName == null) {
+        if ("accessToken".equals(cookieName)) {
+            log.info("일반 토큰 재발급");
+            return standardAuthService.standardRefreshToken(request, response);
+        } else {
             throw new InvalidValueException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
-
-        switch (cookieName) {
-                // kakaoToken 따로 작성 예정
-            case "accessToken" -> {
-                log.info("일반 토큰 재발급");
-                return standardAuthService.standardRefreshToken(request, response);
-            }
-        }
-
-        throw new InvalidValueException(ErrorCode.INVALID_ACCESS_TOKEN);
     }
 
     @Transactional
@@ -56,19 +46,12 @@ public class AuthService {
         String cookieName = CookieUtil.getCookieNames(request);
         log.info("로그인 방식: {}", cookieName);
 
-        if (cookieName == null) {
+        if ("accessToken".equals(cookieName)) {
+            log.info("일반 로그아웃");
+            standardAuthService.standardLogout(request, response);
+            return logoutRedirectUri;
+        } else {
             throw new InvalidValueException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
-
-        switch (cookieName) {
-                // kakaoToken 따로 작성 예정
-            case "accessToken" -> {
-                log.info("일반 로그아웃");
-                standardAuthService.standardLogout(request, response);
-                return logoutRedirectUri;
-            }
-        }
-
-        throw new InvalidValueException(ErrorCode.INVALID_ACCESS_TOKEN);
     }
 }

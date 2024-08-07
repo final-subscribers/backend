@@ -9,10 +9,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import subscribers.clearbunyang.domain.member.entity.Admin;
-import subscribers.clearbunyang.domain.member.entity.Company;
 import subscribers.clearbunyang.domain.member.entity.User;
 import subscribers.clearbunyang.domain.member.repository.AdminRepository;
-import subscribers.clearbunyang.domain.member.repository.CompanyRepository;
 import subscribers.clearbunyang.domain.member.repository.UserRepository;
 
 @RequiredArgsConstructor
@@ -22,7 +20,6 @@ public class MemberDetailsService implements UserDetailsService {
 
     private final AdminRepository adminRepository;
     private final UserRepository userRepository;
-    private final CompanyRepository companyRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -41,11 +38,6 @@ public class MemberDetailsService implements UserDetailsService {
         Optional<Admin> admin = adminRepository.findByEmail(email);
         if (admin.isPresent()) {
             return new MemberDetails(admin.get());
-        }
-
-        Optional<Company> company = companyRepository.findByEmail(email);
-        if (company.isPresent()) {
-            return new MemberDetails(company.get());
         }
 
         throw new UsernameNotFoundException("email로 유저를 찾을 수 없습니다.: " + email);

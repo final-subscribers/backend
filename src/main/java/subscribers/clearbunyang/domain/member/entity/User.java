@@ -35,11 +35,6 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
-    private String addressDetail;
-
-    @Column private String userGrade;
-
     @Setter
     @Enumerated(EnumType.STRING)
     private MemberRole memberRole = MemberRole.USER;

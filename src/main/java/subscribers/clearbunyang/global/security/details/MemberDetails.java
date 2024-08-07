@@ -9,7 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import subscribers.clearbunyang.domain.member.entity.Admin;
-import subscribers.clearbunyang.domain.member.entity.Company;
 import subscribers.clearbunyang.domain.member.entity.User;
 
 @Getter
@@ -34,9 +33,6 @@ public class MemberDetails implements UserDetails {
         } else if (member instanceof Admin) {
             Admin admin = (Admin) member;
             authorities.add(new SimpleGrantedAuthority(admin.getMemberRole().name()));
-        } else {
-            Company company = (Company) member;
-            authorities.add(new SimpleGrantedAuthority(company.getMemberRole().name()));
         }
         return authorities;
     }
@@ -47,7 +43,8 @@ public class MemberDetails implements UserDetails {
             return ((User) member).getPassword();
         } else if (member instanceof Admin) {
             return ((Admin) member).getPassword();
-        } else return ((Company) member).getPassword();
+        }
+        return null;
     }
 
     @Override
@@ -56,7 +53,8 @@ public class MemberDetails implements UserDetails {
             return ((User) member).getEmail();
         } else if (member instanceof Admin) {
             return ((Admin) member).getEmail();
-        } else return ((Company) member).getEmail();
+        }
+        return null;
     }
 
     @Override

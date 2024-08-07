@@ -24,7 +24,6 @@ import subscribers.clearbunyang.global.token.JwtTokenProcessor;
 public class SecurityConfig {
 
     private final JwtTokenProcessor jwtTokenProcessor;
-    // private final KakaoTokenProcessor kakaoTokenProcessor;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
