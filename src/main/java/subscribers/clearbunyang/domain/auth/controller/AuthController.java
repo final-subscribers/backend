@@ -55,7 +55,7 @@ public class AuthController {
         response.sendRedirect(redirectUri);
     }
 
-    @GetMapping("/token/refresh")
+    @GetMapping("/refreshtoken")
     public ResponseEntity<String> refreshToken(
             HttpServletRequest request, HttpServletResponse response) {
         authService.refreshToken(request, response);
