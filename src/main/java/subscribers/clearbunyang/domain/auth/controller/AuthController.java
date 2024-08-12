@@ -13,11 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import subscribers.clearbunyang.domain.auth.service.AuthService;
-import subscribers.clearbunyang.domain.auth.service.StandardAuthService;
-import subscribers.clearbunyang.domain.member.model.request.AdminSignUpRequest;
-import subscribers.clearbunyang.domain.member.model.request.LoginRequest;
-import subscribers.clearbunyang.domain.member.model.request.UserSignUpRequest;
-import subscribers.clearbunyang.domain.member.model.response.LoginResponse;
+import subscribers.clearbunyang.domain.user.model.request.AdminSignUpRequest;
+import subscribers.clearbunyang.domain.user.model.request.LoginRequest;
+import subscribers.clearbunyang.domain.user.model.request.MemberSignUpRequest;
+import subscribers.clearbunyang.domain.user.model.response.LoginResponse;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -25,25 +24,24 @@ import subscribers.clearbunyang.domain.member.model.response.LoginResponse;
 public class AuthController {
 
     private final AuthService authService;
-    private final StandardAuthService standardAuthService;
 
     @PostMapping("/adminSignUp")
     public ResponseEntity<String> adminSignUp(@Valid @RequestBody AdminSignUpRequest request) {
-        standardAuthService.admnSignup(request);
+        authService.admnSignup(request);
         return ResponseEntity.ok("관리자 회원가입 성공");
     }
 
     @PostMapping("/userSignUp")
-    public ResponseEntity<String> userSignUp(@Valid @RequestBody UserSignUpRequest request) {
-        standardAuthService.userSignup(request);
+    public ResponseEntity<String> userSignUp(@Valid @RequestBody MemberSignUpRequest request) {
+        authService.userSignup(request);
         return ResponseEntity.ok("사용자 회원가입 성공");
     }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
             @RequestBody LoginRequest request, HttpServletResponse response) {
-        LoginResponse loginResponse = standardAuthService.login(request);
-        standardAuthService.addTokenCookies(
+        LoginResponse loginResponse = authService.login(request);
+        authService.addTokenCookies(
                 response, loginResponse.getAccessToken(), loginResponse.getRefreshToken());
         return ResponseEntity.ok(loginResponse);
     }

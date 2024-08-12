@@ -7,17 +7,16 @@ import lombok.Getter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import subscribers.clearbunyang.domain.member.entity.Admin;
-import subscribers.clearbunyang.domain.member.entity.User;
+import subscribers.clearbunyang.domain.user.entity.Admin;
+import subscribers.clearbunyang.domain.user.entity.Member;
 
 @Getter
 @ToString
-public class MemberDetails implements UserDetails {
+public class UserDetails implements org.springframework.security.core.userdetails.UserDetails {
 
     private final Object member;
 
-    public MemberDetails(Object member) {
+    public UserDetails(Object member) {
         if (member == null) {
             throw new IllegalArgumentException("Member 값이 null이 될 수 없습니다.");
         }
@@ -27,20 +26,20 @@ public class MemberDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         HashSet<GrantedAuthority> authorities = new HashSet<>();
-        if (member instanceof User) {
-            User user = (User) member;
-            authorities.add(new SimpleGrantedAuthority(user.getMemberRole().name()));
+        if (member instanceof Member) {
+            Member member = (Member) this.member;
+            authorities.add(new SimpleGrantedAuthority(member.getUserRole().name()));
         } else if (member instanceof Admin) {
             Admin admin = (Admin) member;
-            authorities.add(new SimpleGrantedAuthority(admin.getMemberRole().name()));
+            authorities.add(new SimpleGrantedAuthority(admin.getUserRole().name()));
         }
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        if (member instanceof User) {
-            return ((User) member).getPassword();
+        if (member instanceof Member) {
+            return ((Member) member).getPassword();
         } else if (member instanceof Admin) {
             return ((Admin) member).getPassword();
         }
@@ -49,8 +48,8 @@ public class MemberDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        if (member instanceof User) {
-            return ((User) member).getEmail();
+        if (member instanceof Member) {
+            return ((Member) member).getEmail();
         } else if (member instanceof Admin) {
             return ((Admin) member).getEmail();
         }
@@ -59,21 +58,23 @@ public class MemberDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return org.springframework.security.core.userdetails.UserDetails.super
+                .isAccountNonExpired();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return org.springframework.security.core.userdetails.UserDetails.super.isAccountNonLocked();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return org.springframework.security.core.userdetails.UserDetails.super
+                .isCredentialsNonExpired();
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return org.springframework.security.core.userdetails.UserDetails.super.isEnabled();
     }
 }

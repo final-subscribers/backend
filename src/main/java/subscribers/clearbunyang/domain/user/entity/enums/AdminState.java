@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.member.entity.enums;
+package subscribers.clearbunyang.domain.user.entity.enums;
 
 public enum AdminState {
     ACCEPTED, // 승인

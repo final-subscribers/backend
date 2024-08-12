@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.member.entity;
+package subscribers.clearbunyang.domain.user.entity;
 
 
 import jakarta.persistence.Column;
@@ -10,8 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import subscribers.clearbunyang.domain.member.entity.enums.AdminState;
-import subscribers.clearbunyang.domain.member.entity.enums.MemberRole;
+import subscribers.clearbunyang.domain.user.entity.enums.UserRole;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
 @Entity
@@ -19,7 +18,7 @@ import subscribers.clearbunyang.global.entity.BaseEntity;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class Admin extends BaseEntity {
+public class Member extends BaseEntity {
 
     @Column(nullable = false)
     private String name;
@@ -31,25 +30,12 @@ public class Admin extends BaseEntity {
     private String password;
 
     @Column(nullable = false)
-    private Integer companyNumber;
-
-    @Column(nullable = false)
-    private String companyName;
-
-    @Column(nullable = false)
-    private Integer registrationNumber;
+    private Integer phoneNumber;
 
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
-    private String business;
-
     @Setter
     @Enumerated(EnumType.STRING)
-    private AdminState adminState;
-
-    @Setter
-    @Enumerated(EnumType.STRING)
-    private MemberRole memberRole = MemberRole.ADMIN;
+    private UserRole userRole = UserRole.USER;
 }

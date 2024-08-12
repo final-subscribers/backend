@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.member.model.request;
+package subscribers.clearbunyang.domain.user.model.request;
 
 
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ import subscribers.clearbunyang.global.validation.PasswordValidation;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminSignUpRequest {
+public class MemberSignUpRequest {
 
     private String name;
 
@@ -20,19 +20,7 @@ public class AdminSignUpRequest {
 
     @PasswordValidation private String password;
 
-    private Integer companyNumber;
-
-    private String companyName;
-
-    private Integer registrationNumber;
+    private Integer phoneNumber;
 
     private String address;
-
-    private String addressDetail;
-
-    private String Business;
-
-    private String housingFileUrl;
-
-    private String registrationFileUrl;
 }

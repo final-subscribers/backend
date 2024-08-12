@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.member.model.response;
+package subscribers.clearbunyang.domain.user.model.response;
 
 
 import lombok.AllArgsConstructor;
