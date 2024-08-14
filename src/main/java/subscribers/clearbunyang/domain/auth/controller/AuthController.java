@@ -52,11 +52,4 @@ public class AuthController {
         String redirectUri = authService.logout(request, response);
         response.sendRedirect(redirectUri);
     }
-
-    @GetMapping("/refreshtoken")
-    public ResponseEntity<String> refreshToken(
-            HttpServletRequest request, HttpServletResponse response) {
-        authService.refreshToken(request, response);
-        return ResponseEntity.ok("엑세스 토큰 재발급 성공");
-    }
 }

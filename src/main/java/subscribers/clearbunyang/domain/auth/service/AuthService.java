@@ -45,19 +45,6 @@ public class AuthService {
     @Value("${spring.security.redirect-uri}") private String logoutRedirectUri;
 
     @Transactional
-    public String refreshToken(HttpServletRequest request, HttpServletResponse response) {
-        String cookieName = CookieUtil.getCookieNames(request);
-        log.info("로그인 방식: {}", cookieName);
-
-        if ("accessToken".equals(cookieName)) {
-            log.info("일반 토큰 재발급");
-            return standardRefreshToken(request, response);
-        } else {
-            throw new InvalidValueException(ErrorCode.INVALID_ACCESS_TOKEN);
-        }
-    }
-
-    @Transactional
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         String cookieName = CookieUtil.getCookieNames(request);
         log.info("로그인 방식: {}", cookieName);
@@ -84,13 +71,13 @@ public class AuthService {
                         .name(request.getName())
                         .email(request.getEmail())
                         .password(passwordEncoder.encode(request.getPassword()))
-                        .companyNumber(request.getCompanyNumber())
+                        .phoneNumber(request.getPhoneNumber())
                         .companyName(request.getCompanyName())
                         .registrationNumber(request.getRegistrationNumber())
                         .address(request.getAddress())
                         .business(request.getBusiness())
-                        .adminState(AdminState.PENDING)
-                        .userRole(UserRole.ADMIN)
+                        .status(AdminState.PENDING)
+                        .role(UserRole.ADMIN)
                         .build();
 
         adminRepository.save(admin);
@@ -113,7 +100,7 @@ public class AuthService {
                         .password(passwordEncoder.encode(request.getPassword()))
                         .phoneNumber(request.getPhoneNumber())
                         .address(request.getAddress())
-                        .userRole(UserRole.USER)
+                        .role(UserRole.USER)
                         .build();
 
         memberRepository.save(member);
@@ -143,7 +130,7 @@ public class AuthService {
             throw new InvalidValueException(ErrorCode.PASSWORD_MISMATCH);
         }
 
-        if (admin.getAdminState() != AdminState.ACCEPTED) {
+        if (admin.getStatus() != AdminState.ACCEPTED) {
             throw new InvalidValueException(ErrorCode.NOT_ACCEPTED_ADMIN);
         }
 

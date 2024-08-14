@@ -1,6 +1,7 @@
 package subscribers.clearbunyang.domain.user.model.request;
 
 
+import java.math.BigInteger;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,17 +21,15 @@ public class AdminSignUpRequest {
 
     @PasswordValidation private String password;
 
-    private Integer companyNumber;
+    private BigInteger phoneNumber;
 
     private String companyName;
 
-    private Integer registrationNumber;
+    private BigInteger registrationNumber;
 
     private String address;
 
-    private String addressDetail;
-
-    private String Business;
+    private String business;
 
     private String housingFileUrl;
 

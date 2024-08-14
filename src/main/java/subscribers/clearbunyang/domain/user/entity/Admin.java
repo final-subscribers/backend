@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import java.math.BigInteger;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,13 +32,13 @@ public class Admin extends BaseEntity {
     private String password;
 
     @Column(nullable = false)
-    private Integer companyNumber;
+    private BigInteger phoneNumber;
 
     @Column(nullable = false)
     private String companyName;
 
     @Column(nullable = false)
-    private Integer registrationNumber;
+    private BigInteger registrationNumber;
 
     @Column(nullable = false)
     private String address;
@@ -47,9 +48,9 @@ public class Admin extends BaseEntity {
 
     @Setter
     @Enumerated(EnumType.STRING)
-    private AdminState adminState;
+    private AdminState status;
 
     @Setter
     @Enumerated(EnumType.STRING)
-    private UserRole userRole = UserRole.ADMIN;
+    private UserRole role = UserRole.ADMIN;
 }

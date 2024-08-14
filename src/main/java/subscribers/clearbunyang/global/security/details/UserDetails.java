@@ -28,10 +28,10 @@ public class UserDetails implements org.springframework.security.core.userdetail
         HashSet<GrantedAuthority> authorities = new HashSet<>();
         if (member instanceof Member) {
             Member member = (Member) this.member;
-            authorities.add(new SimpleGrantedAuthority(member.getUserRole().name()));
+            authorities.add(new SimpleGrantedAuthority(member.getRole().name()));
         } else if (member instanceof Admin) {
             Admin admin = (Admin) member;
-            authorities.add(new SimpleGrantedAuthority(admin.getUserRole().name()));
+            authorities.add(new SimpleGrantedAuthority(admin.getRole().name()));
         }
         return authorities;
     }
