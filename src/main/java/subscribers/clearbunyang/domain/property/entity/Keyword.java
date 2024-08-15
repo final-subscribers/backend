@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import subscribers.clearbunyang.domain.property.entity.enums.Name;
-import subscribers.clearbunyang.domain.property.entity.enums.Rank;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordRank;
 import subscribers.clearbunyang.domain.property.entity.enums.Type;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
@@ -29,7 +29,7 @@ public class Keyword extends BaseEntity {
     private Property property;
 
     @Column(nullable = false)
-    private Rank rank;
+    private KeywordRank keywordRank;
 
     @Column(nullable = false)
     private Name name;

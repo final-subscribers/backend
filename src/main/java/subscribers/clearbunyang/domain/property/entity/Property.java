@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import subscribers.clearbunyang.domain.file.entity.File;
-import subscribers.clearbunyang.domain.like.entity.Like;
+import subscribers.clearbunyang.domain.like.entity.Likes;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
 import subscribers.clearbunyang.domain.user.entity.Admin;
@@ -88,7 +88,7 @@ public class Property extends BaseEntity {
     private Admin admin;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
-    private Set<Like> likes;
+    private Set<Likes> likes;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
     private List<File> files = new ArrayList<>();

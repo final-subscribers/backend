@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import subscribers.clearbunyang.domain.consultation.entity.enums.Rankk;
+import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
 @Entity
@@ -26,7 +26,7 @@ import subscribers.clearbunyang.global.entity.BaseEntity;
 public class AdminConsultation extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
-    private Rankk rankk;
+    private Tier tier;
 
     private String consultMessage;
 

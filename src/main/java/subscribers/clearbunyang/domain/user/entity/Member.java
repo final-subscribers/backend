@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import subscribers.clearbunyang.domain.like.entity.Like;
+import subscribers.clearbunyang.domain.like.entity.Likes;
 import subscribers.clearbunyang.domain.user.entity.enums.UserRole;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
@@ -46,5 +46,5 @@ public class Member extends BaseEntity {
     private UserRole role = UserRole.USER;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private Set<Like> likes;
+    private Set<Likes> likes;
 }

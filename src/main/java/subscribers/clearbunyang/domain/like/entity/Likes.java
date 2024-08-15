@@ -19,8 +19,8 @@ import subscribers.clearbunyang.global.entity.BaseEntity;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@Table(name = "like")
-public class Like extends BaseEntity {
+@Table(name = "likes")
+public class Likes extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
