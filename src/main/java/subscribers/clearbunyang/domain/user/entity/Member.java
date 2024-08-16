@@ -1,16 +1,20 @@
 package subscribers.clearbunyang.domain.user.entity;
 
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import java.math.BigInteger;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import subscribers.clearbunyang.domain.like.entity.Likes;
 import subscribers.clearbunyang.domain.user.entity.enums.UserRole;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
@@ -19,6 +23,7 @@ import subscribers.clearbunyang.global.entity.BaseEntity;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
+@Table(name = "member")
 public class Member extends BaseEntity {
 
     @Column(nullable = false)
@@ -31,7 +36,7 @@ public class Member extends BaseEntity {
     private String password;
 
     @Column(nullable = false)
-    private BigInteger phoneNumber;
+    private Long phoneNumber;
 
     @Column(nullable = false)
     private String address;
@@ -39,4 +44,7 @@ public class Member extends BaseEntity {
     @Setter
     @Enumerated(EnumType.STRING)
     private UserRole role = UserRole.USER;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private Set<Likes> likes;
 }
