@@ -26,7 +26,7 @@ import subscribers.clearbunyang.global.entity.BaseEntity;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@Table
+@Table(name = "admin")
 public class Admin extends BaseEntity {
 
     @Column(nullable = false)

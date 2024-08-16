@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import subscribers.clearbunyang.domain.consultation.entity.enums.Rankk;
+import subscribers.clearbunyang.domain.consultation.entity.enums.Rank;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
 @Entity
@@ -26,13 +26,11 @@ import subscribers.clearbunyang.global.entity.BaseEntity;
 public class AdminConsultation extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
-    private Rankk rankk;
+    private Rank rank;
 
     private String consultMessage;
 
     private String consultant;
-
-    private int seatNumber;
 
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime completedAt;
