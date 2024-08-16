@@ -1,6 +1,6 @@
 package subscribers.clearbunyang.domain.consultation.entity.enums;
 
-public enum Rank {
+public enum Tier {
     S,
     A,
     B,
