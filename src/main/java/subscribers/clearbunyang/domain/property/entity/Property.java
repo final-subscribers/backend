@@ -46,7 +46,7 @@ public class Property extends BaseEntity {
     private String modelHouseAddr;
 
     @Column(nullable = false)
-    private int phoneNumber;
+    private String phoneNumber;
 
     @Column(nullable = true)
     private String contactChannel;

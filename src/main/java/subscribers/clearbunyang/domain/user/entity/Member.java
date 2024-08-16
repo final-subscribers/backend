@@ -36,7 +36,7 @@ public class Member extends BaseEntity {
     private String password;
 
     @Column(nullable = false)
-    private Long phoneNumber;
+    private String phoneNumber;
 
     @Column(nullable = false)
     private String address;

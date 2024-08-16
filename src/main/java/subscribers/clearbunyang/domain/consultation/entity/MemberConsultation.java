@@ -40,7 +40,7 @@ public class MemberConsultation extends BaseEntity {
 
     private String memberName;
 
-    private Long phoneNumber;
+    private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
