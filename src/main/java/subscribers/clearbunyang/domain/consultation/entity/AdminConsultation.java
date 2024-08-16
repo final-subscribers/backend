@@ -1,6 +1,5 @@
 package subscribers.clearbunyang.domain.consultation.entity;
 
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -31,8 +30,6 @@ public class AdminConsultation extends BaseEntity {
     private String consultMessage;
 
     private String consultant;
-
-    private int seatNumber;
 
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime completedAt;

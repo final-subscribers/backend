@@ -30,7 +30,7 @@ import subscribers.clearbunyang.global.entity.BaseEntity;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@Table
+@Table(name = "property")
 public class Property extends BaseEntity {
 
     @Column(nullable = false)
@@ -46,7 +46,7 @@ public class Property extends BaseEntity {
     private String modelHouseAddr;
 
     @Column(nullable = false)
-    private int phoneNumber;
+    private String phoneNumber;
 
     @Column(nullable = true)
     private String contactChannel;

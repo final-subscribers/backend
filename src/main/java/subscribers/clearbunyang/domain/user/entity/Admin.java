@@ -26,7 +26,7 @@ import subscribers.clearbunyang.global.entity.BaseEntity;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@Table
+@Table(name = "admin")
 public class Admin extends BaseEntity {
 
     @Column(nullable = false)
@@ -39,7 +39,7 @@ public class Admin extends BaseEntity {
     private String password;
 
     @Column(nullable = false)
-    private Long phoneNumber;
+    private String phoneNumber;
 
     @Column(nullable = false)
     private String companyName;
