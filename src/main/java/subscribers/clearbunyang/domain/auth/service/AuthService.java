@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.file.entity.File;
+import subscribers.clearbunyang.domain.file.repository.FileRepository;
 import subscribers.clearbunyang.domain.user.entity.Admin;
 import subscribers.clearbunyang.domain.user.entity.Member;
 import subscribers.clearbunyang.domain.user.entity.enums.AdminState;
@@ -40,6 +42,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenService jwtTokenService;
+    private final FileRepository fileRepository;
 
     // 추후 main페이지로 uri값 수정해야함
     @Value("${spring.security.redirect-uri}") private String logoutRedirectUri;
@@ -76,13 +79,63 @@ public class AuthService {
                         .registrationNumber(request.getRegistrationNumber())
                         .address(request.getAddress())
                         .business(request.getBusiness())
-                        .status(AdminState.PENDING)
+                        .status(AdminState.ACCEPTED)
                         .role(UserRole.ADMIN)
                         .build();
 
         adminRepository.save(admin);
 
+        saveFiles(request.getHousingFile(), request.getRegistrationFile(), admin);
+
         log.info("관리자 회원가입 성공: 이메일={}", admin.getEmail());
+    }
+
+    private void saveFiles(
+            AdminSignUpRequest.FileInfo housingFileInfo,
+            AdminSignUpRequest.FileInfo registrationFileInfo,
+            Admin admin) {
+
+        if (housingFileInfo == null && registrationFileInfo == null) {
+            throw new InvalidValueException(ErrorCode.FILE_INFO_REQUIRED);
+        }
+
+        if (housingFileInfo != null) {
+
+            if (housingFileInfo.getName() == null
+                    || housingFileInfo.getUrl() == null
+                    || housingFileInfo.getType() == null) {
+                throw new InvalidValueException(ErrorCode.INVALID_FILE_INFO);
+            }
+
+            File housingFile =
+                    File.builder()
+                            .admin(admin)
+                            .name(housingFileInfo.getName())
+                            .link(housingFileInfo.getUrl())
+                            .type(housingFileInfo.getType())
+                            .build();
+
+            fileRepository.save(housingFile);
+        }
+
+        if (registrationFileInfo != null) {
+
+            if (registrationFileInfo.getName() == null
+                    || registrationFileInfo.getUrl() == null
+                    || registrationFileInfo.getType() == null) {
+                throw new InvalidValueException(ErrorCode.INVALID_FILE_INFO);
+            }
+
+            File registrationFile =
+                    File.builder()
+                            .admin(admin)
+                            .name(registrationFileInfo.getName())
+                            .link(registrationFileInfo.getUrl())
+                            .type(registrationFileInfo.getType())
+                            .build();
+
+            fileRepository.save(registrationFile);
+        }
     }
 
     @Transactional

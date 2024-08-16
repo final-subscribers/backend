@@ -18,6 +18,8 @@ public enum ErrorCode {
     USER_NOT_FOUND(404, "M003", "입력하신 정보로 등록된 회원 정보가 존재하지 않습니다."),
     USER_EMAIL_INFO_NOT_FOUND(404, "M004", "등록된 이메일 아이디 정보가 존재하지 않습니다."),
     NOT_ACCEPTED_ADMIN(401, "M005", "승인되지 않은 관리자 계정입니다."),
+    FILE_INFO_REQUIRED(404, "M006", "파일 정보가 존재하지 않습니다."),
+    INVALID_FILE_INFO(400, "M007", "파일 정보가 올바르지 않습니다."),
 
     // jwt
     INVALID_TOKEN(400, "J001", "토큰이 올바르지 않습니다."),

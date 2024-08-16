@@ -25,13 +25,13 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/adminSignUp")
+    @PostMapping("/admin-signup")
     public ResponseEntity<String> adminSignUp(@Valid @RequestBody AdminSignUpRequest request) {
         authService.admnSignup(request);
         return ResponseEntity.ok("관리자 회원가입 성공");
     }
 
-    @PostMapping("/userSignUp")
+    @PostMapping("/user-signup")
     public ResponseEntity<String> userSignUp(@Valid @RequestBody MemberSignUpRequest request) {
         authService.userSignup(request);
         return ResponseEntity.ok("사용자 회원가입 성공");
