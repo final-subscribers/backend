@@ -13,8 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import subscribers.clearbunyang.domain.property.entity.enums.Name;
 import subscribers.clearbunyang.domain.property.entity.enums.KeywordRank;
+import subscribers.clearbunyang.domain.property.entity.enums.Name;
 import subscribers.clearbunyang.domain.property.entity.enums.Type;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
