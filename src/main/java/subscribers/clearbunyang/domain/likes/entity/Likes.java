@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.like.entity;
+package subscribers.clearbunyang.domain.likes.entity;
 
 
 import jakarta.persistence.Entity;
