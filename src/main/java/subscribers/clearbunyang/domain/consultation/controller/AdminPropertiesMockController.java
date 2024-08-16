@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.property.controller;
+package subscribers.clearbunyang.domain.consultation.controller;
 
 
 import java.time.LocalDate;
