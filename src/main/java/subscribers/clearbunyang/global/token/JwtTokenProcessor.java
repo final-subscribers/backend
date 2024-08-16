@@ -59,32 +59,39 @@ public class JwtTokenProcessor {
 
     private String refreshToken(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        Cookie refreshTokenCookie = CookieUtil.getCookie(request, "refreshToken");
-        if (refreshTokenCookie == null) {
-            throw new EntityNotFoundException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+        try {
+            Cookie refreshTokenCookie = CookieUtil.getCookie(request, "refreshToken");
+            if (refreshTokenCookie == null) {
+                throw new EntityNotFoundException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+            }
+
+            String refreshToken = refreshTokenCookie.getValue();
+            Claims claims =
+                    jwtTokenProvider.getUserInfoFromToken(refreshToken, JwtTokenType.REFRESH);
+            String email = claims.getSubject();
+            String storedRefreshToken = jwtTokenService.getRefreshToken(email);
+
+            if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
+                throw new InvalidValueException(ErrorCode.INVALID_TOKEN);
+            }
+
+            if (!jwtTokenProvider.validateToken(refreshToken, JwtTokenType.REFRESH)) {
+                throw new InvalidValueException(ErrorCode.INVALID_TOKEN);
+            }
+
+            String newAccessToken = jwtTokenProvider.createToken(email, JwtTokenType.ACCESS);
+            CookieUtil.addCookie(
+                    response,
+                    "accessToken",
+                    newAccessToken,
+                    JwtTokenType.ACCESS.getExpireTime() / 1000);
+            log.info("Access 토큰 재발급: 이메일={}, NewAccessToken={}", email, newAccessToken);
+            return newAccessToken;
+        } catch (EntityNotFoundException | InvalidValueException e) {
+            log.error("토큰 재발급 오류: {}", e.getMessage());
+            handleInvalidToken(response);
+            return null;
         }
-
-        String refreshToken = refreshTokenCookie.getValue();
-        Claims claims = jwtTokenProvider.getUserInfoFromToken(refreshToken, JwtTokenType.REFRESH);
-        String email = claims.getSubject();
-        String storedRefreshToken = jwtTokenService.getRefreshToken(email);
-
-        if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
-            throw new InvalidValueException(ErrorCode.INVALID_REFRESH_TOKEN);
-        }
-
-        if (!jwtTokenProvider.validateToken(refreshToken, JwtTokenType.REFRESH)) {
-            throw new InvalidValueException(ErrorCode.INVALID_TOKEN);
-        }
-
-        String newAccessToken = jwtTokenProvider.createToken(email, JwtTokenType.ACCESS);
-        CookieUtil.addCookie(
-                response,
-                "accessToken",
-                newAccessToken,
-                JwtTokenType.ACCESS.getExpireTime() / 1000);
-        log.info("Access 토큰 재발급: 이메일={}, NewAccessToken={}", email, newAccessToken);
-        return newAccessToken;
     }
 
     private void setAuthentication(String email) {
