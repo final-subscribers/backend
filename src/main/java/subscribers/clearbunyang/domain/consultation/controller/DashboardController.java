@@ -108,7 +108,7 @@ public class DashboardController {
                     .status(PENDING)
                     .period(MONTHLY)
                     .completed(9)
-                    .phone("01000001234")
+                    .phone(23)
                     .channel(28)
                     .lms(10)
                     .eachPeriod(
@@ -163,7 +163,7 @@ public class DashboardController {
             .status(PENDING)
             .period(MONTHLY)
             .completed(9)
-            .phone("01000001234")
+            .phone(23)
             .channel(28)
             .lms(10)
             .eachPeriod(
