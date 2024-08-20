@@ -17,6 +17,8 @@ import subscribers.clearbunyang.domain.user.model.request.AdminSignUpRequest;
 import subscribers.clearbunyang.domain.user.model.request.LoginRequest;
 import subscribers.clearbunyang.domain.user.model.request.MemberSignUpRequest;
 import subscribers.clearbunyang.domain.user.model.response.LoginResponse;
+import subscribers.clearbunyang.global.email.model.EmailVerificationCodeRequest;
+import subscribers.clearbunyang.global.email.model.EmailVerificationRequest;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -29,6 +31,19 @@ public class AuthController {
     public ResponseEntity<String> adminSignUp(@Valid @RequestBody AdminSignUpRequest request) {
         authService.admnSignup(request);
         return ResponseEntity.ok("관리자 회원가입 성공");
+    }
+
+    @PostMapping("/register/send-verification-code")
+    public ResponseEntity<String> sendVerificationCode(
+            @RequestBody EmailVerificationRequest request) {
+        authService.sendVerificationCode(request.getEmail());
+        return ResponseEntity.ok("인증코드가 이메일로 전송되었습니다.");
+    }
+
+    @PostMapping("/register/verify-email")
+    public ResponseEntity<String> verifyCode(@RequestBody EmailVerificationCodeRequest request) {
+        authService.verifyCode(request.getEmail(), request.getVerificationCode());
+        return ResponseEntity.ok("이메일 인증 성공");
     }
 
     @PostMapping("/user-signup")

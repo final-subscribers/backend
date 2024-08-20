@@ -5,10 +5,13 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.Duration;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +27,7 @@ import subscribers.clearbunyang.domain.user.model.request.MemberSignUpRequest;
 import subscribers.clearbunyang.domain.user.model.response.LoginResponse;
 import subscribers.clearbunyang.domain.user.repository.AdminRepository;
 import subscribers.clearbunyang.domain.user.repository.MemberRepository;
+import subscribers.clearbunyang.global.email.service.EmailService;
 import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
@@ -43,6 +47,12 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenService jwtTokenService;
     private final FileRepository fileRepository;
+    private final EmailService emailService;
+
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    private static final String EMAIL_VERIFICATION_PREFIX = "email:verification:";
+    private static final String EMAIL_VERIFIED_PREFIX = "email:verified:";
 
     // 추후 main페이지로 uri값 수정해야함
     @Value("${spring.security.redirect-uri}") private String logoutRedirectUri;
@@ -62,11 +72,48 @@ public class AuthService {
     }
 
     @Transactional
+    public void sendVerificationCode(String email) {
+        if (adminRepository.existsByEmail(email)) {
+            throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
+        }
+
+        String verificationCode = generateVerificationCode();
+        redisTemplate
+                .opsForValue()
+                .set(EMAIL_VERIFICATION_PREFIX + email, verificationCode, Duration.ofMinutes(5));
+        emailService.sendVerifyEmail(email, "시공사 회원가입 인증코드입니다", "인증코드: " + verificationCode);
+    }
+
+    @Transactional
+    public void verifyCode(String email, String code) {
+        String key = EMAIL_VERIFICATION_PREFIX + email;
+        String storedCode = (String) redisTemplate.opsForValue().get(key);
+
+        if (storedCode == null || !storedCode.equals(code)) {
+            throw new InvalidValueException(ErrorCode.INVALID_VERIFICATION_CODE);
+        }
+
+        redisTemplate.delete(key);
+        redisTemplate.opsForValue().set(EMAIL_VERIFIED_PREFIX + email, true);
+    }
+
+    private String generateVerificationCode() {
+        return RandomStringUtils.randomAlphanumeric(6);
+    }
+
+    @Transactional
     public void admnSignup(AdminSignUpRequest request) {
         log.info("관리자 회원가입 시도: 이메일={}, 이름={}", request.getEmail(), request.getName());
 
         if (adminRepository.existsByEmail(request.getEmail())) {
             throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
+        }
+
+        Boolean isVerified =
+                (Boolean)
+                        redisTemplate.opsForValue().get(EMAIL_VERIFIED_PREFIX + request.getEmail());
+        if (isVerified == null || !isVerified) {
+            throw new InvalidValueException(ErrorCode.INVALID_VERIFICATION_CODE);
         }
 
         Admin admin =
