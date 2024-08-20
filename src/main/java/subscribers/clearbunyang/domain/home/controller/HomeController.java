@@ -12,6 +12,9 @@ public class HomeController {
 
     @GetMapping("/api/mock/common/home")
     public Map<String, Object> getHomePage(@RequestParam int page) {
+        int pageSize = 5;
+        int totalProperties = 5;
+        int totalPages = (int) Math.ceil((double) totalProperties / pageSize);
 
         List<String> homeImagesUrl =
                 Arrays.asList(
@@ -107,9 +110,23 @@ public class HomeController {
                             }
                         });
 
+        int startIndex = page * pageSize;
+        int endIndex = Math.min(startIndex + pageSize, totalProperties);
+
+        List<Map<String, Object>> pagedProperties = properties.subList(startIndex, endIndex);
+
         Map<String, Object> response = new HashMap<>();
         response.put("HomeImagesUrl", homeImagesUrl);
-        response.put("properties", properties);
+        response.put(
+                "content",
+                new HashMap<String, Object>() {
+                    {
+                        put("properties", pagedProperties);
+                    }
+                });
+        response.put("totalPages", totalPages);
+        response.put("pageSize", pageSize);
+        response.put("currentPage", page);
 
         return response;
     }
@@ -123,7 +140,8 @@ public class HomeController {
             @RequestParam int price,
             @RequestParam int square_meter,
             @RequestParam int total,
-            @RequestParam int size) {
+            @RequestParam int size,
+            @RequestParam int page) {
 
         List<Map<String, Object>> propertyResponseList =
                 Arrays.asList(
@@ -173,8 +191,26 @@ public class HomeController {
                             }
                         });
 
+        int pageSize = size;
+        int totalProperties = propertyResponseList.size();
+        int totalPages = (int) Math.ceil((double) totalProperties / pageSize);
+
+        int startIndex = page * pageSize;
+        int endIndex = Math.min(startIndex + pageSize, totalProperties);
+        List<Map<String, Object>> pagedProperties =
+                propertyResponseList.subList(startIndex, endIndex);
+
         Map<String, Object> response = new HashMap<>();
-        response.put("property_response_list", propertyResponseList);
+        response.put("totalPages", totalPages);
+        response.put("pageSize", pageSize);
+        response.put("currentPage", page);
+        response.put(
+                "content",
+                new HashMap<String, Object>() {
+                    {
+                        put("property_response_list", pagedProperties);
+                    }
+                });
 
         return response;
     }
