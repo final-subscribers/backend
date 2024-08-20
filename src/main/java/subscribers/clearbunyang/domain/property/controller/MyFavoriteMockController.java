@@ -35,6 +35,7 @@ public class MyFavoriteMockController {
 
         for (int i = 0; i < 20; i++) {
             HashMap<String, Object> property = new HashMap<>();
+            property.put("id", i + 1);
             property.put("keyword", keywords);
             property.put("name", "잠실 프루지오" + (i + 1));
             property.put("area_addr", "서울특별시 서초구 ");
