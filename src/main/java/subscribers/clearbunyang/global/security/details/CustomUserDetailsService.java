@@ -4,6 +4,7 @@ package subscribers.clearbunyang.global.security.details;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import subscribers.clearbunyang.domain.user.entity.Admin;
@@ -14,8 +15,7 @@ import subscribers.clearbunyang.domain.user.repository.MemberRepository;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class UserDetailsService
-        implements org.springframework.security.core.userdetails.UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
     private final AdminRepository adminRepository;
     private final MemberRepository memberRepository;
@@ -33,12 +33,12 @@ public class UserDetailsService
 
         Optional<Member> user = memberRepository.findByEmail(email);
         if (user.isPresent()) {
-            return new UserDetails(user.get());
+            return new CustomUserDetails(user.get());
         }
 
         Optional<Admin> admin = adminRepository.findByEmail(email);
         if (admin.isPresent()) {
-            return new UserDetails(admin.get());
+            return new CustomUserDetails(admin.get());
         }
 
         throw new UsernameNotFoundException("email로 유저를 찾을 수 없습니다.: " + email);

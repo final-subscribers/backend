@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
-import subscribers.clearbunyang.global.security.details.UserDetailsService;
+import subscribers.clearbunyang.global.security.details.CustomUserDetailsService;
 import subscribers.clearbunyang.global.util.CookieUtil;
 
 @Slf4j
@@ -28,7 +28,7 @@ public class JwtTokenProcessor {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenService jwtTokenService;
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
 
     public void processToken(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -95,7 +95,7 @@ public class JwtTokenProcessor {
     }
 
     private void setAuthentication(String email) {
-        UserDetails userDetails = userDetailsService.loadUserByEmail(email);
+        UserDetails userDetails = customUserDetailsService.loadUserByEmail(email);
         Authentication authentication =
                 new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());

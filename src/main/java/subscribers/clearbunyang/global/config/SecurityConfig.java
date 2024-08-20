@@ -44,6 +44,12 @@ public class SecurityConfig {
                                         .permitAll()
                                         .requestMatchers("/api/auth/**")
                                         .permitAll()
+                                        .requestMatchers("/api/common/**")
+                                        .permitAll()
+                                        .requestMatchers("/api/admin/**")
+                                        .hasRole("ADMIN")
+                                        .requestMatchers("/api/member/**")
+                                        .hasRole("MEMBER")
                                         .anyRequest()
                                         .permitAll())
                 .addFilterBefore(

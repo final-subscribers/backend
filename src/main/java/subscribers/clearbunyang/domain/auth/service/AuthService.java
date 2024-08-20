@@ -200,7 +200,7 @@ public class AuthService {
                         .password(passwordEncoder.encode(request.getPassword()))
                         .phoneNumber(request.getPhoneNumber())
                         .address(request.getAddress())
-                        .role(UserRole.USER)
+                        .role(UserRole.MEMBER)
                         .build();
 
         memberRepository.save(member);
