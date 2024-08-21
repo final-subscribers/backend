@@ -26,10 +26,14 @@ public class StatusValidator implements ConstraintValidator<ValidStatus, Status>
                 }
             }
         }
-        context.disableDefaultConstraintViolation();
-        context.buildConstraintViolationWithTemplate(ErrorCode.INVALID_INPUT_VALUE.getMessage())
+        String errorCode = ErrorCode.INVALID_INPUT_VALUE.getCode();
+        int status = ErrorCode.INVALID_INPUT_VALUE.getStatus();
+        String errorMessage = ErrorCode.INVALID_INPUT_VALUE.getMessage();
+
+        context.buildConstraintViolationWithTemplate(
+                        String.format("%s (Code: %s, Status: %d)", errorMessage, errorCode, status))
                 .addConstraintViolation();
-        ;
+
         return false;
     }
 }

@@ -13,7 +13,7 @@ import subscribers.clearbunyang.domain.consultation.annotation.validator.MediumV
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidMedium {
-    String message() default "status 입력값이 올바르지 않음";
+    String message() default "medium 입력값이 올바르지 않음";
 
     Class<?>[] groups() default {};
 
