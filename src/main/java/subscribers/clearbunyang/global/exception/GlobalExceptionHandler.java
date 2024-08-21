@@ -21,4 +21,9 @@ public class GlobalExceptionHandler {
     public Response<Void> handleInvalidValueException(InvalidValueException e) {
         return Response.<Void>builder().result(Result.Error(e.getErrorCode())).build();
     }
+
+    @ExceptionHandler(CustomException.class)
+    public Response<Void> handleCustomException(CustomException e) {
+        return Response.<Void>builder().result(Result.Error(e.getErrorCode())).build();
+    }
 }
