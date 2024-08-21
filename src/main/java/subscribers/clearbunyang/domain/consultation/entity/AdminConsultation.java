@@ -25,6 +25,7 @@ import subscribers.clearbunyang.global.entity.BaseEntity;
 @SuperBuilder
 public class AdminConsultation extends BaseEntity {
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private Tier tier;
 
