@@ -1,6 +1,8 @@
 package subscribers.clearbunyang.domain.consultation.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,13 +12,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
+import subscribers.clearbunyang.domain.consultation.model.Requeset.MemberConsultationRequest;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.user.entity.Member;
 import subscribers.clearbunyang.global.entity.BaseEntity;
@@ -36,7 +39,7 @@ public class MemberConsultation extends BaseEntity {
     private String memberMessage;
 
     @Column(nullable = false)
-    private LocalDateTime preferredAt;
+    private LocalDate preferredAt;
 
     private String memberName;
 
@@ -48,13 +51,31 @@ public class MemberConsultation extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
+    @JsonBackReference
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id")
+    @JsonBackReference
     private Property property;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "admin_consultation_id")
+    @JsonBackReference
     private AdminConsultation adminConsultation;
+
+    public static MemberConsultation toEntity(
+            MemberConsultationRequest request, Property property, AdminConsultation consultation) {
+        return MemberConsultation.builder()
+                .status(request.getStatus())
+                .memberMessage(null)
+                .preferredAt(request.getPreferredAt())
+                .memberName(request.getName())
+                .phoneNumber(request.getPhoneNumber())
+                .medium(request.getMedium())
+                .member(null)
+                .property(property)
+                .adminConsultation(consultation)
+                .build();
+    }
 }
