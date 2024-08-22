@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class SmsCertificationUtil {
 
-    @Value("${01022205930}") private String senderNumber;
+    @Value("${spring.coolsms.senderNumber}") private String senderNumber;
 
-    @Value("${coolsms.api.key}") private String apiKey;
+    @Value("${spring.coolsms.apiKey}") private String apiKey;
 
-    @Value("${coolsms.api.secret}") private String apiSecret;
+    @Value("${spring.coolsms.apiSecret}") private String apiSecret;
 
     DefaultMessageService messageService;
 
