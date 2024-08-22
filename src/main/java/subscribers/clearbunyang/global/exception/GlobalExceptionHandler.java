@@ -2,6 +2,10 @@ package subscribers.clearbunyang.global.exception;
 
 
 import jakarta.annotation.Priority;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -31,8 +35,45 @@ public class GlobalExceptionHandler {
 
     // getCompletedResponse 서 잘못된 양식의 tier를 입력했을 때
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public Response<Void> methodArgumentTypeException(MethodArgumentTypeMismatchException e) {
+    public Response<Map<String, String>> methodArgumentTypeException(
+            MethodArgumentTypeMismatchException e) {
         ErrorCode errorCode = ErrorCode.INVALID_INPUT_VALUE;
-        return Response.<Void>builder().result(Result.Error(errorCode)).build();
+        Map<String, String> errorDetails = new HashMap<>();
+
+        String parameterName = e.getName();
+        String message =
+                String.format(
+                        "Invalid type for parameter '%s'. Expected: %s, Actual: %s",
+                        parameterName,
+                        e.getRequiredType().getSimpleName(),
+                        e.getValue().getClass().getSimpleName());
+
+        errorDetails.put("parameter", parameterName);
+        errorDetails.put("error", message);
+
+        return Response.<Map<String, String>>builder()
+                .result(Result.Error(errorCode))
+                .body(errorDetails)
+                .build();
+    }
+
+    // Valid annotation
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Response<Map<String, String>> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult()
+                .getAllErrors()
+                .forEach(
+                        (error) -> {
+                            String fieldName = ((FieldError) error).getField();
+                            String errorMessage = error.getDefaultMessage();
+                            errors.put(fieldName, errorMessage);
+                        });
+
+        return Response.<Map<String, String>>builder()
+                .result(Result.Error(ErrorCode.INVALID_INPUT_VALUE))
+                .body(errors)
+                .build();
     }
 }

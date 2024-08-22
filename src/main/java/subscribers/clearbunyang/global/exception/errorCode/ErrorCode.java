@@ -22,7 +22,7 @@ public enum ErrorCode {
 
     // Admin
     PHONE_NUMBER_DUPLICATION(400, "A001", "이미 등록된 휴대폰 번호입니다"),
-    TIER_CANNOT_BE_SPECIFIED(400, "A003", "등급을 입력 할 수 없습니다"),
+    TIER_CANNOT_BE_SPECIFIED(400, "A002", "등급을 입력 할 수 없습니다"),
 
     // jwt
     INVALID_TOKEN(400, "J001", "토큰이 올바르지 않습니다."),
