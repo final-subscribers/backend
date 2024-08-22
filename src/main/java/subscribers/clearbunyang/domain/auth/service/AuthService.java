@@ -31,6 +31,9 @@ import subscribers.clearbunyang.global.email.service.EmailService;
 import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
+import subscribers.clearbunyang.global.sms.model.SmsCertificationDao;
+import subscribers.clearbunyang.global.sms.model.SmsCertificationRequest;
+import subscribers.clearbunyang.global.sms.service.SmsCertificationUtil;
 import subscribers.clearbunyang.global.token.JwtTokenProvider;
 import subscribers.clearbunyang.global.token.JwtTokenService;
 import subscribers.clearbunyang.global.token.JwtTokenType;
@@ -48,6 +51,8 @@ public class AuthService {
     private final JwtTokenService jwtTokenService;
     private final FileRepository fileRepository;
     private final EmailService emailService;
+    private final SmsCertificationUtil smsCertificationUtil;
+    private final SmsCertificationDao smsCertificationDao;
 
     private final RedisTemplate<String, Object> redisTemplate;
 
@@ -347,5 +352,27 @@ public class AuthService {
     public void deleteTokenCookies(HttpServletResponse response) {
         CookieUtil.deleteCookie(response, "accessToken");
         CookieUtil.deleteCookie(response, "refreshToken");
+    }
+
+    public void sendSms(SmsCertificationRequest request) {
+        String to = request.getPhone();
+        int randomNumber = (int) (Math.random() * 9000) + 1000;
+        String certificationNumber = String.valueOf(randomNumber);
+        smsCertificationUtil.sendSms(to, certificationNumber);
+        smsCertificationDao.createSmsCertification(to, certificationNumber);
+    }
+
+    public void verifySms(SmsCertificationRequest request) {
+        if (isVerify(request)) {
+            throw new InvalidValueException(ErrorCode.INVALID_VERIFICATION_CODE);
+        }
+        smsCertificationDao.removeSmsCertification(request.getPhone());
+    }
+
+    public boolean isVerify(SmsCertificationRequest request) {
+        return !(smsCertificationDao.hasKey(request.getPhone())
+                && smsCertificationDao
+                        .getSmsCertification(request.getPhone())
+                        .equals(request.getCertificationNumber()));
     }
 }

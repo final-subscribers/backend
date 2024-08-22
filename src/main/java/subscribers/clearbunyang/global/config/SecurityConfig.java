@@ -53,7 +53,7 @@ public class SecurityConfig {
                                         .requestMatchers("/api/member/**")
                                         .hasRole("MEMBER")
                                         .anyRequest()
-                                        .permitAll())
+                                        .authenticated())
                 .addFilterBefore(
                         new AuthenticationFilter(jwtTokenProcessor),
                         UsernamePasswordAuthenticationFilter.class)

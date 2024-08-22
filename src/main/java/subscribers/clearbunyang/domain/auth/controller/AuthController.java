@@ -19,6 +19,7 @@ import subscribers.clearbunyang.domain.user.model.request.MemberSignUpRequest;
 import subscribers.clearbunyang.domain.user.model.response.LoginResponse;
 import subscribers.clearbunyang.global.email.model.EmailVerificationCodeRequest;
 import subscribers.clearbunyang.global.email.model.EmailVerificationRequest;
+import subscribers.clearbunyang.global.sms.model.SmsCertificationRequest;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -66,5 +67,17 @@ public class AuthController {
             throws IOException {
         String redirectUri = authService.logout(request, response);
         response.sendRedirect(redirectUri);
+    }
+
+    @PostMapping("/register/send-verification-sms-code")
+    public ResponseEntity<String> sendSms(@RequestBody SmsCertificationRequest request) {
+        authService.sendSms(request);
+        return ResponseEntity.ok("인증코드가 문자로 전송되었습니다.");
+    }
+
+    @PostMapping("/register/verify-sms")
+    public ResponseEntity<String> smsVerification(@RequestBody SmsCertificationRequest request) {
+        authService.verifySms(request);
+        return ResponseEntity.ok("문자 인증 성공");
     }
 }
