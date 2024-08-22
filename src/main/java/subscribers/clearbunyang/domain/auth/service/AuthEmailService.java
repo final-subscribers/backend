@@ -63,8 +63,7 @@ public class AuthEmailService {
                         redisTemplate.opsForValue().get(EMAIL_VERIFIED_PREFIX + request.getEmail());
 
         if (isVerified == null || !isVerified) {
-            throw new IllegalStateException(
-                    "Email verification status not found for: " + request.getEmail());
+            throw new InvalidValueException(ErrorCode.INVALID_VERIFICATION_EMAIL);
         }
     }
 }

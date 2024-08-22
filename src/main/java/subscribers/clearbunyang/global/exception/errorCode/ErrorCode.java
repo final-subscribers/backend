@@ -21,6 +21,7 @@ public enum ErrorCode {
     FILE_INFO_REQUIRED(404, "M006", "파일 정보가 존재하지 않습니다."),
     INVALID_FILE_INFO(400, "M007", "파일 정보가 올바르지 않습니다."),
     INVALID_VERIFICATION_CODE(400, "M008", "유효하지 않은 인증코드입니다."),
+    INVALID_VERIFICATION_EMAIL(400, "M009", "인증되지 않은 계정입니다."),
 
     // jwt
     INVALID_TOKEN(400, "J001", "토큰이 올바르지 않습니다."),
