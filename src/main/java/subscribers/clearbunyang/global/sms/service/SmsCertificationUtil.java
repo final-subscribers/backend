@@ -15,9 +15,9 @@ public class SmsCertificationUtil {
 
     @Value("${01022205930}") private String senderNumber;
 
-    @Value("${NCSQKCVVYNAJR5JY}") private String apiKey;
+    @Value("${coolsms.api.key}") private String apiKey;
 
-    @Value("${HSBVRVCTJPURMCF2JTQR6OLYPLYFFQXS}") private String apiSecret;
+    @Value("${coolsms.api.secret}") private String apiSecret;
 
     DefaultMessageService messageService;
 

@@ -5,13 +5,10 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.time.Duration;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,13 +24,9 @@ import subscribers.clearbunyang.domain.user.model.request.MemberSignUpRequest;
 import subscribers.clearbunyang.domain.user.model.response.LoginResponse;
 import subscribers.clearbunyang.domain.user.repository.AdminRepository;
 import subscribers.clearbunyang.domain.user.repository.MemberRepository;
-import subscribers.clearbunyang.global.email.service.EmailService;
 import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
-import subscribers.clearbunyang.global.sms.model.SmsCertificationDao;
-import subscribers.clearbunyang.global.sms.model.SmsCertificationRequest;
-import subscribers.clearbunyang.global.sms.service.SmsCertificationUtil;
 import subscribers.clearbunyang.global.token.JwtTokenProvider;
 import subscribers.clearbunyang.global.token.JwtTokenService;
 import subscribers.clearbunyang.global.token.JwtTokenType;
@@ -50,14 +43,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenService jwtTokenService;
     private final FileRepository fileRepository;
-    private final EmailService emailService;
-    private final SmsCertificationUtil smsCertificationUtil;
-    private final SmsCertificationDao smsCertificationDao;
-
-    private final RedisTemplate<String, Object> redisTemplate;
-
-    private static final String EMAIL_VERIFICATION_PREFIX = "email:verification:";
-    private static final String EMAIL_VERIFIED_PREFIX = "email:verified:";
+    private final AuthEmailService authEmailService;
 
     // 추후 main페이지로 uri값 수정해야함
     @Value("${spring.security.redirect-uri}") private String logoutRedirectUri;
@@ -77,36 +63,6 @@ public class AuthService {
     }
 
     @Transactional
-    public void sendVerificationCode(String email) {
-        if (adminRepository.existsByEmail(email)) {
-            throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
-        }
-
-        String verificationCode = generateVerificationCode();
-        redisTemplate
-                .opsForValue()
-                .set(EMAIL_VERIFICATION_PREFIX + email, verificationCode, Duration.ofMinutes(5));
-        emailService.sendVerifyEmail(email, "시공사 회원가입 인증코드입니다", "인증코드: " + verificationCode);
-    }
-
-    @Transactional
-    public void verifyCode(String email, String code) {
-        String key = EMAIL_VERIFICATION_PREFIX + email;
-        String storedCode = (String) redisTemplate.opsForValue().get(key);
-
-        if (storedCode == null || !storedCode.equals(code)) {
-            throw new InvalidValueException(ErrorCode.INVALID_VERIFICATION_CODE);
-        }
-
-        redisTemplate.delete(key);
-        redisTemplate.opsForValue().set(EMAIL_VERIFIED_PREFIX + email, true);
-    }
-
-    private String generateVerificationCode() {
-        return RandomStringUtils.randomAlphanumeric(6);
-    }
-
-    @Transactional
     public void admnSignup(AdminSignUpRequest request) {
         log.info("관리자 회원가입 시도: 이메일={}, 이름={}", request.getEmail(), request.getName());
 
@@ -114,12 +70,8 @@ public class AuthService {
             throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
         }
 
-        Boolean isVerified =
-                (Boolean)
-                        redisTemplate.opsForValue().get(EMAIL_VERIFIED_PREFIX + request.getEmail());
-        if (isVerified == null || !isVerified) {
-            throw new InvalidValueException(ErrorCode.INVALID_VERIFICATION_CODE);
-        }
+        // 이메일 검증 작업 void로 변경 확인 필요.
+        authEmailService.isVerified(request);
 
         Admin admin =
                 Admin.builder()
@@ -151,6 +103,7 @@ public class AuthService {
             throw new InvalidValueException(ErrorCode.FILE_INFO_REQUIRED);
         }
 
+        // 위에서 검증했는데 또 검증하는 이유는?
         if (housingFileInfo != null) {
 
             if (housingFileInfo.getName() == null
@@ -170,6 +123,7 @@ public class AuthService {
             fileRepository.save(housingFile);
         }
 
+        // 위에서 검증했는데 또 검증하는 이유는?
         if (registrationFileInfo != null) {
 
             if (registrationFileInfo.getName() == null
@@ -191,7 +145,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void userSignup(MemberSignUpRequest request) {
+    public void memberSignup(MemberSignUpRequest request) {
         log.info("사용자 회원가입 시도: 이메일={}, 이름={}", request.getEmail(), request.getName());
 
         if (memberRepository.existsByEmail(request.getEmail())) {
@@ -219,7 +173,7 @@ public class AuthService {
         if (adminRepository.existsByEmail(request.getEmail())) {
             return adminLogin(request);
         } else if (memberRepository.existsByEmail(request.getEmail())) {
-            return userLogin(request);
+            return memberLogin(request);
         } else {
             throw new InvalidValueException(ErrorCode.USER_NOT_FOUND);
         }
@@ -251,7 +205,8 @@ public class AuthService {
         return LoginResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
-    private LoginResponse userLogin(LoginRequest request) {
+    // memberLogin으로 바꿈
+    private LoginResponse memberLogin(LoginRequest request) {
         Member member =
                 memberRepository
                         .findByEmail(request.getEmail())
@@ -273,6 +228,7 @@ public class AuthService {
         return LoginResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
+    // 어디에서 쓰이는건지?
     @Transactional
     public String standardRefreshToken(HttpServletRequest request, HttpServletResponse response) {
         Cookie refreshTokenCookie = CookieUtil.getCookie(request, "refreshToken");
@@ -329,12 +285,14 @@ public class AuthService {
         String email = jwtTokenProvider.getEmailFromToken(accessToken, JwtTokenType.ACCESS);
 
         if (adminRepository.existsByEmail(email)) {
+            // 굳이 변수로 저장되어야 하는 이유는?
             Admin admin =
                     adminRepository
                             .findByEmail(email)
                             .orElseThrow(
                                     () -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
         } else if (memberRepository.existsByEmail(email)) {
+            // 굳이 변수로 저장되어야 하는 이유는?
             Member member =
                     memberRepository
                             .findByEmail(email)
@@ -352,27 +310,5 @@ public class AuthService {
     public void deleteTokenCookies(HttpServletResponse response) {
         CookieUtil.deleteCookie(response, "accessToken");
         CookieUtil.deleteCookie(response, "refreshToken");
-    }
-
-    public void sendSms(SmsCertificationRequest request) {
-        String to = request.getPhone();
-        int randomNumber = (int) (Math.random() * 9000) + 1000;
-        String certificationNumber = String.valueOf(randomNumber);
-        smsCertificationUtil.sendSms(to, certificationNumber);
-        smsCertificationDao.createSmsCertification(to, certificationNumber);
-    }
-
-    public void verifySms(SmsCertificationRequest request) {
-        if (isVerify(request)) {
-            throw new InvalidValueException(ErrorCode.INVALID_VERIFICATION_CODE);
-        }
-        smsCertificationDao.removeSmsCertification(request.getPhone());
-    }
-
-    public boolean isVerify(SmsCertificationRequest request) {
-        return !(smsCertificationDao.hasKey(request.getPhone())
-                && smsCertificationDao
-                        .getSmsCertification(request.getPhone())
-                        .equals(request.getCertificationNumber()));
     }
 }
