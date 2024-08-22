@@ -18,6 +18,10 @@ public class TierValidator implements ConstraintValidator<ValidTier, Tier> {
 
     @Override
     public boolean isValid(Tier value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return true;
+        }
+
         Object[] enumValues = this.validTier.enumClass().getEnumConstants();
         if (enumValues != null) {
             for (Object enumValue : enumValues) {
