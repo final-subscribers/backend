@@ -33,7 +33,7 @@ public class ConsultCompletedSummaryResponse {
                 .name(consultation.getMemberConsultation().getMemberName())
                 .consultant(consultation.getConsultant())
                 .createdAt(consultation.getMemberConsultation().getCreatedAt())
-                .completedAt(consultation.getCompletedAt())
+                .completedAt(LocalDate.from(consultation.getCreatedAt()))
                 .tier(consultation.getTier())
                 .phoneNumber(consultation.getMemberConsultation().getPhoneNumber())
                 .build();
