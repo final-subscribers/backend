@@ -17,14 +17,14 @@ public class SmsController {
 
     private final AuthSmsService authSmsService;
 
-    @PostMapping("/register/send-verification-sms-code")
+    @PostMapping("/send-sms-code")
     public ResponseEntity<String> sendVerificationCode(
             @RequestBody SmsCertificationRequest request) {
         authSmsService.sendVerificationCode(request);
         return ResponseEntity.ok("인증코드가 문자로 전송되었습니다.");
     }
 
-    @PostMapping("/register/verify-sms")
+    @PostMapping("/verify-sms")
     public ResponseEntity<String> verifyCode(@RequestBody SmsCertificationRequest request) {
         authSmsService.verifyCode(request);
         return ResponseEntity.ok("문자 인증 성공");
