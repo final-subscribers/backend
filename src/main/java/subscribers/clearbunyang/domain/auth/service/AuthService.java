@@ -1,8 +1,6 @@
 package subscribers.clearbunyang.domain.auth.service;
 
 
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
@@ -70,7 +68,6 @@ public class AuthService {
             throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
         }
 
-        // 이메일 검증 작업 void로 변경 확인 필요.
         authEmailService.isVerified(request);
 
         Admin admin =
@@ -103,7 +100,6 @@ public class AuthService {
             throw new InvalidValueException(ErrorCode.FILE_INFO_REQUIRED);
         }
 
-        // 위에서 검증했는데 또 검증하는 이유는?
         if (housingFileInfo != null) {
 
             if (housingFileInfo.getName() == null
@@ -123,7 +119,6 @@ public class AuthService {
             fileRepository.save(housingFile);
         }
 
-        // 위에서 검증했는데 또 검증하는 이유는?
         if (registrationFileInfo != null) {
 
             if (registrationFileInfo.getName() == null
@@ -205,7 +200,6 @@ public class AuthService {
         return LoginResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
-    // memberLogin으로 바꿈
     private LoginResponse memberLogin(LoginRequest request) {
         Member member =
                 memberRepository
@@ -228,20 +222,6 @@ public class AuthService {
         return LoginResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
-    // 어디에서 쓰이는건지?
-    @Transactional
-    public String standardRefreshToken(HttpServletRequest request, HttpServletResponse response) {
-        Cookie refreshTokenCookie = CookieUtil.getCookie(request, "refreshToken");
-        if (refreshTokenCookie == null) {
-            throw new EntityNotFoundException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
-        }
-        String newAccessToken = createAccessToken(refreshTokenCookie.getValue());
-        addAccessTokenCookie(response, newAccessToken);
-        log.info("재발급된 Access 토큰을 쿠키에 저장: NewAccessToken={}", newAccessToken);
-
-        return newAccessToken;
-    }
-
     public void addTokenCookies(
             HttpServletResponse response, String accessToken, String refreshToken) {
         CookieUtil.addCookie(
@@ -253,30 +233,6 @@ public class AuthService {
                 JwtTokenType.REFRESH.getExpireTime() / 1000);
     }
 
-    public void addAccessTokenCookie(HttpServletResponse response, String accessToken) {
-        CookieUtil.addCookie(
-                response, "accessToken", accessToken, JwtTokenType.ACCESS.getExpireTime() / 1000);
-    }
-
-    @Transactional
-    public String createAccessToken(String refreshToken) {
-        Claims claims = jwtTokenProvider.getUserInfoFromToken(refreshToken, JwtTokenType.REFRESH);
-        String email = claims.getSubject();
-        String storedRefreshToken = jwtTokenService.getRefreshToken(email);
-
-        if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
-            throw new InvalidValueException(ErrorCode.INVALID_REFRESH_TOKEN);
-        }
-
-        if (!jwtTokenProvider.validateToken(refreshToken, JwtTokenType.REFRESH)) {
-            throw new InvalidValueException(ErrorCode.INVALID_TOKEN);
-        }
-
-        String newAccessToken = jwtTokenProvider.createToken(email, JwtTokenType.ACCESS);
-        log.info("Access 토큰 재발급: 이메일={}, NewAccessToken={}", email, newAccessToken);
-        return newAccessToken;
-    }
-
     @Transactional
     public void standardLogout(HttpServletRequest request, HttpServletResponse response) {
 
@@ -285,14 +241,12 @@ public class AuthService {
         String email = jwtTokenProvider.getEmailFromToken(accessToken, JwtTokenType.ACCESS);
 
         if (adminRepository.existsByEmail(email)) {
-            // 굳이 변수로 저장되어야 하는 이유는?
             Admin admin =
                     adminRepository
                             .findByEmail(email)
                             .orElseThrow(
                                     () -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
         } else if (memberRepository.existsByEmail(email)) {
-            // 굳이 변수로 저장되어야 하는 이유는?
             Member member =
                     memberRepository
                             .findByEmail(email)
