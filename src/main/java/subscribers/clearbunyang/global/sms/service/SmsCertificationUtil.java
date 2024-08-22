@@ -8,16 +8,17 @@ import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SmsCertificationUtil {
 
-    @Value("${01022205930}") private String senderNumber;
+    @Value("${spring.coolsms.senderNumber}") private String senderNumber;
 
-    @Value("${coolsms.api.key}") private String apiKey;
+    @Value("${spring.coolsms.apiKey}") private String apiKey;
 
-    @Value("${coolsms.api.secret}") private String apiSecret;
+    @Value("${spring.coolsms.apiSecret}") private String apiSecret;
 
     DefaultMessageService messageService;
 
@@ -27,6 +28,7 @@ public class SmsCertificationUtil {
                 NurigoApp.INSTANCE.initialize(apiKey, apiSecret, "https://api.coolsms.co.kr");
     }
 
+    @Async("smsExecutor")
     public SingleMessageSentResponse sendSms(String to, String verificationCode) {
         Message message = new Message();
         message.setFrom(senderNumber);

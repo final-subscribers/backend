@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.global.email.service;
+package subscribers.clearbunyang.global.config;
 
 
 import org.springframework.core.task.TaskDecorator;
