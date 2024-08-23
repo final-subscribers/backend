@@ -11,12 +11,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ConsultCompletedResponse {
+public class ConsultCompletedListResponse {
 
     private List<ConsultCompletedSummaryResponse> consultCompletedSummaries;
 
-    public static ConsultCompletedResponse toDto(
+    public static ConsultCompletedListResponse toDto(
             List<ConsultCompletedSummaryResponse> responseList) {
-        return ConsultCompletedResponse.builder().consultCompletedSummaries(responseList).build();
+        return ConsultCompletedListResponse.builder()
+                .consultCompletedSummaries(responseList)
+                .build();
     }
 }
