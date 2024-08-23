@@ -13,9 +13,20 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SideBarListResponse {
 
-    private List<PendingResponse> pendingResponseList;
+    private List<SideBarPendingResponse> sideBarPendingResponseList;
 
-    private List<CompletedResponse> completedResponseList;
+    private List<SideBarCompletedResponse> sideBarCompletedResponseList;
 
-    private SelectedPropertyResponse selectedPropertyResponse;
+    private SideBarSelectedPropertyResponse sideBarSelectedPropertyResponse;
+
+    public static SideBarListResponse toDto(
+            List<SideBarPendingResponse> pendingList,
+            List<SideBarCompletedResponse> completedList,
+            SideBarSelectedPropertyResponse selectedProperty) {
+        return SideBarListResponse.builder()
+                .sideBarPendingResponseList(pendingList)
+                .sideBarCompletedResponseList(completedList)
+                .sideBarSelectedPropertyResponse(selectedProperty)
+                .build();
+    }
 }
