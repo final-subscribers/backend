@@ -79,11 +79,11 @@ public class Property extends BaseEntity {
     @Column(nullable = false)
     private String companyName;
 
+    /*@Column(nullable = false)
+    private String areaCategory;*/
+    // TODO 커밋 전 확인
     @Column(nullable = false)
-    private String areaCategory;
-
-    @Column(nullable = false)
-    private String dong;
+    private String addr_dong;
 
     @ManyToOne
     @JoinColumn(name = "admin_id", nullable = false)

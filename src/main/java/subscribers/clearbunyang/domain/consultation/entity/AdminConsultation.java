@@ -12,9 +12,9 @@ import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
+import subscribers.clearbunyang.domain.consultation.model.request.AdminConsultRequest;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
 @Entity
@@ -25,17 +25,39 @@ import subscribers.clearbunyang.global.entity.BaseEntity;
 @SuperBuilder
 public class AdminConsultation extends BaseEntity {
 
-    @Setter
     @Enumerated(EnumType.STRING)
     private Tier tier;
 
     private String consultMessage;
 
-    @Setter private String consultant;
+    private String consultant;
 
     private LocalDate completedAt;
 
     @OneToOne(mappedBy = "adminConsultation", cascade = CascadeType.ALL)
     @JsonManagedReference
     private MemberConsultation memberConsultation;
+
+    public void setConsultant(String consultant) {
+        this.consultant = consultant;
+    }
+
+    public void setTier(Tier tier) {
+        this.tier = tier;
+    }
+
+    public void setMessage(String consultMessage) {
+        this.consultMessage = consultMessage;
+    }
+
+    public static AdminConsultation toEntity(
+            AdminConsultRequest request, MemberConsultation consultation) {
+        return AdminConsultation.builder()
+                .tier(request.getTier())
+                .consultMessage(request.getConsultantMessage())
+                .consultant(consultation.getAdminConsultation().getConsultant())
+                .completedAt(consultation.getPreferredAt())
+                .memberConsultation(consultation)
+                .build();
+    }
 }
