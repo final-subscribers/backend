@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PendingResponse {
+public class SideBarPendingResponse {
 
     private Long id; // 매물 id
 

@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.consultation.model.Requeset;
+package subscribers.clearbunyang.domain.consultation.model.request;
 
 
 import jakarta.validation.constraints.NotBlank;
@@ -19,7 +19,7 @@ import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MemberConsultationRequest {
+public class MemberConsultRequest {
 
     @NotBlank private String name; // 고객 이름
 
@@ -34,7 +34,7 @@ public class MemberConsultationRequest {
     @ValidTier(enumClass = Tier.class) // pending 일 때 입력하지 않으면 에러
     private Tier tier; // 등급
 
-    @ValidStatus(enumClass = Status.class) // 얘는 작동 함
+    @ValidStatus(enumClass = Status.class)
     private Status status; // 상태
 
     @ValidMedium(enumClass = Medium.class)

@@ -9,11 +9,12 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 @Getter
-public class ConsultPendingResponse {
+public class ConsultPendingListResponse {
 
     private List<ConsultPendingSummaryResponse> consultPendingSummaries;
 
-    public static ConsultPendingResponse toDto(List<ConsultPendingSummaryResponse> responseList) {
-        return ConsultPendingResponse.builder().consultPendingSummaries(responseList).build();
+    public static ConsultPendingListResponse toDto(
+            List<ConsultPendingSummaryResponse> responseList) {
+        return ConsultPendingListResponse.builder().consultPendingSummaries(responseList).build();
     }
 }

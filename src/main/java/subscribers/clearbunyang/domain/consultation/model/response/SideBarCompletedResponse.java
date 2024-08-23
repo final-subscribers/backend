@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CompletedResponse {
+public class SideBarCompletedResponse {
 
     private Long id; // 매물 id
 

@@ -12,7 +12,7 @@ import subscribers.clearbunyang.domain.property.entity.Property;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SelectedPropertyResponse {
+public class SideBarSelectedPropertyResponse {
 
     private Long id;
 
@@ -34,8 +34,8 @@ public class SelectedPropertyResponse {
 
     private String propertyType;
 
-    public static SelectedPropertyResponse toDto(Property property) {
-        return SelectedPropertyResponse.builder()
+    public static SideBarSelectedPropertyResponse toDto(Property property) {
+        return SideBarSelectedPropertyResponse.builder()
                 .id(property.getId())
                 .name(property.getName())
                 // .image(property.getFiles().get(0).getType()) TODO 파일 이미지 생성
