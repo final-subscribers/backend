@@ -69,7 +69,7 @@ class AuthEmailServiceTest {
 
     verify(adminRepository).existsByEmail(email);
     verify(valueOperations).set(eq("email:verification:" + email), anyString(), eq(Duration.ofMinutes(5)));
-    verify(emailService).sendVerifyEmail(eq(email), eq("시공사 회원가입 인증코드입니다"), anyString());
+    verify(emailService).sendVerifyEmail(eq(email), eq("시행사 회원가입 인증코드입니다"), anyString());
   }
 
   @Test

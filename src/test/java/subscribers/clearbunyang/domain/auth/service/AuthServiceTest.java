@@ -67,6 +67,9 @@ public class AuthServiceTest {
   @Mock
   private AuthEmailService authEmailService;
 
+  @Mock
+  private AuthSmsService authSmsService;
+
   @InjectMocks
   private AuthService authService;
 
@@ -155,9 +158,11 @@ public class AuthServiceTest {
         .build();
 
     when(memberRepository.existsByEmail(request.getEmail())).thenReturn(false);
+    when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
 
     authService.memberSignup(request);
 
+    verify(authSmsService).isVerified(request);
     verify(memberRepository).save(any(Member.class));
   }
 
