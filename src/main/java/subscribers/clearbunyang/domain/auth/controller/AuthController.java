@@ -31,7 +31,7 @@ public class AuthController {
         return ResponseEntity.ok("관리자 회원가입 성공");
     }
 
-    @PostMapping("/user-signup")
+    @PostMapping("/member-signup")
     public ResponseEntity<String> memberSignup(@Valid @RequestBody MemberSignUpRequest request) {
         authService.memberSignup(request);
         return ResponseEntity.ok("사용자 회원가입 성공");
