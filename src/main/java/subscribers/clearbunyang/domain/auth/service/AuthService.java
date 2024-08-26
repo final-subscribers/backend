@@ -42,6 +42,7 @@ public class AuthService {
     private final JwtTokenService jwtTokenService;
     private final FileRepository fileRepository;
     private final AuthEmailService authEmailService;
+    private final AuthSmsService authSmsService;
 
     // 추후 main페이지로 uri값 수정해야함
     @Value("${spring.security.redirect-uri}") private String logoutRedirectUri;
@@ -146,6 +147,8 @@ public class AuthService {
         if (memberRepository.existsByEmail(request.getEmail())) {
             throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
         }
+
+        authSmsService.isVerified(request);
 
         Member member =
                 Member.builder()

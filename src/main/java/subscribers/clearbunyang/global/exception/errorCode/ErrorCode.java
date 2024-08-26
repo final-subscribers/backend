@@ -22,6 +22,8 @@ public enum ErrorCode {
     INVALID_FILE_INFO(400, "M007", "파일 정보가 올바르지 않습니다."),
     INVALID_VERIFICATION_CODE(400, "M008", "유효하지 않은 인증코드입니다."),
     INVALID_VERIFICATION_EMAIL(400, "M009", "인증되지 않은 계정입니다."),
+    PHONE_DUPLICATION(400, "M010", "이미 등록된 회원 정보입니다."),
+    INVALID_VERIFICATION_SMS(400, "M011", "인증되지 않은 번호입니다."),
 
     // jwt
     INVALID_TOKEN(400, "J001", "토큰이 올바르지 않습니다."),

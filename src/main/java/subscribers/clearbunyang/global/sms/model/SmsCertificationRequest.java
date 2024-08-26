@@ -6,6 +6,5 @@ import lombok.Getter;
 @Getter
 public class SmsCertificationRequest {
 
-    private String phone;
-    private String certificationNumber;
+    private String phoneNumber;
 }

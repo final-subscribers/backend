@@ -36,7 +36,7 @@ public class AuthEmailService {
         redisTemplate
                 .opsForValue()
                 .set(EMAIL_VERIFICATION_PREFIX + email, verificationCode, Duration.ofMinutes(5));
-        emailService.sendVerifyEmail(email, "시공사 회원가입 인증코드입니다", "인증코드: " + verificationCode);
+        emailService.sendVerifyEmail(email, "시행사 회원가입 인증코드입니다", "인증코드: " + verificationCode);
     }
 
     @Transactional
