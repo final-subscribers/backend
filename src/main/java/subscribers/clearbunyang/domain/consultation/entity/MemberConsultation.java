@@ -10,7 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,8 +35,7 @@ public class MemberConsultation extends BaseEntity {
 
     private String memberMessage;
 
-    @Column(nullable = false)
-    private LocalDateTime preferredAt;
+    private LocalDate preferredAt;
 
     private String memberName;
 

@@ -1,14 +1,13 @@
 package subscribers.clearbunyang.domain.consultation.entity;
 
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,8 +30,7 @@ public class AdminConsultation extends BaseEntity {
 
     private String consultant;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime completedAt;
+    private LocalDate completedAt;
 
     @OneToOne(mappedBy = "adminConsultation", cascade = CascadeType.ALL)
     private MemberConsultation memberConsultation;

@@ -4,6 +4,7 @@ package subscribers.clearbunyang.global.exception.errorCode;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -11,6 +12,9 @@ public enum ErrorCode {
 
     // Common
     INVALID_INPUT_VALUE(400, "C001", "Invalid Input Value"),
+    BAD_REQUEST(HttpStatus.BAD_REQUEST.value(), "400", "요청 파라미터나, 요청 바디의 값을 다시 확인하세요"),
+    JSON_CONVERSION_FAILED(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(), "500", "JSON 형식이 아니라 변환에 실패했습니다"),
 
     // User
     EMAIL_DUPLICATION(400, "M001", "이미 등록된 회원 정보입니다."),
