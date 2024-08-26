@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import subscribers.clearbunyang.global.validation.EmailValidation;
 import subscribers.clearbunyang.global.validation.PasswordValidation;
 
@@ -22,6 +23,7 @@ public class MemberSignUpRequest {
     @PasswordValidation private String password;
 
     @JsonProperty("phone_number")
+    @Setter
     private String phoneNumber;
 
     private String address;
