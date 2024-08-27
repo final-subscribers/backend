@@ -10,7 +10,7 @@ import subscribers.clearbunyang.domain.user.repository.MemberRepository;
 import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.sms.model.SmsCertificationCodeRequest;
-import subscribers.clearbunyang.global.sms.model.SmsCertificationDao;
+import subscribers.clearbunyang.global.sms.service.SmsCertificationDao;
 import subscribers.clearbunyang.global.sms.service.SmsCertificationUtil;
 
 @Service

@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.global.sms.model;
+package subscribers.clearbunyang.global.sms.service;
 
 
 import java.time.Duration;
