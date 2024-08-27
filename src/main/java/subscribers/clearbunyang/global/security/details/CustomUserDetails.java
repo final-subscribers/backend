@@ -16,21 +16,30 @@ import subscribers.clearbunyang.domain.user.entity.Member;
 @ToString
 public class CustomUserDetails implements UserDetails {
 
-    private final Object member;
+    private final Object user;
 
-    public CustomUserDetails(Object member) {
-        if (member == null) {
-            throw new IllegalArgumentException("Member 값이 null이 될 수 없습니다.");
+    public CustomUserDetails(Object user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User 값이 null이 될 수 없습니다.");
         }
-        this.member = member;
+        this.user = user;
+    }
+
+    public Long getUserId() {
+        if (user instanceof Member member) {
+            return member.getId();
+        } else if (user instanceof Admin admin) {
+            return admin.getId();
+        }
+        return null;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
-        if (member instanceof Member memberEntity) {
-            authorities.add(new SimpleGrantedAuthority(memberEntity.getRole().name()));
-        } else if (member instanceof Admin admin) {
+        if (user instanceof Member member) {
+            authorities.add(new SimpleGrantedAuthority(member.getRole().name()));
+        } else if (user instanceof Admin admin) {
             authorities.add(new SimpleGrantedAuthority(admin.getRole().name()));
         }
         return authorities;
@@ -38,9 +47,9 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        if (member instanceof Member memberEntity) {
-            return memberEntity.getPassword();
-        } else if (member instanceof Admin admin) {
+        if (user instanceof Member member) {
+            return member.getPassword();
+        } else if (user instanceof Admin admin) {
             return admin.getPassword();
         }
         return null;
@@ -48,9 +57,9 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        if (member instanceof Member memberEntity) {
-            return memberEntity.getEmail();
-        } else if (member instanceof Admin admin) {
+        if (user instanceof Member member) {
+            return member.getEmail();
+        } else if (user instanceof Admin admin) {
             return admin.getEmail();
         }
         return null;

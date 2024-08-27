@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.file.entity.File;
+import subscribers.clearbunyang.domain.file.entity.enums.FileType;
 import subscribers.clearbunyang.domain.file.repository.FileRepository;
 import subscribers.clearbunyang.domain.user.entity.Admin;
 import subscribers.clearbunyang.domain.user.entity.Member;
@@ -114,7 +115,7 @@ public class AuthService {
                             .admin(admin)
                             .name(housingFileInfo.getName())
                             .link(housingFileInfo.getUrl())
-                            .type(housingFileInfo.getType())
+                            .type(FileType.valueOf(housingFileInfo.getType()))
                             .build();
 
             fileRepository.save(housingFile);
@@ -133,7 +134,7 @@ public class AuthService {
                             .admin(admin)
                             .name(registrationFileInfo.getName())
                             .link(registrationFileInfo.getUrl())
-                            .type(registrationFileInfo.getType())
+                            .type(FileType.valueOf(registrationFileInfo.getType()))
                             .build();
 
             fileRepository.save(registrationFile);
