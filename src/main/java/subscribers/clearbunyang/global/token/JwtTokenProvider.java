@@ -10,7 +10,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
-import java.util.Collections;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,13 +35,15 @@ public class JwtTokenProvider {
         this.refreshKey = Keys.hmacShaKeyFor(refreshKeyBytes);
     }
 
-    public String createToken(String email, JwtTokenType type) {
+    public String createToken(String email, String role, JwtTokenType type) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + type.getExpireTime());
 
         Key key = type == JwtTokenType.ACCESS ? accessKey : refreshKey;
 
-        Claims claims = Jwts.claims(Collections.singletonMap("sub", email));
+        Claims claims = Jwts.claims();
+        claims.setSubject(email);
+        claims.put("role", role);
 
         return Jwts.builder()
                 .setClaims(claims)

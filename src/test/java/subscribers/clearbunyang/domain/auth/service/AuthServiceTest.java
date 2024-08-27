@@ -29,6 +29,7 @@ import subscribers.clearbunyang.domain.file.repository.FileRepository;
 import subscribers.clearbunyang.domain.user.entity.Admin;
 import subscribers.clearbunyang.domain.user.entity.Member;
 import subscribers.clearbunyang.domain.user.entity.enums.AdminState;
+import subscribers.clearbunyang.domain.user.entity.enums.UserRole;
 import subscribers.clearbunyang.domain.user.model.request.AdminSignUpRequest;
 import subscribers.clearbunyang.domain.user.model.request.LoginRequest;
 import subscribers.clearbunyang.domain.user.model.request.MemberSignUpRequest;
@@ -116,8 +117,8 @@ public class AuthServiceTest {
         123456789L,
         "Address",
         "Business",
-        new AdminSignUpRequest.FileInfo("housingFile", "url", "type"),
-        new AdminSignUpRequest.FileInfo("registrationFile", "url", "type")
+        new AdminSignUpRequest.FileInfo("housingFile", "url", "HOUSING"),
+        new AdminSignUpRequest.FileInfo("registrationFile", "url", "REGISTRATION")
     );
 
     when(adminRepository.existsByEmail(request.getEmail())).thenReturn(false);
@@ -194,12 +195,13 @@ public class AuthServiceTest {
         .email("admin@example.com")
         .password(passwordEncoder.encode("password"))
         .status(AdminState.ACCEPTED)
+        .role(UserRole.ADMIN)
         .build();
 
     when(adminRepository.existsByEmail(request.getEmail())).thenReturn(true);
     when(adminRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(admin));
     when(passwordEncoder.matches(request.getPassword(), admin.getPassword())).thenReturn(true);
-    when(jwtTokenProvider.createToken(any(), any())).thenReturn("token");
+    when(jwtTokenProvider.createToken(any(), any(), any())).thenReturn("token");
     doNothing().when(jwtTokenService).saveRefreshToken(any(), any());
 
     LoginResponse response = authService.login(request);
@@ -219,12 +221,13 @@ public class AuthServiceTest {
     Member member = Member.builder()
         .email("member@example.com")
         .password(passwordEncoder.encode("password"))
+        .role(UserRole.MEMBER)
         .build();
 
     when(memberRepository.existsByEmail(request.getEmail())).thenReturn(true);
     when(memberRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(member));
     when(passwordEncoder.matches(request.getPassword(), member.getPassword())).thenReturn(true);
-    when(jwtTokenProvider.createToken(any(), any())).thenReturn("token");
+    when(jwtTokenProvider.createToken(any(), any(), any())).thenReturn("token");
     doNothing().when(jwtTokenService).saveRefreshToken(any(), any());
 
     LoginResponse response = authService.login(request);

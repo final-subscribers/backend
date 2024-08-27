@@ -17,6 +17,7 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import subscribers.clearbunyang.domain.file.entity.File;
 import subscribers.clearbunyang.domain.like.entity.Likes;
@@ -54,6 +55,7 @@ public class Property extends BaseEntity {
     @Column(nullable = true)
     private String homePage;
 
+    @Setter
     @Column(nullable = false)
     private int likeCount;
 
