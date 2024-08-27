@@ -24,7 +24,7 @@ public class File extends BaseEntity {
     private Admin admin;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "property_id", nullable = false)
+    @JoinColumn(name = "property_id")
     private Property property;
 
     @Column(nullable = false)
