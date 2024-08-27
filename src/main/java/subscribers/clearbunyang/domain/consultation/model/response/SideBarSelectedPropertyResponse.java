@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import subscribers.clearbunyang.domain.file.entity.File;
+import subscribers.clearbunyang.domain.file.entity.enums.FileType;
 import subscribers.clearbunyang.domain.property.entity.Property;
 
 @Getter
@@ -18,7 +20,7 @@ public class SideBarSelectedPropertyResponse {
 
     private String name;
 
-    // private FileType image;
+    private String image;
 
     private String propertyName; // 분양유형
 
@@ -35,10 +37,15 @@ public class SideBarSelectedPropertyResponse {
     private String propertyType;
 
     public static SideBarSelectedPropertyResponse toDto(Property property) {
+        File imageFile =
+                property.getFiles().stream()
+                        .filter(file -> file.getType() == FileType.PROPERTY_IMAGE)
+                        .findFirst()
+                        .orElse(null);
         return SideBarSelectedPropertyResponse.builder()
                 .id(property.getId())
                 .name(property.getName())
-                // .image(property.getFiles().get(0).getType()) TODO 파일 이미지 생성
+                .image(imageFile != null ? imageFile.getLink() : null)
                 .propertyName(property.getName())
                 .companyName(property.getCompanyName())
                 .constructor(property.getConstructor())

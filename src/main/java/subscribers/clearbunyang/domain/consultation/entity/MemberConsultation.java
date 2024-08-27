@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
-import subscribers.clearbunyang.domain.consultation.model.request.MemberConsultRequest;
+import subscribers.clearbunyang.domain.consultation.model.request.NewCustomerAdditionRequest;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.user.entity.Member;
 import subscribers.clearbunyang.global.entity.BaseEntity;
@@ -65,7 +65,7 @@ public class MemberConsultation extends BaseEntity {
     private AdminConsultation adminConsultation;
 
     public static MemberConsultation toEntity(
-            MemberConsultRequest request, Property property, AdminConsultation consultation) {
+            NewCustomerAdditionRequest request, Property property, AdminConsultation consultation) {
         return MemberConsultation.builder()
                 .status(request.getStatus())
                 .memberMessage(null)
@@ -77,5 +77,9 @@ public class MemberConsultation extends BaseEntity {
                 .property(property)
                 .adminConsultation(consultation)
                 .build();
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

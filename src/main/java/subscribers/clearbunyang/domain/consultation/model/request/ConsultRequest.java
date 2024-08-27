@@ -14,7 +14,7 @@ import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AdminConsultRequest {
+public class ConsultRequest {
 
     @ValidStatus(enumClass = Status.class)
     private Status status;

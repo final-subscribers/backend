@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
-import subscribers.clearbunyang.domain.consultation.model.request.AdminConsultRequest;
+import subscribers.clearbunyang.domain.consultation.model.request.ConsultRequest;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
 @Entity
@@ -51,7 +51,7 @@ public class AdminConsultation extends BaseEntity {
     }
 
     public static AdminConsultation toEntity(
-            AdminConsultRequest request, MemberConsultation consultation) {
+            ConsultRequest request, MemberConsultation consultation) {
         return AdminConsultation.builder()
                 .tier(request.getTier())
                 .consultMessage(request.getConsultantMessage())

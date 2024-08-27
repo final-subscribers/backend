@@ -19,7 +19,7 @@ import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MemberConsultRequest {
+public class NewCustomerAdditionRequest {
 
     @NotBlank private String name; // 고객 이름
 
