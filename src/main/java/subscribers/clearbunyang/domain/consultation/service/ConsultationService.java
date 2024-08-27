@@ -33,7 +33,7 @@ public class ConsultationService {
     @Transactional(readOnly = true)
     public ConsultCompletedResponse getConsultCompletedResponse(Long adminConsultationId) {
         AdminConsultation adminConsultation = getAdminConsultation(adminConsultationId);
-        // 해야하나?
+
         if (adminConsultation.getMemberConsultation().getStatus() != Status.COMPLETED) {
             throw new ConsultationException(ErrorCode.NOT_FOUND);
         }
@@ -44,7 +44,7 @@ public class ConsultationService {
     @Transactional(readOnly = true) // admin으로 받으면 쿼리가 너무 길어짐 (admin에서 member 찾아서 extra 체크히고..)
     public ConsultPendingResponse getConsultPendingResponse(Long memberConsultationId) {
         MemberConsultation memberConsultation = getMemberConsultation(memberConsultationId);
-        // TODO 해야함?
+
         if (memberConsultation.getStatus() != Status.PENDING) {
             throw new ConsultationException(ErrorCode.NOT_FOUND);
         }
@@ -87,11 +87,10 @@ public class ConsultationService {
     public ConsultCompletedResponse updateConsultMessage(Long adminConsultationId, String message) {
         AdminConsultation adminConsultation = getAdminConsultation(adminConsultationId);
 
-        // TODO 입력 받는 adminConsultationId의 consultation의 상태가 pending 일 때 예외
-        //  status 검증해야하나? 일어날 수 없는 일도 테스트 해야?
-        if (adminConsultation.getMemberConsultation().getStatus().equals(Status.PENDING)) {
+        if (adminConsultation.getMemberConsultation().getStatus() != Status.COMPLETED) {
             throw new ConsultationException(ErrorCode.NOT_FOUND);
         }
+
         adminConsultation.setMessage(message);
 
         return ConsultCompletedResponse.toDto(adminConsultation);
