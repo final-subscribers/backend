@@ -45,7 +45,7 @@ public class PropertyService {
     public MemberConsultation createNewCustomerAddition(
             Long propertyId, NewCustomerAdditionRequest request) {
         validDate(LocalDate.now(), request.getPreferredAt());
-        memberConsultationRepository.checkPhoneNumberExists(request.getPhoneNumber());
+        checkPhoneNumberExists(request.getPhoneNumber());
         Property property = getProperty(propertyId);
 
         AdminConsultation consultant = createAdminConsultation(request);
@@ -143,6 +143,10 @@ public class PropertyService {
         if (today.isAfter(preferredAt) || preferredAt.isBefore(today)) {
             throw new ConsultationException(ErrorCode.DATETIME_INVALID);
         }
+    }
+
+    private void checkPhoneNumberExists(String phoneNumber) {
+        memberConsultationRepository.checkPhoneNumberExists(phoneNumber);
     }
 
     // search 키워드가 ["name 010123412354"] 일 때 분리
