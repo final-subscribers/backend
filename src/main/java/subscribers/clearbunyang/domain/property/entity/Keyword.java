@@ -13,9 +13,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import subscribers.clearbunyang.domain.property.entity.enums.KeywordRank;
-import subscribers.clearbunyang.domain.property.entity.enums.Name;
-import subscribers.clearbunyang.domain.property.entity.enums.Type;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
 @Entity
@@ -31,14 +28,12 @@ public class Keyword extends BaseEntity {
     private Property property;
 
     @Enumerated(EnumType.STRING)
-    private KeywordRank keywordRank;
-
-    @Enumerated(EnumType.STRING)
-    private Name name;
+    private KeywordTier keywordTier;
 
     @Column(nullable = false)
-    private String value;
+    private String values;
 
-    @Enumerated(EnumType.STRING)
-    private Type type;
+    private String name;
+
+    private String type; // 혜택/인프라
 }
