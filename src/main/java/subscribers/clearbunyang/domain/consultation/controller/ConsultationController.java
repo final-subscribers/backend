@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +38,7 @@ public class ConsultationController {
                     @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ConsultCompletedResponse.class)))
-    @GetMapping("/{adminConsultationId}/completed") // admin
+    @GetMapping("/{adminConsultationId}/completed")
     public ConsultCompletedResponse getConsultCompleted(@PathVariable Long adminConsultationId) {
         return consultationService.getConsultCompletedResponse(adminConsultationId);
     }
@@ -49,7 +50,7 @@ public class ConsultationController {
                     @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ConsultPendingResponse.class)))
-    @GetMapping("/{memberConsultationId}/pending") // membcreateAdminConsulter
+    @GetMapping("/{memberConsultationId}/pending")
     public ConsultPendingResponse getConsultPending(@PathVariable Long memberConsultationId) {
         return consultationService.getConsultPendingResponse(memberConsultationId);
     }
@@ -101,7 +102,7 @@ public class ConsultationController {
                             schema = @Schema(implementation = AdminConsultResponse.class)))
     @PostMapping("/{memberConsultationId}")
     public AdminConsultResponse createAdminConsult(
-            @PathVariable Long memberConsultationId, @RequestBody ConsultRequest request) {
+            @PathVariable Long memberConsultationId, @RequestBody @Valid ConsultRequest request) {
         return consultationService.createAdminConsult(memberConsultationId, request);
     }
 }

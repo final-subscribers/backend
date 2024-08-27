@@ -75,13 +75,6 @@ public interface AdminConsultationRepository extends JpaRepository<AdminConsulta
             @Param("consultant") String consultant,
             Pageable pageable);
 
-    /* @Query(
-            "SELECT ac FROM AdminConsultation ac "
-                    + "LEFT JOIN FETCH  ac.memberConsultation mc "
-                    + "WHERE ac.id = :id AND mc.status = :status")
-    Optional<AdminConsultation> findByIdAndStatus(
-            @Param("id") Long id, @Param("status") Status status); */
-
     @Query(
             "SELECT ac FROM AdminConsultation  ac LEFT JOIN FETCH ac.memberConsultation mc"
                     + " WHERE mc.property.id = :propertyId")
