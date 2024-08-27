@@ -79,9 +79,10 @@ public class Property extends BaseEntity {
     @Column(nullable = false)
     private String companyName;
 
-    /*@Column(nullable = false)
+    /*에러 때문에 주석 처리
+    @Column(nullable = false)
     private String areaCategory;*/
-    // TODO 커밋 전 확인
+
     @Column(nullable = false)
     private String addr_dong;
 
