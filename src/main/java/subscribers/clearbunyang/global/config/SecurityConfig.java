@@ -32,8 +32,9 @@ public class SecurityConfig {
         return (web) -> web.ignoring().requestMatchers("^(?!/api/).*"); // api 엔드포인트
     }
 
-    // swagger 설정 나중에 추가
-    private final String[] swagger = {};
+    private final String[] swagger = {
+        "/swagger-ui/**", "/swagger-ui/index.html", "/v3/api-docs/**", "favicon.ico"
+    };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
