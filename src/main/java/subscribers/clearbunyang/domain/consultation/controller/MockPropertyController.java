@@ -1,26 +1,23 @@
 package subscribers.clearbunyang.domain.consultation.controller;
 
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/mock/admin/properties/{productId}/consultation")
-class AdminPropertiesMockController {
+@RequestMapping("/api/mock/admin/properties/1/consultation")
+public class MockPropertyController {
 
-    // http://localhost:8080/api/mock/admin/properties/1/consultation/sidebar
+    // 사이드바
     @GetMapping("/sidebar")
-    public Map<String, Object> getSidebar(@PathVariable Long productId) {
-        // 사이드바
+    public Map<String, Object> getSidebar() {
+
         Map<String, List<Map<String, Object>>> SideBarListResponse = new HashMap<>();
 
         // 모집중 데이터
@@ -63,16 +60,12 @@ class AdminPropertiesMockController {
         return sidebar;
     }
 
-    // - 상담신청_상담대기_ 검색_상담신청일자, 고객명, 전화번호
-    // http://localhost:8080/api/mock/admin/properties/1/consultation/pending?search=search&page=1&preferred_at=2020-01-10&size=5
+    // - 상담신청_상담대기_ 리스트
     @GetMapping("/pending")
-    public Map<String, Object> getPendingConsultation(
-            @PathVariable Long productId,
-            @RequestParam(name = "search", required = false) String search,
-            @RequestParam(name = "page", defaultValue = "1") int page,
-            @RequestParam(name = "size", defaultValue = "5") int size,
-            @RequestParam(name = "preferred_at", required = false) LocalDate preferredAt) {
+    public Map<String, Object> getPendingConsultation() {
 
+        int page = 2;
+        int size = 5;
         int offset = (page - 1) * size;
         List<Map<String, Object>> consultPendingSummary = new ArrayList<>();
 
@@ -106,19 +99,12 @@ class AdminPropertiesMockController {
         return result;
     }
 
-    // 상담 신청_ 상담 완료 검색
-    // 고객명, 전화번호, 고객 등급, 상담사, 상담 신청 일자 검색
-    // http://localhost:8080/api/mock/admin/properties/1/consultation/completed?search=boreum&page=1&preferred_at=2020-01-10&size=5&rank=A&consultant=
+    // 상담 신청_ 상담 완료 리스트
     @GetMapping("/completed")
-    public Map<String, Object> getCompletedConsultation(
-            @PathVariable Long productId,
-            @RequestParam(required = false) String search,
-            @RequestParam(required = false) String rank,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size,
-            @RequestParam(required = false) LocalDate preferredAt,
-            @RequestParam(required = false) String consultant) {
+    public Map<String, Object> getCompletedConsultation() {
 
+        int page = 2;
+        int size = 5;
         int offset = (page - 1) * size;
         List<Map<String, Object>> ConsultCompletedSummary = new ArrayList<>();
 
