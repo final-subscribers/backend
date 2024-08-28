@@ -170,7 +170,7 @@ class PropertiesServiceTest {
         Page<AdminConsultation> page = new PageImpl<>(List.of(adminConsultation1),
                 PageRequest.of(0, 1), List.of(adminConsultation1).size());
 
-        lenient().when(propertyRepository.getById(anyLong())).thenReturn(property);
+        lenient().when(propertyRepository.getIdById(anyLong())).thenReturn(property.getId());
         lenient().when(adminConsultationRepository.findByPropertyIdAndPendingAndFilters(
                 anyLong(),
                 any(Status.class),
@@ -190,7 +190,7 @@ class PropertiesServiceTest {
         assertNotNull(pagedDTO);
         ConsultPendingListResponse consultPendingListResponse = pagedDTO.getContent();
         assertNotNull(consultPendingListResponse);
-        verify(propertyRepository).getById(anyLong());
+        verify(propertyRepository).getIdById(anyLong());
     }
 
     @Test
@@ -198,7 +198,7 @@ class PropertiesServiceTest {
         Page<AdminConsultation> page = new PageImpl<>(List.of(adminConsultation),
                 PageRequest.of(0, 1), List.of(adminConsultation).size());
 
-        lenient().when(propertyRepository.getById(anyLong())).thenReturn(property);
+        lenient().when(propertyRepository.getIdById(anyLong())).thenReturn(property.getId());
         lenient().when(adminConsultationRepository.findByPropertyIdAndCompletedAndFilters(
                 anyLong(),
                 any(Status.class),
@@ -217,7 +217,7 @@ class PropertiesServiceTest {
         ConsultCompletedListResponse counselCompletedListResponse = pagedDTO.getContent();
         assertNotNull(counselCompletedListResponse);
 
-        verify(propertyRepository).getById(anyLong());
+        verify(propertyRepository).getIdById(anyLong());
     }
 
     @Test
@@ -251,7 +251,7 @@ class PropertiesServiceTest {
 
     @Test
     void 상담대기리스트_해당매물_Property_NOT_FOUND() {
-        when(propertyRepository.getById(anyLong())).thenThrow(
+        when(propertyRepository.getIdById(anyLong())).thenThrow(
                 new EntityNotFoundException(ErrorCode.NOT_FOUND));
 
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
@@ -263,7 +263,7 @@ class PropertiesServiceTest {
 
     @Test
     void 상담완료리스트_해당매물_Property_NOT_FOUND() {
-        when(propertyRepository.getById(anyLong())).thenThrow(
+        when(propertyRepository.getIdById(anyLong())).thenThrow(
                 new EntityNotFoundException(ErrorCode.NOT_FOUND));
 
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {

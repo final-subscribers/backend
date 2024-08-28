@@ -144,14 +144,14 @@ class ConsultationServiceTest {
 
     @Test
     void 상담사목록_정상작동() {
-        lenient().when(propertyRepository.getById(anyLong())).thenReturn(property);
+        lenient().when(propertyRepository.getIdById(anyLong())).thenReturn(property.getId());
         lenient().when(adminConsultationRepository.findAllConsultantByPropertyId(any()))
                 .thenReturn(List.of(adminConsultation));
 
         ConsultantListResponse response = consultationService.getConsultants(1L);
         assertNotNull(response);
 
-        verify(propertyRepository).getById(anyLong());
+        verify(propertyRepository).getIdById(anyLong());
     }
 
     @Test
@@ -174,11 +174,9 @@ class ConsultationServiceTest {
         ConsultRequest request = createAdminConsultRequest();
 
         when(memberConsultationRepository.getById(anyLong())).thenReturn(memberConsultation1);
-        when(adminConsultationRepository.save(any(AdminConsultation.class))).thenReturn(adminConsultation1);
 
         consultationService.createAdminConsult(1L, request);
-
-        verify(adminConsultationRepository).save(any(AdminConsultation.class));
+        verify(memberConsultationRepository).getById(anyLong());
     }
 
     @Test
@@ -315,7 +313,7 @@ class ConsultationServiceTest {
 
     @Test
     void 상담사리스트_Property_NOT_FOUND() {
-        when(propertyRepository.getById(anyLong())).thenThrow(
+        when(propertyRepository.getIdById(anyLong())).thenThrow(
                 new EntityNotFoundException(ErrorCode.NOT_FOUND));
 
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
