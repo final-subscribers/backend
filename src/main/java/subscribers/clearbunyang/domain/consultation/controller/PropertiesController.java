@@ -2,9 +2,7 @@ package subscribers.clearbunyang.domain.consultation.controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -31,13 +29,8 @@ public class PropertiesController {
 
     private final PropertiesService propertiesService;
 
-    @Operation(summary = "신규 고객 등록", description = "어드민이 신규 고객을 등록합니다")
-    @ApiResponse(
-            description = "신규 고객 등록 성공",
-            content =
-                    @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = MemberConsultation.class)))
+    @Tag(name = "고객 추가", description = "신규 고객 추가")
+    @Operation(summary = "신규 고객")
     @PostMapping
     public MemberConsultation createNewCustomerAddition(
             @PathVariable(required = false) Long propertyId,
@@ -46,26 +39,16 @@ public class PropertiesController {
         return propertiesService.createNewCustomerAddition(propertyId, request);
     }
 
-    @Operation(summary = "사이드바", description = "사이드바를 조회합니다")
-    @ApiResponse(
-            description = "사이드바 조회 성공",
-            content =
-                    @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = SideBarListResponse.class)))
+    @Tag(name = "사이드바", description = "사이드바 조회")
+    @Operation(summary = "사이드바 ")
     @GetMapping("/sidebar")
     public SideBarListResponse getSidebar(@PathVariable Long propertyId) {
 
         return propertiesService.getSideBarList(propertyId);
     }
 
-    @Operation(summary = "상담 대기 리스트", description = "상담 대기 리스트를 조회합니다")
-    @ApiResponse(
-            description = "상담 대기 리스트 조회 성공",
-            content =
-                    @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ConsultPendingListResponse.class)))
+    @Tag(name = "상담 대기 리스트", description = "상담 대기 리스트 조회")
+    @Operation(summary = "상담 대기 리스트 ")
     @GetMapping("/pending")
     public PagedDTO<ConsultPendingListResponse> getConsultPendingList(
             @PathVariable Long propertyId,
@@ -82,13 +65,8 @@ public class PropertiesController {
         return response;
     }
 
-    @Operation(summary = "상담 완료 리스트", description = "상담 완료 리스트를 조회합니다")
-    @ApiResponse(
-            description = "상담 완료 리스트 조회 성공",
-            content =
-                    @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ConsultCompletedListResponse.class)))
+    @Tag(name = "상담 완료 리스트", description = "상담 완료 리스트 조회")
+    @Operation(summary = "상담 완료 리스트 ")
     @GetMapping("/completed")
     public PagedDTO<ConsultCompletedListResponse> getConsultCompletedList(
             @PathVariable(required = false) Long propertyId,
