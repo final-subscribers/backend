@@ -74,6 +74,12 @@ dependencies {
     liquibaseRuntime('ch.qos.logback:logback-classic:1.4.12')
     liquibaseRuntime 'org.liquibase.ext:liquibase-hibernate5:3.6'
     liquibaseRuntime sourceSets.main.output
+
+    // Querydsl
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 }
 
 tasks.named('test') {
@@ -134,6 +140,8 @@ static def getChangeLogFileName() {
     def formattedDate = date.format('yyyyMMddHHmmss')
     return 'src/main/resources/liquibase/migrations/' + formattedDate + '-changelog.yaml'
 }
+
+clean {	delete file('src/main/generated')}
 
 // git hook 설정
 spotless {
