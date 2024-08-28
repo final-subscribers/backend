@@ -136,9 +136,7 @@ public class ConsultationService {
     }
 
     private void validateRequest(ConsultRequest request) {
-        if (request.getTier() == null
-                || request.getStatus() == null
-                || request.getConsultantMessage() == null) {
+        if (request.getTier() == null) {
             throw new ConsultationException(ErrorCode.INVALID_INPUT_VALUE);
         }
     }

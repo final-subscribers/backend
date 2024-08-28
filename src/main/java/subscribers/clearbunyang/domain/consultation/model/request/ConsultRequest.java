@@ -1,12 +1,13 @@
 package subscribers.clearbunyang.domain.consultation.model.request;
 
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import subscribers.clearbunyang.domain.consultation.annotation.ValidStatus;
+import subscribers.clearbunyang.domain.consultation.annotation.ValidTier;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
 
@@ -19,8 +20,8 @@ public class ConsultRequest {
     @ValidStatus(enumClass = Status.class)
     private Status status;
 
-    @ValidStatus(enumClass = Tier.class)
+    @ValidTier(enumClass = Tier.class)
     private Tier tier;
 
-    @NotNull private String consultantMessage;
+    @NotBlank private String consultantMessage;
 }
