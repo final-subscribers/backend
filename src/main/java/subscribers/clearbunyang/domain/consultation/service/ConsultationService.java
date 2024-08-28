@@ -86,6 +86,7 @@ public class ConsultationService {
     @Transactional
     public ConsultCompletedResponse updateConsultMessage(Long adminConsultationId, String message) {
         AdminConsultation adminConsultation = getAdminConsultation(adminConsultationId);
+        getMemberConsultation(adminConsultation.getMemberConsultation().getId());
 
         if (adminConsultation.getMemberConsultation().getStatus() != Status.COMPLETED) {
             throw new ConsultationException(ErrorCode.NOT_FOUND);
@@ -103,13 +104,10 @@ public class ConsultationService {
         validateRequest(request);
 
         memberConsultation.setStatus(request.getStatus());
+        AdminConsultation adminConsultation = memberConsultation.getAdminConsultation();
+        adminConsultation.update(request, memberConsultation);
 
-        AdminConsultation adminConsultation =
-                AdminConsultation.toEntity(request, memberConsultation);
-
-        AdminConsultation saved = adminConsultationRepository.save(adminConsultation);
-
-        return AdminConsultResponse.toDto(saved);
+        return AdminConsultResponse.toDto(adminConsultation);
     }
 
     private AdminConsultation getAdminConsultation(Long id) {
