@@ -20,7 +20,7 @@ public class Result {
     }
 
     private static String concatErrorCodeAndMessage(ErrorCode errorCode) {
-        return errorCode.getCode() + ", " + errorCode.getMessage();
+        return errorCode.getMessage();
     }
 
     public static Result Error(ErrorCode errorCode) {

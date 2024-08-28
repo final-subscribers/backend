@@ -24,7 +24,7 @@ public class Area extends BaseEntity {
 
     private int price;
 
-    private int discountPrice;
+    private int discountPercent;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id", nullable = false)
