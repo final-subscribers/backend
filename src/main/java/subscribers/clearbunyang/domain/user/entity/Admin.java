@@ -1,6 +1,7 @@
 package subscribers.clearbunyang.domain.user.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -62,8 +63,10 @@ public class Admin extends BaseEntity {
     private UserRole role = UserRole.ADMIN;
 
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Property> properties = new ArrayList<>();
 
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<File> files = new ArrayList<>();
 }

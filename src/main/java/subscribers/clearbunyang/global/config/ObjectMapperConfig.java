@@ -21,8 +21,7 @@ public class ObjectMapperConfig {
         objectMapperConfig.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapperConfig.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         objectMapperConfig.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        objectMapperConfig.setPropertyNamingStrategy(
-                new PropertyNamingStrategies.SnakeCaseStrategy());
+        objectMapperConfig.setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE);
         return objectMapperConfig;
     }
 }
