@@ -22,14 +22,14 @@ import subscribers.clearbunyang.domain.consultation.model.response.ConsultComple
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultPendingListResponse;
 import subscribers.clearbunyang.domain.consultation.model.response.PagedDTO;
 import subscribers.clearbunyang.domain.consultation.model.response.SideBarListResponse;
-import subscribers.clearbunyang.domain.consultation.service.PropertyService;
+import subscribers.clearbunyang.domain.consultation.service.PropertiesService;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/properties/{propertyId}/consultations")
-public class PropertyController {
+public class PropertiesController {
 
-    private final PropertyService propertyService;
+    private final PropertiesService propertiesService;
 
     @Operation(summary = "신규 고객 등록", description = "어드민이 신규 고객을 등록합니다")
     @ApiResponse(
@@ -43,7 +43,7 @@ public class PropertyController {
             @PathVariable(required = false) Long propertyId,
             @RequestBody @Valid NewCustomerAdditionRequest request) {
 
-        return propertyService.createNewCustomerAddition(propertyId, request);
+        return propertiesService.createNewCustomerAddition(propertyId, request);
     }
 
     @Operation(summary = "사이드바", description = "사이드바를 조회합니다")
@@ -56,7 +56,7 @@ public class PropertyController {
     @GetMapping("/sidebar")
     public SideBarListResponse getSidebar(@PathVariable Long propertyId) {
 
-        return propertyService.getSideBarList(propertyId);
+        return propertiesService.getSideBarList(propertyId);
     }
 
     @Operation(summary = "상담 대기 리스트", description = "상담 대기 리스트를 조회합니다")
@@ -76,7 +76,7 @@ public class PropertyController {
             @RequestParam(required = false, value = "size", defaultValue = "5") int size) {
 
         PagedDTO<ConsultPendingListResponse> response =
-                propertyService.getConsultPendingListResponse(
+                propertiesService.getConsultPendingListResponse(
                         propertyId, search, consultant, preferredAt, page, size);
 
         return response;
@@ -100,7 +100,7 @@ public class PropertyController {
             @RequestParam(value = "size", defaultValue = "5") int size) {
 
         PagedDTO<ConsultCompletedListResponse> response =
-                propertyService.getConsultCompletedListResponse(
+                propertiesService.getConsultCompletedListResponse(
                         propertyId, search, tier, consultant, preferredAt, page, size);
 
         return response;

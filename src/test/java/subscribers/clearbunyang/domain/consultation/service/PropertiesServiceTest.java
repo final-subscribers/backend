@@ -11,7 +11,6 @@ import static org.mockito.Mockito.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import org.mockito.Mock;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,10 +48,10 @@ import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
-class PropertyServiceTest {
+class PropertiesServiceTest {
 
     @InjectMocks
-    PropertyService propertyService;
+    PropertiesService propertiesService;
 
     @Mock
     AdminConsultationRepository adminConsultationRepository;
@@ -156,7 +155,7 @@ class PropertyServiceTest {
                 .thenReturn(List.of(property));
         lenient().when(propertyRepository.getById(anyLong())).thenReturn(property);
 
-        sideBarListResponse = propertyService.getSideBarList(property.getId());
+        sideBarListResponse = propertiesService.getSideBarList(property.getId());
 
         assertNotNull(sideBarListResponse);
 
@@ -185,7 +184,7 @@ class PropertyServiceTest {
         lenient().when(memberConsultationRepository.checkExtraConsultation(anyString()))
                 .thenReturn(true);
 
-        PagedDTO<ConsultPendingListResponse> pagedDTO = propertyService.getConsultPendingListResponse(
+        PagedDTO<ConsultPendingListResponse> pagedDTO = propertiesService.getConsultPendingListResponse(
                 property.getId(), "name 010", "a", LocalDate.now().plusDays(1), 0, 1);
 
         assertNotNull(pagedDTO);
@@ -211,7 +210,7 @@ class PropertyServiceTest {
                 any(Pageable.class))
         ).thenReturn(page);
 
-        PagedDTO<ConsultCompletedListResponse> pagedDTO = propertyService.getConsultCompletedListResponse(
+        PagedDTO<ConsultCompletedListResponse> pagedDTO = propertiesService.getConsultCompletedListResponse(
                 property.getId(), "name 010", Tier.A, "a", LocalDate.now().plusDays(1), 0, 1);
 
         assertNotNull(pagedDTO);
@@ -230,7 +229,7 @@ class PropertyServiceTest {
         NewCustomerAdditionRequest request = createNewCustomerAdditionRequest();
 
         ConsultationException exception = assertThrows(ConsultationException.class, () -> {
-            propertyService.createNewCustomerAddition(anyLong(), request);
+            propertiesService.createNewCustomerAddition(anyLong(), request);
         });
 
         assertEquals(ErrorCode.PHONE_NUMBER_DUPLICATION.getMessage(), exception.getMessage());
@@ -242,7 +241,7 @@ class PropertyServiceTest {
                 new EntityNotFoundException(ErrorCode.NOT_FOUND));
 
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
-            propertyService.createNewCustomerAddition(anyLong(),
+            propertiesService.createNewCustomerAddition(anyLong(),
                     createNewCustomerAdditionRequest());
         });
 
@@ -256,7 +255,7 @@ class PropertyServiceTest {
                 new EntityNotFoundException(ErrorCode.NOT_FOUND));
 
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
-            propertyService.getConsultPendingListResponse(property.getId(), "dfd", "fd",
+            propertiesService.getConsultPendingListResponse(property.getId(), "dfd", "fd",
                     LocalDate.now(), 1, 2);
         });
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
@@ -268,7 +267,7 @@ class PropertyServiceTest {
                 new EntityNotFoundException(ErrorCode.NOT_FOUND));
 
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
-            propertyService.getConsultCompletedListResponse(property.getId(), "name 010", Tier.A,
+            propertiesService.getConsultCompletedListResponse(property.getId(), "name 010", Tier.A,
                     "a", LocalDate.now().plusDays(1), 0, 1);
         });
 

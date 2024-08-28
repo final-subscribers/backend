@@ -35,7 +35,7 @@ import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PropertyService {
+public class PropertiesService {
 
     private final AdminConsultationRepository adminConsultationRepository;
     private final MemberConsultationRepository memberConsultationRepository;
