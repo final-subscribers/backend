@@ -80,7 +80,7 @@ public class PropertiesService {
             LocalDate preferredAt,
             int page,
             int size) {
-        getProperty(propertyId);
+        getPropertyId(propertyId);
 
         Page<AdminConsultation> adminConsultationPage =
                 filterPendingConsultations(propertyId, search, consultant, preferredAt, page, size);
@@ -110,7 +110,7 @@ public class PropertiesService {
             LocalDate preferredAt,
             int page,
             int size) {
-        getProperty(propertyId);
+        getPropertyId(propertyId);
 
         Page<AdminConsultation> adminConsultationPage =
                 filterCompletedConsultations(
@@ -136,6 +136,10 @@ public class PropertiesService {
 
     private Property getProperty(Long propertyId) {
         return propertyRepository.getById(propertyId);
+    }
+
+    private Long getPropertyId(Long id) {
+        return propertyRepository.getIdById(id);
     }
 
     private void validDate(LocalDate today, LocalDate preferredAt) {

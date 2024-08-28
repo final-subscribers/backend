@@ -39,4 +39,12 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
         return findByIdWithFetchJoin(propertyId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
     }
+
+    @Query("SELECT p.id FROM Property p WHERE p.id = :id")
+    Optional<Long> findIdById(@Param("id") Long id);
+
+    default Long getIdById(Long propertyId) {
+        return findIdById(propertyId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
+    }
 }

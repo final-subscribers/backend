@@ -58,7 +58,7 @@ public class ConsultationService {
 
     @Transactional(readOnly = true)
     public ConsultantListResponse getConsultants(Long propertyId) {
-        getProperty(propertyId);
+        getPropertyId(propertyId);
         List<AdminConsultation> adminConsultation =
                 adminConsultationRepository.findAllConsultantByPropertyId(propertyId);
 
@@ -118,8 +118,8 @@ public class ConsultationService {
         return memberConsultationRepository.getById(id);
     }
 
-    private Property getProperty(Long propertyId) {
-        return propertyRepository.getById(propertyId);
+    private Long getPropertyId(Long id) {
+        return propertyRepository.getIdById(id);
     }
 
     private void validateConsultantExists(Long propertyId, String consultant) {
