@@ -65,8 +65,8 @@ public class ConsultationController {
         return consultationService.updateConsultMessage(adminConsultationId, consultantMessage);
     }
 
-    @Tag(name = "상담 답변", description = "상담 답변")
-    @Operation(summary = "상담 답변 ")
+    @Tag(name = "상담 답변", description = "상담 답변 하기")
+    @Operation(summary = "상담 내역 저장")
     @PostMapping("/{memberConsultationId}")
     public AdminConsultResponse createAdminConsult(
             @PathVariable Long memberConsultationId, @RequestBody @Valid ConsultRequest request) {
