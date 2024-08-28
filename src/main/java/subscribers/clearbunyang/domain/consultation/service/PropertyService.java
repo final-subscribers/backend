@@ -151,6 +151,10 @@ public class PropertyService {
 
     // search 키워드가 ["name 010123412354"] 일 때 분리
     private String[] splitSearch(String search) {
+        if (search == null || search.isEmpty()) {
+            return new String[] {"", ""};
+        }
+
         String[] parts = search.split("\\s+");
         String name = parts.length > 0 ? parts[0] : "";
         String phoneNumber = parts.length > 1 ? parts[1] : "";
