@@ -3,10 +3,7 @@ package subscribers.clearbunyang.domain.property.controller;
 
 import java.util.Arrays;
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import subscribers.clearbunyang.domain.property.model.MyPropertiesResponseDTO;
 import subscribers.clearbunyang.domain.property.model.MyPropertyCardDTO;
 import subscribers.clearbunyang.domain.property.model.MyPropertyTableDTO;
@@ -14,7 +11,6 @@ import subscribers.clearbunyang.domain.property.model.MyPropertyTableDTO;
 @RestController
 @RequestMapping("/api/mock/admin/my-properties")
 public class PropertyMockController {
-
     @GetMapping("/card")
     public MyPropertiesResponseDTO<MyPropertyCardDTO> getCards(
             @RequestParam(defaultValue = "1") int page,
