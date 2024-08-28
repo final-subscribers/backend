@@ -1,6 +1,8 @@
 package subscribers.clearbunyang.domain.auth.controller;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -21,22 +23,26 @@ import subscribers.clearbunyang.domain.user.model.response.LoginResponse;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name = "Auth", description = "로그인/로그아웃/회원가입")
 public class AuthController {
 
     private final AuthService authService;
 
+    @Operation(summary = "관리자 회원가입")
     @PostMapping("/admin-signup")
     public ResponseEntity<String> adminSignUp(@Valid @RequestBody AdminSignUpRequest request) {
         authService.admnSignup(request);
         return ResponseEntity.ok("관리자 회원가입 성공");
     }
 
+    @Operation(summary = "사용자 회원가입")
     @PostMapping("/member-signup")
     public ResponseEntity<String> memberSignup(@Valid @RequestBody MemberSignUpRequest request) {
         authService.memberSignup(request);
         return ResponseEntity.ok("사용자 회원가입 성공");
     }
 
+    @Operation(summary = "로그인")
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
             @RequestBody LoginRequest request, HttpServletResponse response) {
@@ -46,6 +52,7 @@ public class AuthController {
         return ResponseEntity.ok(loginResponse);
     }
 
+    @Operation(summary = "로그아웃")
     @GetMapping("/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response)
             throws IOException {

@@ -33,7 +33,15 @@ public class SecurityConfig {
     }
 
     // swagger 설정 나중에 추가
-    private final String[] swagger = {};
+    private final String[] swagger = {
+        "/open-api/**",
+        "/resources/**",
+        "/error",
+        "/swagger-resources/**",
+        "/swagger-ui/**",
+        "/v3/api-docs/**",
+        "/v3/api-docs"
+    };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
