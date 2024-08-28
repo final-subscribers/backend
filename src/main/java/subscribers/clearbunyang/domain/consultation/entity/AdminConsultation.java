@@ -50,14 +50,11 @@ public class AdminConsultation extends BaseEntity {
         this.consultMessage = consultMessage;
     }
 
-    public static AdminConsultation toEntity(
-            ConsultRequest request, MemberConsultation consultation) {
-        return AdminConsultation.builder()
-                .tier(request.getTier())
-                .consultMessage(request.getConsultantMessage())
-                .consultant(consultation.getAdminConsultation().getConsultant())
-                .completedAt(consultation.getPreferredAt())
-                .memberConsultation(consultation)
-                .build();
+    public void update(ConsultRequest request, MemberConsultation consultation) {
+        this.tier = request.getTier();
+        this.consultMessage = request.getConsultantMessage();
+        this.consultant = consultation.getAdminConsultation().getConsultant();
+        this.completedAt = LocalDate.now();
+        this.memberConsultation = consultation;
     }
 }
