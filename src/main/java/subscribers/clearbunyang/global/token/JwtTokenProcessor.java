@@ -69,6 +69,7 @@ public class JwtTokenProcessor {
             Claims claims =
                     jwtTokenProvider.getUserInfoFromToken(refreshToken, JwtTokenType.REFRESH);
             String email = claims.getSubject();
+            String role = claims.get("role", String.class);
             String storedRefreshToken = jwtTokenService.getRefreshToken(email);
 
             if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
@@ -79,7 +80,7 @@ public class JwtTokenProcessor {
                 throw new InvalidValueException(ErrorCode.INVALID_TOKEN);
             }
 
-            String newAccessToken = jwtTokenProvider.createToken(email, JwtTokenType.ACCESS);
+            String newAccessToken = jwtTokenProvider.createToken(email, role, JwtTokenType.ACCESS);
             CookieUtil.addCookie(
                     response,
                     "accessToken",

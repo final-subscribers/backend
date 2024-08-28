@@ -17,6 +17,7 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import subscribers.clearbunyang.domain.file.entity.File;
 import subscribers.clearbunyang.domain.like.entity.Likes;
@@ -54,6 +55,7 @@ public class Property extends BaseEntity {
     @Column(nullable = true)
     private String homePage;
 
+    @Setter
     @Column(nullable = false)
     private int likeCount;
 
@@ -78,10 +80,16 @@ public class Property extends BaseEntity {
     private String companyName;
 
     @Column(nullable = false)
-    private String areaCategory;
+    private String addrDo;
 
     @Column(nullable = false)
-    private String dong;
+    private String addrGu;
+
+    @Column(nullable = false)
+    private String addrDong;
+
+    @Column(nullable = false)
+    private String buildingName;
 
     @ManyToOne
     @JoinColumn(name = "admin_id", nullable = false)
@@ -95,6 +103,9 @@ public class Property extends BaseEntity {
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
     private List<Area> areas;
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
+    private List<Keyword> keywords;
 
     public void setAdminId(Admin adminId) {
         this.admin = adminId;

@@ -1,6 +1,9 @@
 package subscribers.clearbunyang.domain.property.model;
 
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +15,13 @@ import subscribers.clearbunyang.domain.file.entity.enums.FileType;
 @AllArgsConstructor
 @Builder
 public class FileDTO {
+    @NotBlank
+    @Size(min = 1, max = 255)
     private String name; // 이름
+
+    @NotBlank
+    @Size(min = 1, max = 255)
     private String url; // url
-    private FileType type; // 할인 분양가
+
+    @NotNull private FileType type; // 할인 분양가
 }

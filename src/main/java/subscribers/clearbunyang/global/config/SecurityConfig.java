@@ -57,9 +57,9 @@ public class SecurityConfig {
                                         .requestMatchers("/api/common/**")
                                         .permitAll()
                                         .requestMatchers("/api/admin/**")
-                                        .hasRole("ADMIN")
+                                        .hasAuthority("ADMIN")
                                         .requestMatchers("/api/member/**")
-                                        .hasRole("MEMBER")
+                                        .hasAuthority("MEMBER")
                                         .anyRequest()
                                         .authenticated())
                 .addFilterBefore(
