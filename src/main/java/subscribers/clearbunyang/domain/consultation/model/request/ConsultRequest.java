@@ -1,6 +1,7 @@
 package subscribers.clearbunyang.domain.consultation.model.request;
 
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,5 +23,5 @@ public class ConsultRequest {
     @ValidTier(enumClass = Tier.class)
     private Tier tier;
 
-    private String consultantMessage;
+    @NotBlank private String consultantMessage;
 }
