@@ -42,8 +42,7 @@ public class PropertiesService {
     private final PropertyRepository propertyRepository;
 
     @Transactional
-    public MemberConsultation createNewCustomerAddition(
-            Long propertyId, NewCustomerAdditionRequest request) {
+    public void createNewCustomerAddition(Long propertyId, NewCustomerAdditionRequest request) {
         validDate(LocalDate.now(), request.getPreferredAt());
         checkPhoneNumberExists(request.getPhoneNumber());
         Property property = getProperty(propertyId);
@@ -52,7 +51,7 @@ public class PropertiesService {
 
         MemberConsultation memberConsultation =
                 MemberConsultation.toEntity(request, property, consultant);
-        return memberConsultationRepository.save(memberConsultation);
+        memberConsultationRepository.save(memberConsultation);
     }
 
     @Transactional(readOnly = true)

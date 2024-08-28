@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
 import subscribers.clearbunyang.domain.consultation.model.request.NewCustomerAdditionRequest;
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultCompletedListResponse;
@@ -32,11 +31,11 @@ public class PropertiesController {
     @Tag(name = "고객 추가", description = "신규 고객 추가")
     @Operation(summary = "신규 고객")
     @PostMapping
-    public MemberConsultation createNewCustomerAddition(
+    public void createNewCustomerAddition(
             @PathVariable(required = false) Long propertyId,
             @RequestBody @Valid NewCustomerAdditionRequest request) {
 
-        return propertiesService.createNewCustomerAddition(propertyId, request);
+        propertiesService.createNewCustomerAddition(propertyId, request);
     }
 
     @Tag(name = "사이드바", description = "사이드바 조회")
