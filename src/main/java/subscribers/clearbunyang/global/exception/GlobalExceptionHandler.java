@@ -4,8 +4,10 @@ package subscribers.clearbunyang.global.exception;
 import jakarta.annotation.Priority;
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.validation.FieldError;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -15,6 +17,7 @@ import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 
+@Slf4j
 @Priority(Integer.MAX_VALUE)
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -31,6 +34,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomException.class)
     public Response<Void> handleCustomException(CustomException e) {
         return Response.<Void>builder().result(Result.Error(e.getErrorCode())).build();
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Response<Object>> ValidationException(
+            MethodArgumentNotValidException exception) {
+        log.error("", exception);
+
+        return ResponseEntity.status(ErrorCode.BAD_REQUEST.getStatus())
+                .body(Response.ERROR(ErrorCode.BAD_REQUEST));
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<Response<Object>> ValidationException(
+            MissingServletRequestParameterException exception) {
+        log.error("", exception);
+
+        return ResponseEntity.status(ErrorCode.BAD_REQUEST.getStatus())
+                .body(Response.ERROR(ErrorCode.BAD_REQUEST));
     }
 
     // getCompletedResponse 서 잘못된 양식의 tier를 입력했을 때
@@ -58,7 +79,7 @@ public class GlobalExceptionHandler {
     }
 
     // Valid annotation
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    /* @ExceptionHandler(MethodArgumentNotValidException.class)
     public Response<Map<String, String>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
@@ -75,5 +96,5 @@ public class GlobalExceptionHandler {
                 .result(Result.Error(ErrorCode.INVALID_INPUT_VALUE))
                 .body(errors)
                 .build();
-    }
+    }*/
 }

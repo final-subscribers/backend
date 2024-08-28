@@ -81,12 +81,17 @@ public class Property extends BaseEntity {
     @Column(nullable = false)
     private String companyName;
 
-    /*에러 때문에 주석 처리
     @Column(nullable = false)
-    private String areaCategory;*/
+    private String addrDo;
 
     @Column(nullable = false)
-    private String addr_dong;
+    private String addrGu;
+
+    @Column(nullable = false)
+    private String addrDong;
+
+    @Column(nullable = false)
+    private String buildingName;
 
     @ManyToOne
     @JoinColumn(name = "admin_id", nullable = false)
@@ -104,6 +109,10 @@ public class Property extends BaseEntity {
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Area> areas;
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Keyword> keywords;
 
     public void setAdminId(Admin adminId) {
         this.admin = adminId;

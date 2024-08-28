@@ -4,12 +4,16 @@ package subscribers.clearbunyang.global.exception.errorCode;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public enum ErrorCode {
 
     // Common
+    BAD_REQUEST(HttpStatus.BAD_REQUEST.value(), "400", "요청 파라미터나, 요청 바디의 값을 다시 확인하세요"),
+    JSON_CONVERSION_FAILED(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(), "500", "JSON 형식이 아니라 변환에 실패했습니다"),
     INVALID_INPUT_VALUE(400, "C001", "유효하지 않은 입력입니다."),
     NOT_FOUND(404, "C002", "Not Found"),
     DATETIME_INVALID(400, "C003", "유효하지 않은 날짜입니다"),
@@ -27,7 +31,7 @@ public enum ErrorCode {
     PHONE_DUPLICATION(400, "M010", "이미 등록된 회원 정보입니다."),
     INVALID_VERIFICATION_SMS(400, "M011", "인증되지 않은 번호입니다."),
 
-    // Admin
+    // Consultation
     PHONE_NUMBER_DUPLICATION(400, "A001", "이미 등록된 휴대폰 번호입니다"),
     TIER_CANNOT_BE_SPECIFIED(400, "A002", "등급을 입력 할 수 없습니다"),
 

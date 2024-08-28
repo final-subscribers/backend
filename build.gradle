@@ -1,9 +1,21 @@
+import org.liquibase.gradle.LiquibaseTask
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.liquibase:liquibase-core:4.26.0'
+    }
+}
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.2'
     id 'io.spring.dependency-management' version '1.1.6'
     id 'com.diffplug.spotless' version '6.11.0'
     id "it.nicolasfarabegoli.conventional-commits" version "3.1.3" // 커밋 컨벤션 강제 플러그인
+    id 'org.liquibase.gradle' version '3.0.0'
 }
 
 group = 'subscribers'
@@ -52,7 +64,16 @@ dependencies {
     // coolsms
     implementation 'net.nurigo:sdk:4.3.0'
 
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+    // liquibase
+    liquibaseRuntime 'org.liquibase:liquibase-core:4.26.0'
+    liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:3.0.2'
+    liquibaseRuntime 'info.picocli:picocli:4.6.1'
+    liquibaseRuntime 'mysql:mysql-connector-java:8.0.28'
+    liquibaseRuntime group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    liquibaseRuntime('ch.qos.logback:logback-core:1.4.14')
+    liquibaseRuntime('ch.qos.logback:logback-classic:1.4.12')
+    liquibaseRuntime 'org.liquibase.ext:liquibase-hibernate5:3.6'
+    liquibaseRuntime sourceSets.main.output
 }
 
 tasks.named('test') {
@@ -61,6 +82,57 @@ tasks.named('test') {
 
 bootJar {
     archiveFileName = 'subscribers.jar'
+}
+
+def db_url = project.findProperty("DB_URL") ?: ""
+def db_username= project.findProperty("DB_USERNAME") ?: ""
+def db_password= project.findProperty("DB_PASSWORD") ?: ""
+def db_driver = project.findProperty("DB_DRIVER") ?: ""
+def reference_url= project.findProperty("REFERENCE_URL") ?: ""
+def reference_username = project.findProperty("REFERENCE_USERNAME") ?: ""
+def reference_password = project.findProperty("REFERENCE_PASSWORD") ?: ""
+
+liquibase {
+    def changeLogName = getChangeLogFileName()
+    activities {
+        mainActivity {
+            url "${db_url}"
+            username "${db_username}"
+            password "${db_password}"
+            changelogFile changeLogName
+            classpath 'src/main/java'
+        }
+        runList = 'mainActivity'
+    }
+}
+
+
+tasks.named('diffChangelog', LiquibaseTask) {
+    dependsOn 'compileJava'
+
+    doFirst {
+        liquibase {
+            activities {
+                mainActivity {
+                    url "${db_url}"
+                    username "${db_username}"
+                    password "${db_password}"
+                    changelogFile 'src/main/resources/liquibase/migrations/diff-changelog.yaml'
+                    classpath 'src/main/java'
+                    referenceUrl "${reference_url}"
+                    referenceUsername "${reference_username}"
+                    referencePassword "${reference_password}"
+                }
+            }
+            runList = 'mainActivity'
+        }
+    }
+}
+
+static def getChangeLogFileName() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMddHHmmss')
+    return 'src/main/resources/liquibase/migrations/' + formattedDate + '-changelog.yaml'
 }
 
 // git hook 설정
@@ -75,7 +147,7 @@ spotless {
         formatAnnotations()
     }
 }
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.compilerArgs += '-parameters'
 }
