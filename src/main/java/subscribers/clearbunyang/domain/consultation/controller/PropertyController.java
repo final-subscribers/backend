@@ -31,7 +31,6 @@ public class PropertyController {
 
     private final PropertyService propertyService;
 
-    // TODO response 변경: result code X
     @Operation(summary = "신규 고객 등록", description = "어드민이 신규 고객을 등록합니다")
     @ApiResponse(
             description = "신규 고객 등록 성공",
