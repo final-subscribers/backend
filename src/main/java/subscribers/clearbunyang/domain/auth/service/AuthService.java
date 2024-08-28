@@ -192,8 +192,12 @@ public class AuthService {
             throw new InvalidValueException(ErrorCode.NOT_ACCEPTED_ADMIN);
         }
 
-        String accessToken = jwtTokenProvider.createToken(admin.getEmail(), JwtTokenType.ACCESS);
-        String refreshToken = jwtTokenProvider.createToken(admin.getEmail(), JwtTokenType.REFRESH);
+        String accessToken =
+                jwtTokenProvider.createToken(
+                        admin.getEmail(), admin.getRole().name(), JwtTokenType.ACCESS);
+        String refreshToken =
+                jwtTokenProvider.createToken(
+                        admin.getEmail(), admin.getRole().name(), JwtTokenType.REFRESH);
         jwtTokenService.saveRefreshToken(admin.getEmail(), refreshToken);
 
         log.info(
@@ -214,8 +218,12 @@ public class AuthService {
             throw new InvalidValueException(ErrorCode.PASSWORD_MISMATCH);
         }
 
-        String accessToken = jwtTokenProvider.createToken(member.getEmail(), JwtTokenType.ACCESS);
-        String refreshToken = jwtTokenProvider.createToken(member.getEmail(), JwtTokenType.REFRESH);
+        String accessToken =
+                jwtTokenProvider.createToken(
+                        member.getEmail(), member.getRole().name(), JwtTokenType.ACCESS);
+        String refreshToken =
+                jwtTokenProvider.createToken(
+                        member.getEmail(), member.getRole().name(), JwtTokenType.REFRESH);
         jwtTokenService.saveRefreshToken(member.getEmail(), refreshToken);
 
         log.info(
