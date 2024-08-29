@@ -24,6 +24,7 @@ public class PropertyController {
      * 물건을 저장하는 메소드
      *
      * @param requestDTO
+     * @param CustomUserDetails jwt 토큰으로 받은 user 객체
      * @return
      */
     @PostMapping("")

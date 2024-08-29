@@ -124,6 +124,7 @@ public class PropertyService {
      * 물건을 저장하는 메소드
      *
      * @param propertyDTO
+     * @param adminId
      * @return
      */
     @Transactional
