@@ -8,9 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import subscribers.clearbunyang.domain.consultation.annotation.ValidMedium;
-import subscribers.clearbunyang.domain.consultation.annotation.ValidStatus;
-import subscribers.clearbunyang.domain.consultation.annotation.ValidTier;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
@@ -31,12 +28,9 @@ public class NewCustomerAdditionRequest {
 
     private String consultingMessage; // 상담원 작성 메세지
 
-    @ValidTier(enumClass = Tier.class) // pending 일 때 입력하지 않으면 에러
     private Tier tier; // 등급
 
-    @ValidStatus(enumClass = Status.class)
     private Status status; // 상태
 
-    @ValidMedium(enumClass = Medium.class)
     private Medium medium;
 }
