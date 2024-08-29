@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import subscribers.clearbunyang.domain.consultation.annotation.ValidStatus;
-import subscribers.clearbunyang.domain.consultation.annotation.ValidTier;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
 
@@ -17,10 +15,8 @@ import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
 @Builder
 public class ConsultRequest {
 
-    @ValidStatus(enumClass = Status.class)
     private Status status;
 
-    @ValidTier(enumClass = Tier.class)
     private Tier tier;
 
     @NotBlank private String consultantMessage;
