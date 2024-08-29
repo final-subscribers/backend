@@ -37,49 +37,49 @@ public class PropertyService {
 
     private final ObjectMapper objectMapper;
 
-    public void saveKeywords(List<KeywordDTO> keywords, Property property) {
+    /**
+     * 키워드들을 저장하는 메소드
+     *
+     * @param keywordDTOS
+     * @param property
+     */
+    public void saveKeywords(List<KeywordDTO> keywordDTOS, Property property) {
         List<Keyword> searchableKeywords = new ArrayList<>();
         List<KeywordDTO> nonSearchableKeywords = new ArrayList<>();
 
-        for (KeywordDTO keyword : keywords) {
-            if (keyword.getSearchEnabled()) {
-                searchableKeywords.add(toKeyword(keyword, property));
+        for (KeywordDTO keywordDTO : keywordDTOS) {
+            if (keywordDTO.getSearchEnabled()) {
+                Keyword keyword = Keyword.toEntity(keywordDTO, objectToJson(keywordDTO), property);
+                searchableKeywords.add(keyword);
             } else {
-                nonSearchableKeywords.add(keyword);
+                nonSearchableKeywords.add(keywordDTO);
             }
         }
         keywordRepository.saveAll(searchableKeywords);
+
         if (!nonSearchableKeywords.isEmpty()) {
             saveNonSearchableKeywordsAsJson(nonSearchableKeywords, property);
         }
     }
 
-    private Keyword toKeyword(KeywordDTO keywordDTO, Property property) {
-        Keyword keyword =
-                Keyword.builder()
-                        .name(keywordDTO.getName())
-                        .type(keywordDTO.getType())
-                        .jsonValue(objectToJson(keywordDTO))
-                        //                .isSearchable(keywordDTO.isSearchable())
-                        .isSearchable(keywordDTO.getSearchEnabled())
-                        .property(property)
-                        .build();
-        return keyword;
-    }
-
+    /**
+     * 검색 키워드에 해당되지 않은 키워드들을 모아서 하나의 레코드에 저장하는 메소드
+     *
+     * @param nonSearchableKeywords 검색 키워드에 해당되지 않은 키워드들을 모아놓은 리스트
+     * @param property
+     */
     private void saveNonSearchableKeywordsAsJson(
             List<KeywordDTO> nonSearchableKeywords, Property property) {
-        // 변환된 JSON 문자열을 새로운 Keyword 엔티티에 저장
-        Keyword keyword =
-                Keyword.builder()
-                        .jsonValue(objectToJson(nonSearchableKeywords))
-                        .isSearchable(false)
-                        .property(property)
-                        .build();
-
+        Keyword keyword = Keyword.toEntity(objectToJson(nonSearchableKeywords), property);
         keywordRepository.save(keyword);
     }
 
+    /**
+     * json 형식의 데이터를 string으로 직렬화하는 메소드
+     *
+     * @param input json 형식의 데이터
+     * @return
+     */
     private String objectToJson(Object input) {
         try {
             return objectMapper.writeValueAsString(input);
@@ -87,6 +87,56 @@ public class PropertyService {
             e.printStackTrace();
             throw new JsonConversionException();
         }
+    }
+
+    /**
+     * 세대 면적을 저장하는 메소드
+     *
+     * @param areaDTOs
+     * @param property
+     */
+    private void saveAreas(List<AreaDTO> areaDTOs, Property property) {
+        List<Area> areas =
+                areaDTOs.stream()
+                        .map(areaDTO -> Area.toEntity(areaDTO, property))
+                        .collect(Collectors.toList());
+
+        areaRepository.saveAll(areas);
+    }
+
+    /**
+     * 파일을 저장하는 메소드
+     *
+     * @param fileDTOs
+     * @param property
+     * @param admin
+     */
+    private void saveFiles(List<FileDTO> fileDTOs, Property property, Admin admin) {
+        List<File> files =
+                fileDTOs.stream()
+                        .map(fileDTO -> File.toEntity(fileDTO, property, admin))
+                        .collect(Collectors.toList());
+
+        fileRepository.saveAll(files);
+    }
+
+    /**
+     * 물건을 저장하는 메소드
+     *
+     * @param propertyDTO
+     * @return
+     */
+    @Transactional
+    public Property saveProperty(PropertyRequestDTO propertyDTO, Long adminId) {
+        Admin admin = adminRepository.findAdminById(adminId);
+        Property property = Property.toEntity(propertyDTO, admin);
+        Property savedProperty = propertyRepository.save(property);
+
+        saveAreas(propertyDTO.getAreas(), savedProperty);
+        saveFiles(propertyDTO.getFiles(), savedProperty, admin);
+        saveKeywords(propertyDTO.getKeywords(), property);
+
+        return savedProperty;
     }
 
     public Map<String, List<KeywordDTO>> categorizedKeywords(Long propertyId) {
@@ -116,73 +166,5 @@ public class PropertyService {
         } catch (Exception e) {
             throw new JsonConversionException();
         }
-    }
-
-    private void saveAreas(List<AreaDTO> areaDTOs, Property property) {
-        List<Area> areas =
-                areaDTOs.stream()
-                        .map(
-                                areaDTO ->
-                                        Area.builder()
-                                                .squareMeter(areaDTO.getSquareMeter())
-                                                .price(areaDTO.getPrice())
-                                                .discountPercent(areaDTO.getDiscountPercent())
-                                                .property(property)
-                                                .build())
-                        .collect(Collectors.toList());
-
-        areaRepository.saveAll(areas);
-    }
-
-    private void saveFiles(List<FileDTO> fileDTOs, Property property, Admin admin) {
-        List<File> files =
-                fileDTOs.stream()
-                        .map(
-                                fileDTO ->
-                                        File.builder()
-                                                .property(property)
-                                                .admin(admin)
-                                                .name(fileDTO.getName())
-                                                .link(fileDTO.getUrl())
-                                                .type(fileDTO.getType())
-                                                .build())
-                        .collect(Collectors.toList());
-
-        fileRepository.saveAll(files);
-    }
-
-    @Transactional
-    public Property saveProperty(PropertyRequestDTO propertyDTO) {
-        Admin admin = adminRepository.findById(1L).get(); // todo 파라미터로 받기
-
-        Property property =
-                Property.builder()
-                        .name(propertyDTO.getName())
-                        .constructor(propertyDTO.getConstructor())
-                        .areaAddr(propertyDTO.getAreaAddr())
-                        .modelHouseAddr(propertyDTO.getModelhouseAddr())
-                        .phoneNumber(propertyDTO.getPhoneNumber())
-                        .contactChannel(propertyDTO.getContactChannel())
-                        .homePage(propertyDTO.getHomepage())
-                        .startDate(propertyDTO.getStartDate())
-                        .endDate(propertyDTO.getEndDate())
-                        .propertyType(propertyDTO.getPropertyType())
-                        .salesType(propertyDTO.getSalesType())
-                        .totalNumber(propertyDTO.getTotalNumber())
-                        .companyName(propertyDTO.getCompanyName())
-                        .addrDo(propertyDTO.getAddrDo())
-                        .addrGu(propertyDTO.getAddrGu())
-                        .addrDong(propertyDTO.getAddrDong())
-                        .buildingName(propertyDTO.getBuildingName())
-                        .admin(admin)
-                        .build();
-
-        Property savedProperty = propertyRepository.save(property);
-
-        saveAreas(propertyDTO.getAreas(), savedProperty);
-        saveFiles(propertyDTO.getFiles(), savedProperty, admin);
-        saveKeywords(propertyDTO.getKeywords(), property);
-
-        return savedProperty;
     }
 }

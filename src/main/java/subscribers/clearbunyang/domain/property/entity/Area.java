@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import subscribers.clearbunyang.domain.property.model.AreaDTO;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
 @Entity
@@ -31,4 +32,14 @@ public class Area extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id", nullable = false)
     private Property property;
+
+    public static Area toEntity(AreaDTO areaDTO, Property property) {
+        return Area.builder()
+                .squareMeter(areaDTO.getSquareMeter())
+                .price(areaDTO.getPrice())
+                .discountPrice(areaDTO.getDiscountPrice())
+                .discountPercent(areaDTO.getDiscountPercent())
+                .property(property)
+                .build();
+    }
 }
