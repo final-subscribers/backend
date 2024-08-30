@@ -1,11 +1,15 @@
 package subscribers.clearbunyang.domain.like.service;
 
 
+import java.time.LocalDate;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.like.entity.Likes;
+import subscribers.clearbunyang.domain.like.model.response.LikesPropertyResponse;
 import subscribers.clearbunyang.domain.like.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
@@ -48,5 +52,32 @@ public class LikesService {
         }
 
         propertyRepository.save(property);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<LikesPropertyResponse> getMyFavoriteProperties(
+            Long memberId, String status, int page, int size) {
+        Member member =
+                memberRepository
+                        .findById(memberId)
+                        .orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        LocalDate currentDate = LocalDate.now();
+
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        Page<Property> properties;
+
+        if (status.equalsIgnoreCase("open")) {
+            properties =
+                    propertyRepository.findAllByMemberAndDateRange(
+                            member, currentDate, pageRequest, true);
+        } else {
+            properties =
+                    propertyRepository.findAllByMemberAndDateRange(
+                            member, currentDate, pageRequest, false);
+        }
+
+        return properties.map(LikesPropertyResponse::fromEntity);
     }
 }
