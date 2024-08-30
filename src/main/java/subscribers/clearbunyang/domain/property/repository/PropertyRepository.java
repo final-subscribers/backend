@@ -10,33 +10,34 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import subscribers.clearbunyang.domain.property.entity.Property;
+import subscribers.clearbunyang.domain.property.model.PropertyDateDto;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 
 public interface PropertyRepository extends JpaRepository<Property, Long> {
 
     @Query(
-            "SELECT p FROM Property p WHERE p.startDate <= :today AND p.endDate >= :today ORDER BY p.id DESC")
-    List<Property> findPendingProperties(LocalDate today, Pageable pageable);
+            "SELECT new subscribers.clearbunyang.domain.property.model.PropertyDateDto(p.id, p.name, p.endDate, p.startDate) "
+                    + "FROM Property p WHERE p.startDate <= :today AND p.endDate >= :today ORDER BY p.id DESC")
+    List<PropertyDateDto> findPendingPropertiesDateDto(LocalDate today, Pageable pageable);
 
-    default List<Property> getPendingProperties(LocalDate today, Pageable pageable) {
-        List<Property> properties = findPendingProperties(today, pageable);
+    default List<PropertyDateDto> getPendingPropertiesDto(LocalDate today, Pageable pageable) {
+        List<PropertyDateDto> properties = findPendingPropertiesDateDto(today, pageable);
         return properties != null ? properties : Collections.emptyList();
     }
 
-    @Query("SELECT p FROM Property p WHERE p.endDate < :today ORDER BY p.id DESC")
-    List<Property> findCompletedProperties(LocalDate today, Pageable pageable);
+    @Query(
+            "SELECT new subscribers.clearbunyang.domain.property.model.PropertyDateDto(p.id, p.name, p.endDate, p.startDate) "
+                    + "FROM Property p WHERE p.endDate < :today ORDER BY p.id DESC")
+    List<PropertyDateDto> findCompletedPropertiesDateDto(LocalDate today, Pageable pageable);
 
-    default List<Property> getCompletedProperties(LocalDate today, Pageable pageable) {
-        List<Property> properties = findCompletedProperties(today, pageable);
+    default List<PropertyDateDto> getCompletedPropertiesDto(LocalDate today, Pageable pageable) {
+        List<PropertyDateDto> properties = findCompletedPropertiesDateDto(today, pageable);
         return properties != null ? properties : Collections.emptyList();
     }
-
-    @Query("SELECT p FROM Property p LEFT JOIN FETCH p.admin a WHERE p.id = :id")
-    Optional<Property> findByIdWithFetchJoin(@Param("id") Long id);
 
     default Property getById(Long propertyId) {
-        return findByIdWithFetchJoin(propertyId)
+        return findById(propertyId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
     }
 
