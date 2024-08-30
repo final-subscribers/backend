@@ -59,9 +59,10 @@ public class PropertiesService {
         LocalDate today = LocalDate.now();
         Pageable pageable = PageRequest.of(0, 20);
 
-        List<SideBarPendingResponse> sideBarPendingResponse = getPendingProperties(today, pageable);
+        List<SideBarPendingResponse> sideBarPendingResponse =
+                getPendingPropertiesDto(today, pageable);
         List<SideBarCompletedResponse> completedSummaryResponse =
-                getCompletedProperties(today, pageable);
+                getCompletedPropertiesDto(today, pageable);
 
         Property property = getProperty(propertyId);
 
@@ -192,25 +193,26 @@ public class PropertiesService {
         }
     }
 
-    private List<SideBarPendingResponse> getPendingProperties(LocalDate today, Pageable pageable) {
-        return propertyRepository.getPendingProperties(today, pageable).stream()
+    private List<SideBarPendingResponse> getPendingPropertiesDto(
+            LocalDate today, Pageable pageable) {
+        return propertyRepository.getPendingPropertiesDto(today, pageable).stream()
                 .map(
-                        property ->
+                        propertyDto ->
                                 SideBarPendingResponse.builder()
-                                        .id(property.getId())
-                                        .name(property.getName())
+                                        .id(propertyDto.getId())
+                                        .name(propertyDto.getName())
                                         .build())
                 .collect(Collectors.toList());
     }
 
-    private List<SideBarCompletedResponse> getCompletedProperties(
+    private List<SideBarCompletedResponse> getCompletedPropertiesDto(
             LocalDate today, Pageable pageable) {
-        return propertyRepository.getCompletedProperties(today, pageable).stream()
+        return propertyRepository.getCompletedPropertiesDto(today, pageable).stream()
                 .map(
-                        property ->
+                        propertyDateDto ->
                                 SideBarCompletedResponse.builder()
-                                        .id(property.getId())
-                                        .name(property.getName())
+                                        .id(propertyDateDto.getId())
+                                        .name(propertyDateDto.getName())
                                         .build())
                 .collect(Collectors.toList());
     }
