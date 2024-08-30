@@ -6,11 +6,13 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.model.PropertyDateDto;
+import subscribers.clearbunyang.domain.user.entity.Member;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 
@@ -48,4 +50,14 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
         return findIdById(propertyId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
     }
+
+    @Query(
+            "SELECT p FROM Property p JOIN p.likes l WHERE l.member = :member AND "
+                    + "(:isOpen = true AND p.startDate <= :currentDate AND p.endDate >= :currentDate) "
+                    + "OR (:isOpen = false AND p.endDate < :currentDate)")
+    Page<Property> findAllByMemberAndDateRange(
+            @org.springframework.data.repository.query.Param("member") Member member,
+            @org.springframework.data.repository.query.Param("currentDate") LocalDate currentDate,
+            @org.springframework.data.repository.query.Param("pageable") Pageable pageable,
+            @org.springframework.data.repository.query.Param("isOpen") boolean isOpen);
 }
