@@ -31,4 +31,9 @@ public class ConsultationProgressDTO {
         this.pending = pending;
         this.completed = completed;
     }
+
+    public ConsultationProgressDTO(Long propertyId, String propertyName) {
+        this.propertyId = propertyId;
+        this.propertyName = propertyName;
+    }
 }

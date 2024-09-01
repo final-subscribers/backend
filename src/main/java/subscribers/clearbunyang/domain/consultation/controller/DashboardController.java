@@ -4,6 +4,11 @@ import static subscribers.clearbunyang.domain.consultation.entity.enums.Period.*
 import static subscribers.clearbunyang.domain.consultation.entity.enums.Status.*;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,12 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.ConsultationProgressDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.DashboardPropertyDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.DashboardResponseDTO;
+import subscribers.clearbunyang.domain.consultation.service.DashboardService;
+import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
 @RestController
-@RequestMapping("/mock/admin/dashboard")
+@RequiredArgsConstructor
+@RequestMapping("/api/admin/")
 public class DashboardController {
+    private final DashboardService dashboardService;
 
-    @GetMapping
+    @GetMapping("dashboard")
     public DashboardResponseDTO getDashboard() {
         return DashboardResponseDTO.builder()
                 .today(ConsultationProgressDTO.builder().all(12).pending(9).completed(3).build())
@@ -85,7 +94,14 @@ public class DashboardController {
                 .build();
     }
 
-    @GetMapping("/properties")
+    @GetMapping("dashboard/properties")
+    public Page<ConsultationProgressDTO> getDashboardProperties(
+            @PageableDefault Pageable pageable,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return dashboardService.getConsultationProgress(customUserDetails.getUserId(), pageable);
+    }
+
+    @GetMapping("mock/dashboard/properties")
     public DashboardResponseDTO getDashboardProperties(
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "5") int size) {
