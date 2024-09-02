@@ -38,7 +38,7 @@ public class DashboardRepositoryImpl implements DashboardRepository {
                                 Projections.constructor(
                                         PropertiesInquiryStatsDTO.class,
                                         memberConsultation.property.id,
-                                        memberConsultation.property.buildingName,
+                                        memberConsultation.property.name,
                                         pendingCount,
                                         completedCount))
                         .from(memberConsultation)
@@ -73,7 +73,7 @@ public class DashboardRepositoryImpl implements DashboardRepository {
                         query.select(
                                         Projections.constructor(
                                                 PropertyInquiryDetailsDTO.class,
-                                                memberConsultation.property.buildingName,
+                                                memberConsultation.property.name,
                                                 pendingCount,
                                                 completedCount,
                                                 phoneCount,
@@ -99,7 +99,7 @@ public class DashboardRepositoryImpl implements DashboardRepository {
         result.ifPresent(detailsDTO -> detailsDTO.setTimeStamps(stampsQuery.fetch()));
 
         return result.orElse(
-                new PropertyInquiryDetailsDTO(memberConsultation.property.buildingName.toString()));
+                new PropertyInquiryDetailsDTO(memberConsultation.property.name.toString()));
     }
 
     private NumberExpression<Integer> statusSumExpression(Status status) {
