@@ -2,13 +2,13 @@ package subscribers.clearbunyang.domain.like.service;
 
 
 import java.time.LocalDate;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import subscribers.clearbunyang.domain.like.entity.Likes;
 import subscribers.clearbunyang.domain.like.model.response.LikesPropertyResponse;
 import subscribers.clearbunyang.domain.like.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
@@ -27,8 +27,11 @@ public class LikesService {
     private final MemberRepository memberRepository;
     private final PropertyRepository propertyRepository;
 
+    @Autowired private RedisTemplate<String, Object> redisTemplate;
+
     @Transactional
     public void toggleLike(Long memberId, Long propertyId) {
+
         Member member =
                 memberRepository
                         .findById(memberId)
@@ -40,18 +43,19 @@ public class LikesService {
                         .orElseThrow(
                                 () -> new EntityNotFoundException(ErrorCode.PROPERTY_NOT_FOUND));
 
-        Optional<Likes> existingLike = likesRepository.findByMemberAndProperty(member, property);
+        String key = memberId + ":" + propertyId;
 
-        if (existingLike.isPresent()) {
-            likesRepository.delete(existingLike.get());
-            property.setLikeCount(property.getLikeCount() - 1);
+        Boolean isLiked = (Boolean) redisTemplate.opsForHash().get("likes", key);
+
+        System.out.println("Current like status for key " + key + ": " + isLiked);
+
+        if (Boolean.TRUE.equals(isLiked)) {
+            redisTemplate.opsForHash().put("likes", key, false);
+            System.out.println("Removed like for key " + key);
         } else {
-            Likes like = Likes.builder().member(member).property(property).build();
-            likesRepository.save(like);
-            property.setLikeCount(property.getLikeCount() + 1);
+            redisTemplate.opsForHash().put("likes", key, true);
+            System.out.println("Added like for key " + key);
         }
-
-        propertyRepository.save(property);
     }
 
     @Transactional(readOnly = true)

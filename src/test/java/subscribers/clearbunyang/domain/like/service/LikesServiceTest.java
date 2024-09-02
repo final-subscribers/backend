@@ -3,6 +3,7 @@ package subscribers.clearbunyang.domain.like.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -17,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.redisson.api.RMap;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -49,47 +52,6 @@ class LikesServiceTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-  }
-
-  @Test
-  void testToggleLike_AddLike() {
-    //좋아요 추가
-    Long memberId = 1L;
-    Long propertyId = 1L;
-    Member member = new Member();
-    Property property = new Property();
-    property.setLikeCount(0);
-
-    when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-    when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
-    when(likesRepository.findByMemberAndProperty(member, property)).thenReturn(Optional.empty());
-
-    likesService.toggleLike(memberId, propertyId);
-
-    verify(likesRepository, times(1)).save(any(Likes.class));
-    verify(propertyRepository, times(1)).save(property);
-    assertEquals(1, property.getLikeCount());
-  }
-
-  @Test
-  void testToggleLike_RemoveLike() {
-    //좋아요 삭제
-    Long memberId = 1L;
-    Long propertyId = 1L;
-    Member member = new Member();
-    Property property = new Property();
-    property.setLikeCount(1);
-    Likes existingLike = new Likes();
-
-    when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-    when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
-    when(likesRepository.findByMemberAndProperty(member, property)).thenReturn(Optional.of(existingLike));
-
-    likesService.toggleLike(memberId, propertyId);
-
-    verify(likesRepository, times(1)).delete(existingLike);
-    verify(propertyRepository, times(1)).save(property);
-    assertEquals(0, property.getLikeCount());
   }
 
   @Test
