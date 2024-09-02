@@ -1,10 +1,15 @@
 package subscribers.clearbunyang.domain.consultation.repository.dashboard;
 
 
+import java.time.LocalDate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import subscribers.clearbunyang.domain.consultation.model.dashboard.ConsultationProgressDTO;
+import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertiesInquiryStatsDTO;
+import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryDetailsDTO;
 
 public interface DashboardRepository {
-    Page<ConsultationProgressDTO> findConsultationProgress(Long userId, Pageable pageable);
+    Page<PropertiesInquiryStatsDTO> findConsultationProgress(Long userId, Pageable pageable);
+
+    PropertyInquiryDetailsDTO findPropertyInquiryDetails(
+            Long propertyId, LocalDate start, LocalDate end);
 }

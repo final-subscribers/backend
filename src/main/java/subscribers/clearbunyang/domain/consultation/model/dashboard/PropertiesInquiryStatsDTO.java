@@ -1,7 +1,6 @@
 package subscribers.clearbunyang.domain.consultation.model.dashboard;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,18 +12,16 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ConsultationProgressDTO {
+public class PropertiesInquiryStatsDTO {
     LocalDateTime startTime;
     LocalDateTime endDate;
-    String periodLabel;
     Long propertyId;
     String propertyName;
-    Integer pending;
-    Integer completed;
-    Integer all;
+    Integer pending = 0;
+    Integer completed = 0;
+    Integer all = 0;
 
-    public ConsultationProgressDTO(
+    public PropertiesInquiryStatsDTO(
             Long propertyId, String propertyName, Integer pending, Integer completed) {
         this.propertyId = propertyId;
         this.propertyName = propertyName;
@@ -32,7 +29,7 @@ public class ConsultationProgressDTO {
         this.completed = completed;
     }
 
-    public ConsultationProgressDTO(Long propertyId, String propertyName) {
+    public PropertiesInquiryStatsDTO(Long propertyId, String propertyName) {
         this.propertyId = propertyId;
         this.propertyName = propertyName;
     }

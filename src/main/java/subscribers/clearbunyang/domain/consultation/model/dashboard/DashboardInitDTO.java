@@ -14,15 +14,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DashboardResponseDTO {
-    ConsultationProgressDTO today;
-    ConsultationProgressDTO thisWeek;
-    ConsultationProgressDTO lastWeek;
-    List<ConsultationProgressDTO> lastFiveWeeks;
-    ConsultationProgressDTO highestConsultation;
-    ConsultationProgressDTO lowestConsultation;
+public class DashboardInitDTO {
+    PropertiesInquiryStatsDTO today;
+    PropertiesInquiryStatsDTO thisWeek;
+    PropertiesInquiryStatsDTO lastWeek;
+    List<PropertiesInquiryStatsDTO> lastFiveWeeks;
+    PropertiesInquiryStatsDTO highestConsultation;
+    PropertiesInquiryStatsDTO lowestConsultation;
     Integer allProperties;
-    List<ConsultationProgressDTO> properties;
+    List<PropertiesInquiryStatsDTO> properties;
     List<String> statusProperties;
-    DashboardPropertyDTO situation;
+    PropertyInquiryDetailsDTO situation;
 }
