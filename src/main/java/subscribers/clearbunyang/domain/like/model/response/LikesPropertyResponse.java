@@ -1,6 +1,7 @@
 package subscribers.clearbunyang.domain.like.model.response;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -18,14 +19,28 @@ import subscribers.clearbunyang.domain.property.entity.Property;
 public class LikesPropertyResponse {
 
     private Long id;
+
     private List<String[]> keyword;
+
+    @JsonProperty("imageUrl")
     private String imageUrl;
+
     private String name;
+
+    @JsonProperty("areaAddr")
     private String areaAddr;
+
+    @JsonProperty("propertyType")
     private String propertyType;
+
+    @JsonProperty("salesType")
     private String salesType;
+
     private int count;
+
     private int price;
+
+    @JsonProperty("salesPrice")
     private int salesPrice;
 
     public static LikesPropertyResponse fromEntity(Property property) {
