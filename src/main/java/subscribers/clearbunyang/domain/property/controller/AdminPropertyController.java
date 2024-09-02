@@ -16,7 +16,7 @@ import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/properties")
-public class PropertyController {
+public class AdminPropertyController {
 
     private final PropertyService propertyService;
 

@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
+import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
 import subscribers.clearbunyang.domain.file.entity.File;
 import subscribers.clearbunyang.domain.file.model.FileDTO;
 import subscribers.clearbunyang.domain.file.repository.FileRepository;
@@ -18,13 +20,16 @@ import subscribers.clearbunyang.domain.property.entity.Keyword;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.exception.JsonConversionException;
 import subscribers.clearbunyang.domain.property.model.AreaDTO;
+import subscribers.clearbunyang.domain.property.model.ConsultationRequestDTO;
 import subscribers.clearbunyang.domain.property.model.KeywordDTO;
 import subscribers.clearbunyang.domain.property.model.PropertyRequestDTO;
 import subscribers.clearbunyang.domain.property.repository.AreaRepository;
 import subscribers.clearbunyang.domain.property.repository.KeywordRepository;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.domain.user.entity.Admin;
+import subscribers.clearbunyang.domain.user.entity.Member;
 import subscribers.clearbunyang.domain.user.repository.AdminRepository;
+import subscribers.clearbunyang.domain.user.repository.MemberRepository;
 
 @RequiredArgsConstructor
 @Service
@@ -34,7 +39,8 @@ public class PropertyService {
     private final AreaRepository areaRepository;
     private final AdminRepository adminRepository;
     private final FileRepository fileRepository;
-
+    private final MemberConsultationRepository memberConsultationRepository;
+    private final MemberRepository memberRepository;
     private final ObjectMapper objectMapper;
 
     /**
@@ -167,5 +173,22 @@ public class PropertyService {
         } catch (Exception e) {
             throw new JsonConversionException();
         }
+    }
+
+    /**
+     * 상담을 등록하는 메소드
+     *
+     * @param propertyId
+     * @param requestDTO
+     * @param memberId
+     */
+    @Transactional
+    public void saveConsultation(
+            Long propertyId, ConsultationRequestDTO requestDTO, Long memberId) {
+        Property property = propertyRepository.findPropertyById(propertyId);
+        Member member = (memberId != null) ? memberRepository.findMemberById(memberId) : null;
+        MemberConsultation memberConsultation =
+                MemberConsultation.toEntity(requestDTO, property, member);
+        memberConsultationRepository.save(memberConsultation);
     }
 }

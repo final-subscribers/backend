@@ -2,10 +2,7 @@ package subscribers.clearbunyang.domain.property.model;
 
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -14,6 +11,7 @@ import lombok.NoArgsConstructor;
 import subscribers.clearbunyang.domain.file.model.FileDTO;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
+import subscribers.clearbunyang.global.validation.NumericValidation;
 
 @Data
 @NoArgsConstructor
@@ -32,6 +30,7 @@ public class PropertyRequestDTO {
     private String companyName; // 시행사
 
     @NotNull @Min(1)
+    @Max(10000)
     private Integer totalNumber; // 세대 수
 
     @NotNull private LocalDate startDate; // 시작 기간
@@ -67,10 +66,14 @@ public class PropertyRequestDTO {
     private String modelhouseAddr; // 모델하우스 주소
 
     @NotBlank
-    @Size(min = 1, max = 20)
+    @Size(min = 1, max = 12)
+    @NumericValidation
     private String phoneNumber; // 분양 문의 번호
 
+    @Size(max = 255)
     private String homepage; // 홈페이지 링크
+
+    @Size(max = 255)
     private String contactChannel; // 채널 링크
 
     @NotNull @Valid private List<AreaDTO> areas; // 면적 정보 리스트

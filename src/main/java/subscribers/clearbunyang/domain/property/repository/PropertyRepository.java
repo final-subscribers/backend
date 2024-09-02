@@ -47,4 +47,9 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
         return findIdById(propertyId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
     }
+
+    default Property findPropertyById(Long propertyId) {
+        return findById(propertyId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
+    }
 }

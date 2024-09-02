@@ -17,10 +17,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import subscribers.clearbunyang.domain.file.entity.enums.FileType;
 import subscribers.clearbunyang.domain.file.model.FileDTO;
-import subscribers.clearbunyang.domain.property.controller.PropertyController;
+import subscribers.clearbunyang.domain.property.controller.AdminPropertyController;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
@@ -28,15 +29,20 @@ import subscribers.clearbunyang.domain.property.model.AreaDTO;
 import subscribers.clearbunyang.domain.property.model.KeywordDTO;
 import subscribers.clearbunyang.domain.property.model.PropertyRequestDTO;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
+import subscribers.clearbunyang.global.config.SecurityConfig;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
+import subscribers.clearbunyang.global.token.JwtTokenProcessor;
 import subscribers.clearbunyang.security.annotation.WithMockCustomAdmin;
 
-@WebMvcTest(PropertyController.class)
-public class PropertyControllerTest {
+@WebMvcTest(AdminPropertyController.class)
+@Import(SecurityConfig.class)
+public class AdminPropertyControllerTest {
 
     @Autowired private MockMvc mockMvc;
     @MockBean private PropertyService propertyService;
     @Autowired private ObjectMapper objectMapper;
+
+    @MockBean private JwtTokenProcessor jwtTokenProcessor;
 
     @DisplayName("물건 등록 테스트")
     @Test
@@ -62,6 +68,7 @@ public class PropertyControllerTest {
         PropertyRequestDTO requestDTO = createTestPropertyRequestDTO();
         requestDTO.getAreas().add(new AreaDTO(60, 50000, 60000, 10));
         Property mockProperty = new Property();
+
         when(propertyService.saveProperty(any(PropertyRequestDTO.class), any(Long.class)))
                 .thenReturn(mockProperty);
 
@@ -115,7 +122,7 @@ public class PropertyControllerTest {
                 "푸르지오 아파트",
                 "서울시 강남구 역삼동 456",
                 "01012345678",
-                "https://example.com",
+                null,
                 "https://kakao.com/channel",
                 areas,
                 files,

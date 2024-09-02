@@ -23,8 +23,11 @@ import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundExceptio
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
-    public Response<Void> handleEntityNotFoundException(EntityNotFoundException e) {
-        return Response.<Void>builder().result(Result.Error(e.getErrorCode())).build();
+    public ResponseEntity<Response<Object>> handleEntityNotFoundException(
+            EntityNotFoundException e) {
+        //        return Response.<Void>builder().result(Result.Error(e.getErrorCode())).build();
+        return ResponseEntity.status(e.getErrorCode().getStatus())
+                .body(Response.ERROR(e.getErrorCode()));
     }
 
     @ExceptionHandler(InvalidValueException.class)
