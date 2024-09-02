@@ -51,6 +51,11 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
     }
 
+    default Property findPropertyById(Long propertyId) {
+        return findById(propertyId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
+    }
+
     @Query(
             "SELECT p FROM Property p JOIN p.likes l WHERE l.member = :member AND "
                     + "(:isOpen = true AND p.startDate <= :currentDate AND p.endDate >= :currentDate) "

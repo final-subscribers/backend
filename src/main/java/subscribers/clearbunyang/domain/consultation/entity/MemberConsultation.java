@@ -21,6 +21,7 @@ import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.domain.consultation.model.request.NewCustomerAdditionRequest;
 import subscribers.clearbunyang.domain.property.entity.Property;
+import subscribers.clearbunyang.domain.property.model.ConsultationRequestDTO;
 import subscribers.clearbunyang.domain.user.entity.Member;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
@@ -76,6 +77,33 @@ public class MemberConsultation extends BaseEntity {
                 .member(null)
                 .property(property)
                 .adminConsultation(consultation)
+                .build();
+    }
+
+    public static MemberConsultation toEntity(
+            ConsultationRequestDTO requestDTO, Property property) {
+        return MemberConsultation.builder()
+                .memberName(requestDTO.getName())
+                .phoneNumber(requestDTO.getPhoneNumber())
+                .preferredAt(requestDTO.getPreferredAt())
+                .memberMessage(requestDTO.getCounselingMessage())
+                .medium(Medium.LMS)
+                .status(Status.PENDING)
+                .property(property)
+                .build();
+    }
+
+    public static MemberConsultation toEntity(
+            ConsultationRequestDTO requestDTO, Property property, Member member) {
+        return MemberConsultation.builder()
+                .memberName(requestDTO.getName())
+                .phoneNumber(requestDTO.getPhoneNumber())
+                .preferredAt(requestDTO.getPreferredAt())
+                .memberMessage(requestDTO.getCounselingMessage())
+                .medium(Medium.LMS)
+                .status(Status.PENDING)
+                .property(property)
+                .member(member)
                 .build();
     }
 

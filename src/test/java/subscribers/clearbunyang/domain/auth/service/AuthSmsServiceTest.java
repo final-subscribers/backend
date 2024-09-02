@@ -31,23 +31,17 @@ import subscribers.clearbunyang.global.sms.service.SmsCertificationUtil;
 @ExtendWith(MockitoExtension.class)
 public class AuthSmsServiceTest {
 
-    @Mock
-    private SmsCertificationUtil smsCertificationUtil;
+    @Mock private SmsCertificationUtil smsCertificationUtil;
 
-    @Mock
-    private SmsCertificationDao smsCertificationDao;
+    @Mock private SmsCertificationDao smsCertificationDao;
 
-    @Mock
-    private MemberRepository memberRepository;
+    @Mock private MemberRepository memberRepository;
 
-    @Mock
-    private RedisTemplate<String, Object> redisTemplate;
+    @Mock private RedisTemplate<String, Object> redisTemplate;
 
-    @Mock
-    private ValueOperations<String, Object> valueOperations;
+    @Mock private ValueOperations<String, Object> valueOperations;
 
-    @InjectMocks
-    private AuthSmsService authSmsService;
+    @InjectMocks private AuthSmsService authSmsService;
 
     @BeforeEach
     void setUp() {
@@ -74,16 +68,20 @@ public class AuthSmsServiceTest {
         String phoneNumber = "01012345678";
         when(memberRepository.existsByPhoneNumber(phoneNumber)).thenReturn(true);
 
-        InvalidValueException exception = assertThrows(InvalidValueException.class, () -> authSmsService.sendVerificationCode(phoneNumber));
+        InvalidValueException exception =
+                assertThrows(
+                        InvalidValueException.class,
+                        () -> authSmsService.sendVerificationCode(phoneNumber));
 
-       assertEquals(ErrorCode.PHONE_DUPLICATION.getMessage(), exception.getMessage());
-       verify(smsCertificationUtil, never()).sendSms(anyString(), anyString());
+        assertEquals(ErrorCode.PHONE_DUPLICATION.getMessage(), exception.getMessage());
+        verify(smsCertificationUtil, never()).sendSms(anyString(), anyString());
     }
 
     // 인증번호가 올바른 경우
     @Test
     void verifyCode_ShouldVerify_WhenCertificationCodeIsCorrect() {
-        SmsCertificationCodeRequest request = new SmsCertificationCodeRequest("01012345678", "1234");
+        SmsCertificationCodeRequest request =
+                new SmsCertificationCodeRequest("01012345678", "1234");
         when(smsCertificationDao.hasKey(request.getPhoneNumber())).thenReturn(true);
         when(smsCertificationDao.getSmsCertification(request.getPhoneNumber())).thenReturn("1234");
 
@@ -96,11 +94,13 @@ public class AuthSmsServiceTest {
     // 인증번호가 올바르지 않는 경우
     @Test
     void verifyCode_ShouldThrowException_WhenCertificationCodeIsInvalid() {
-        SmsCertificationCodeRequest request = new SmsCertificationCodeRequest("01012345678", "1234");
+        SmsCertificationCodeRequest request =
+                new SmsCertificationCodeRequest("01012345678", "1234");
         when(smsCertificationDao.hasKey(request.getPhoneNumber())).thenReturn(true);
         when(smsCertificationDao.getSmsCertification(request.getPhoneNumber())).thenReturn("5678");
 
-        InvalidValueException exception = assertThrows(InvalidValueException.class, () -> authSmsService.verifyCode(request));
+        InvalidValueException exception =
+                assertThrows(InvalidValueException.class, () -> authSmsService.verifyCode(request));
 
         assertEquals(ErrorCode.INVALID_VERIFICATION_CODE.getMessage(), exception.getMessage());
         verify(smsCertificationDao, never()).markAsVerified(request.getPhoneNumber());
@@ -110,7 +110,8 @@ public class AuthSmsServiceTest {
     // isVerify 성공
     @Test
     void isVerify_ShouldReturnTrue_WhenCertificationCodeIsCorrect() {
-        SmsCertificationCodeRequest request = new SmsCertificationCodeRequest("01012345678", "1234");
+        SmsCertificationCodeRequest request =
+                new SmsCertificationCodeRequest("01012345678", "1234");
         when(smsCertificationDao.hasKey(request.getPhoneNumber())).thenReturn(true);
         when(smsCertificationDao.getSmsCertification(request.getPhoneNumber())).thenReturn("1234");
 
@@ -122,7 +123,8 @@ public class AuthSmsServiceTest {
     // isVerify에서 인증번호가 없을 경우
     @Test
     void isVerify_ShouldReturnFalse_WhenCertificationCodeDoesNotExist() {
-        SmsCertificationCodeRequest request = new SmsCertificationCodeRequest("01012345678", "1234");
+        SmsCertificationCodeRequest request =
+                new SmsCertificationCodeRequest("01012345678", "1234");
         when(smsCertificationDao.hasKey(request.getPhoneNumber())).thenReturn(false);
 
         boolean result = authSmsService.isVerify(request);
@@ -133,7 +135,8 @@ public class AuthSmsServiceTest {
     // isVerify에서 인증번호가 일치하지 않을 경우
     @Test
     void isVerify_ShouldReturnFalse_WhenCertificationCodeIsIncorrect() {
-        SmsCertificationCodeRequest request = new SmsCertificationCodeRequest("01012345678", "1234");
+        SmsCertificationCodeRequest request =
+                new SmsCertificationCodeRequest("01012345678", "1234");
         when(smsCertificationDao.hasKey(request.getPhoneNumber())).thenReturn(true);
         when(smsCertificationDao.getSmsCertification(request.getPhoneNumber())).thenReturn("5678");
 
@@ -145,10 +148,8 @@ public class AuthSmsServiceTest {
     // 인증받았던 경우
     @Test
     void isVerified_ShouldDoNothing_WhenPhoneNumberIsVerified() {
-        MemberSignUpRequest request = MemberSignUpRequest.builder()
-            .phoneNumber("01012345678")
-            .build()
-            ;
+        MemberSignUpRequest request =
+                MemberSignUpRequest.builder().phoneNumber("01012345678").build();
         when(smsCertificationDao.isVerified(request.getPhoneNumber())).thenReturn(true);
 
         authSmsService.isVerified(request);
@@ -159,13 +160,12 @@ public class AuthSmsServiceTest {
     // 인증 안받았던 경우
     @Test
     void isVerified_ShouldThrowException_WhenPhoneNumberIsNotVerified() {
-        MemberSignUpRequest request = MemberSignUpRequest.builder()
-            .phoneNumber("01012345678")
-            .build()
-            ;
+        MemberSignUpRequest request =
+                MemberSignUpRequest.builder().phoneNumber("01012345678").build();
         when(smsCertificationDao.isVerified(request.getPhoneNumber())).thenReturn(false);
 
-        InvalidValueException exception = assertThrows(InvalidValueException.class, () -> authSmsService.isVerified(request));
+        InvalidValueException exception =
+                assertThrows(InvalidValueException.class, () -> authSmsService.isVerified(request));
 
         assertEquals(ErrorCode.INVALID_VERIFICATION_SMS.getMessage(), exception.getMessage());
         verify(smsCertificationDao, times(1)).isVerified(request.getPhoneNumber());

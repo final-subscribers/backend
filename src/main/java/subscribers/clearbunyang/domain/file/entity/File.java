@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import subscribers.clearbunyang.domain.file.entity.enums.FileType;
+import subscribers.clearbunyang.domain.file.model.FileDTO;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.user.entity.Admin;
 import subscribers.clearbunyang.global.entity.BaseEntity;
@@ -36,4 +37,14 @@ public class File extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private FileType type;
+
+    public static File toEntity(FileDTO fileDTO, Property property, Admin admin) {
+        return File.builder()
+                .property(property)
+                .admin(admin)
+                .name(fileDTO.getName())
+                .link(fileDTO.getUrl())
+                .type(fileDTO.getType())
+                .build();
+    }
 }

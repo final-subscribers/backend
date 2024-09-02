@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.s3;
+package subscribers.clearbunyang.domain.file.service;
 
 
 import com.amazonaws.HttpMethod;
@@ -18,12 +18,15 @@ import org.springframework.stereotype.Service;
 public class FileService {
     @Value("${aws.s3.bucket}") private String bucket;
 
+    @Value("${aws.s3.accountId}") private String accountId;
+
     private final AmazonS3 amazonS3;
 
     /**
      * presigned url 발급
      *
-     * @param fileName 클라이언트가 전달한 파일명 파라미터
+     * @param directoryName 저장할 디렉토리 이름
+     * @param fileName 클라이언트가 전달한 파일명
      * @return presigned url
      */
     public String getPreSignedUrl(String directoryName, String fileName) {
@@ -60,7 +63,7 @@ public class FileService {
     private Date getPreSignedUrlExpiration() {
         Date expiration = new Date();
         long expTimeMillis = expiration.getTime();
-        expTimeMillis += 1000 * 60 * 2;
+        expTimeMillis += 1000 * 60 * 2; // 2분
         expiration.setTime(expTimeMillis);
         return expiration;
     }
@@ -77,11 +80,24 @@ public class FileService {
     /**
      * 파일의 전체 경로를 생성
      *
-     * @param prefix 디렉토리 경로
+     * @param 디렉토리 경로
      * @return 파일의 전체 경로
      */
-    private String createPath(String prefix, String fileName) {
+    private String createPath(String directoryName, String fileName) {
         String fileId = createFileId();
-        return String.format("%s/%s:%s", prefix, fileId, fileName);
+        return String.format("%s/%s:%s", directoryName, fileId, fileName);
+    }
+
+    /**
+     * 저장된 파일에 접근할 수 있는 URL 리턴
+     *
+     * @param fileName 파일 이름
+     * @param directoryName 디렉토리 이름
+     * @return
+     */
+    public String getFile(String fileName, String directoryName) {
+        return String.format(
+                "https://%s.r2.cloudflarestorage.com/%s/%s/%s",
+                accountId, bucket, directoryName, fileName);
     }
 }

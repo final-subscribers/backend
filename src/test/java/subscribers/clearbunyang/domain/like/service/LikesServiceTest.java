@@ -34,172 +34,191 @@ import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundExceptio
 
 class LikesServiceTest {
 
-  @Mock
-  private LikesRepository likesRepository;
+    @Mock private LikesRepository likesRepository;
 
-  @Mock
-  private MemberRepository memberRepository;
+    @Mock private MemberRepository memberRepository;
 
-  @Mock
-  private PropertyRepository propertyRepository;
+    @Mock private PropertyRepository propertyRepository;
 
-  @InjectMocks
-  private LikesService likesService;
+    @InjectMocks private LikesService likesService;
 
-  @BeforeEach
-  void setUp() {
-    MockitoAnnotations.openMocks(this);
-  }
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
-  @Test
-  void testToggleLike_AddLike() {
-    //좋아요 추가
-    Long memberId = 1L;
-    Long propertyId = 1L;
-    Member member = new Member();
-    Property property = new Property();
-    property.setLikeCount(0);
+    @Test
+    void testToggleLike_AddLike() {
+        // 좋아요 추가
+        Long memberId = 1L;
+        Long propertyId = 1L;
+        Member member = new Member();
+        Property property = new Property();
+        property.setLikeCount(0);
 
-    when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-    when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
-    when(likesRepository.findByMemberAndProperty(member, property)).thenReturn(Optional.empty());
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
+        when(likesRepository.findByMemberAndProperty(member, property))
+                .thenReturn(Optional.empty());
 
-    likesService.toggleLike(memberId, propertyId);
+        likesService.toggleLike(memberId, propertyId);
 
-    verify(likesRepository, times(1)).save(any(Likes.class));
-    verify(propertyRepository, times(1)).save(property);
-    assertEquals(1, property.getLikeCount());
-  }
+        verify(likesRepository, times(1)).save(any(Likes.class));
+        verify(propertyRepository, times(1)).save(property);
+        assertEquals(1, property.getLikeCount());
+    }
 
-  @Test
-  void testToggleLike_RemoveLike() {
-    //좋아요 삭제
-    Long memberId = 1L;
-    Long propertyId = 1L;
-    Member member = new Member();
-    Property property = new Property();
-    property.setLikeCount(1);
-    Likes existingLike = new Likes();
+    @Test
+    void testToggleLike_RemoveLike() {
+        // 좋아요 삭제
+        Long memberId = 1L;
+        Long propertyId = 1L;
+        Member member = new Member();
+        Property property = new Property();
+        property.setLikeCount(1);
+        Likes existingLike = new Likes();
 
-    when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-    when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
-    when(likesRepository.findByMemberAndProperty(member, property)).thenReturn(Optional.of(existingLike));
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
+        when(likesRepository.findByMemberAndProperty(member, property))
+                .thenReturn(Optional.of(existingLike));
 
-    likesService.toggleLike(memberId, propertyId);
+        likesService.toggleLike(memberId, propertyId);
 
-    verify(likesRepository, times(1)).delete(existingLike);
-    verify(propertyRepository, times(1)).save(property);
-    assertEquals(0, property.getLikeCount());
-  }
+        verify(likesRepository, times(1)).delete(existingLike);
+        verify(propertyRepository, times(1)).save(property);
+        assertEquals(0, property.getLikeCount());
+    }
 
-  @Test
-  void testToggleLike_MemberNotFound() {
-    //멤버 찾을 수 없을 때 에러 반환
-    Long memberId = 1L;
-    Long propertyId = 1L;
+    @Test
+    void testToggleLike_MemberNotFound() {
+        // 멤버 찾을 수 없을 때 에러 반환
+        Long memberId = 1L;
+        Long propertyId = 1L;
 
-    when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
+        when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
 
-    EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-        () -> likesService.toggleLike(memberId, propertyId));
+        EntityNotFoundException exception =
+                assertThrows(
+                        EntityNotFoundException.class,
+                        () -> likesService.toggleLike(memberId, propertyId));
 
-    assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
-    verify(likesRepository, never()).save(any(Likes.class));
-    verify(likesRepository, never()).delete(any(Likes.class));
-  }
+        assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
+        verify(likesRepository, never()).save(any(Likes.class));
+        verify(likesRepository, never()).delete(any(Likes.class));
+    }
 
-  @Test
-  void testToggleLike_PropertyNotFound() {
-    //물건 찾을 수 없을 때 에러 반환
-    Long memberId = 1L;
-    Long propertyId = 1L;
-    Member member = new Member();
+    @Test
+    void testToggleLike_PropertyNotFound() {
+        // 물건 찾을 수 없을 때 에러 반환
+        Long memberId = 1L;
+        Long propertyId = 1L;
+        Member member = new Member();
 
-    when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-    when(propertyRepository.findById(propertyId)).thenReturn(Optional.empty());
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.empty());
 
-    EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-        () -> likesService.toggleLike(memberId, propertyId));
+        EntityNotFoundException exception =
+                assertThrows(
+                        EntityNotFoundException.class,
+                        () -> likesService.toggleLike(memberId, propertyId));
 
-    assertEquals(ErrorCode.PROPERTY_NOT_FOUND, exception.getErrorCode());
-    verify(likesRepository, never()).save(any(Likes.class));
-    verify(likesRepository, never()).delete(any(Likes.class));
-  }
+        assertEquals(ErrorCode.PROPERTY_NOT_FOUND, exception.getErrorCode());
+        verify(likesRepository, never()).save(any(Likes.class));
+        verify(likesRepository, never()).delete(any(Likes.class));
+    }
 
-  @Test
-  void testGetMyFavoriteProperties_OpenStatus() {
-    // Open 상태일 때 내 좋아요 목록 반환
-    Long memberId = 1L;
-    String status = "open";
-    int page = 0;
-    int size = 10;
-    Member member = new Member();
+    @Test
+    void testGetMyFavoriteProperties_OpenStatus() {
+        // Open 상태일 때 내 좋아요 목록 반환
+        Long memberId = 1L;
+        String status = "open";
+        int page = 0;
+        int size = 10;
+        Member member = new Member();
 
-    Property property = Property.builder()
-        .keywords(new ArrayList<>())
-        .areas(new ArrayList<>())
-        .files(new ArrayList<>())
-        .propertyType(PropertyType.APARTMENT)
-        .salesType(SalesType.PRIVATE_SALE)
-        .build();
+        Property property =
+                Property.builder()
+                        .keywords(new ArrayList<>())
+                        .areas(new ArrayList<>())
+                        .files(new ArrayList<>())
+                        .propertyType(PropertyType.APARTMENT)
+                        .salesType(SalesType.PRIVATE_SALE)
+                        .build();
 
-    Page<Property> propertyPage = new PageImpl<>(Collections.singletonList(property));
+        Page<Property> propertyPage = new PageImpl<>(Collections.singletonList(property));
 
-    when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-    when(propertyRepository.findAllByMemberAndDateRange(member, LocalDate.now(), PageRequest.of(page, size), true))
-        .thenReturn(propertyPage);
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+        when(propertyRepository.findAllByMemberAndDateRange(
+                        member, LocalDate.now(), PageRequest.of(page, size), true))
+                .thenReturn(propertyPage);
 
-    Page<LikesPropertyResponse> result = likesService.getMyFavoriteProperties(memberId, status, page, size);
+        Page<LikesPropertyResponse> result =
+                likesService.getMyFavoriteProperties(memberId, status, page, size);
 
-    assertNotNull(result);
-    assertEquals(1, result.getTotalElements());
-    verify(propertyRepository, times(1)).findAllByMemberAndDateRange(member, LocalDate.now(), PageRequest.of(page, size), true);
-  }
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        verify(propertyRepository, times(1))
+                .findAllByMemberAndDateRange(
+                        member, LocalDate.now(), PageRequest.of(page, size), true);
+    }
 
-  @Test
-  void testGetMyFavoriteProperties_ClosedStatus() {
-    // Closed 상태일 때 내 좋아요 목록 반환
-    Long memberId = 1L;
-    String status = "closed";
-    int page = 0;
-    int size = 10;
-    Member member = new Member();
+    @Test
+    void testGetMyFavoriteProperties_ClosedStatus() {
+        // Closed 상태일 때 내 좋아요 목록 반환
+        Long memberId = 1L;
+        String status = "closed";
+        int page = 0;
+        int size = 10;
+        Member member = new Member();
 
-    Property property = Property.builder()
-        .keywords(new ArrayList<>())
-        .areas(new ArrayList<>())
-        .files(new ArrayList<>())
-        .propertyType(PropertyType.APARTMENT)
-        .salesType(SalesType.PRIVATE_SALE)
-        .build();
+        Property property =
+                Property.builder()
+                        .keywords(new ArrayList<>())
+                        .areas(new ArrayList<>())
+                        .files(new ArrayList<>())
+                        .propertyType(PropertyType.APARTMENT)
+                        .salesType(SalesType.PRIVATE_SALE)
+                        .build();
 
-    Page<Property> propertyPage = new PageImpl<>(Collections.singletonList(property));
+        Page<Property> propertyPage = new PageImpl<>(Collections.singletonList(property));
 
-    when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-    when(propertyRepository.findAllByMemberAndDateRange(member, LocalDate.now(), PageRequest.of(page, size), false))
-        .thenReturn(propertyPage);
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+        when(propertyRepository.findAllByMemberAndDateRange(
+                        member, LocalDate.now(), PageRequest.of(page, size), false))
+                .thenReturn(propertyPage);
 
-    Page<LikesPropertyResponse> result = likesService.getMyFavoriteProperties(memberId, status, page, size);
+        Page<LikesPropertyResponse> result =
+                likesService.getMyFavoriteProperties(memberId, status, page, size);
 
-    assertNotNull(result);
-    assertEquals(1, result.getTotalElements());
-    verify(propertyRepository, times(1)).findAllByMemberAndDateRange(member, LocalDate.now(), PageRequest.of(page, size), false);
-  }
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        verify(propertyRepository, times(1))
+                .findAllByMemberAndDateRange(
+                        member, LocalDate.now(), PageRequest.of(page, size), false);
+    }
 
-  @Test
-  void testGetMyFavoriteProperties_MemberNotFound() {
-    //멤버 찾을 수 없을 때 에러 반환
-    Long memberId = 1L;
-    String status = "open";
-    int page = 0;
-    int size = 10;
+    @Test
+    void testGetMyFavoriteProperties_MemberNotFound() {
+        // 멤버 찾을 수 없을 때 에러 반환
+        Long memberId = 1L;
+        String status = "open";
+        int page = 0;
+        int size = 10;
 
-    when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
+        when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
 
-    EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-        () -> likesService.getMyFavoriteProperties(memberId, status, page, size));
+        EntityNotFoundException exception =
+                assertThrows(
+                        EntityNotFoundException.class,
+                        () -> likesService.getMyFavoriteProperties(memberId, status, page, size));
 
-    assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
-    verify(propertyRepository, never()).findAllByMemberAndDateRange(any(Member.class), any(LocalDate.class), any(PageRequest.class), anyBoolean());
-  }
+        assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
+        verify(propertyRepository, never())
+                .findAllByMemberAndDateRange(
+                        any(Member.class),
+                        any(LocalDate.class),
+                        any(PageRequest.class),
+                        anyBoolean());
+    }
 }

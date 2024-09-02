@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,8 +23,11 @@ import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundExceptio
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
-    public Response<Void> handleEntityNotFoundException(EntityNotFoundException e) {
-        return Response.<Void>builder().result(Result.Error(e.getErrorCode())).build();
+    public ResponseEntity<Response<Object>> handleEntityNotFoundException(
+            EntityNotFoundException e) {
+        //        return Response.<Void>builder().result(Result.Error(e.getErrorCode())).build();
+        return ResponseEntity.status(e.getErrorCode().getStatus())
+                .body(Response.ERROR(e.getErrorCode()));
     }
 
     @ExceptionHandler(InvalidValueException.class)
@@ -36,9 +40,24 @@ public class GlobalExceptionHandler {
         return Response.<Void>builder().result(Result.Error(e.getErrorCode())).build();
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<Response<Object>> ValidationException(
             MethodArgumentNotValidException exception) {
+        log.error("", exception);
+
+        return ResponseEntity.status(ErrorCode.BAD_REQUEST.getStatus())
+                .body(Response.ERROR(ErrorCode.BAD_REQUEST));
+    }
+
+    /**
+     * 정의한 enum 이와의 값을 입력했을때 발생하는 예외
+     *
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler({HttpMessageNotReadableException.class})
+    public ResponseEntity<Response<Object>> HttpMessageNotReadableException(
+            HttpMessageNotReadableException exception) {
         log.error("", exception);
 
         return ResponseEntity.status(ErrorCode.BAD_REQUEST.getStatus())
