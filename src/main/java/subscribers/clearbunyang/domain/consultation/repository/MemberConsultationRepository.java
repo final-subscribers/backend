@@ -32,6 +32,7 @@ public interface MemberConsultationRepository extends JpaRepository<MemberConsul
     }
 
     // lms 라면 false, 추가 상담 필요 X
-    @Query("SELECT CASE " + "WHEN :medium = 'LMS' THEN false " + "ELSE true " + "END")
-    boolean checkExtraConsultation(@Param("medium") String medium);
+    default boolean checkExtraConsultation(String medium) {
+        return !"LMS".equals(medium);
+    }
 }

@@ -41,6 +41,7 @@ import subscribers.clearbunyang.domain.property.entity.Area;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
+import subscribers.clearbunyang.domain.property.model.PropertyDateDto;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.domain.user.entity.Admin;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
@@ -150,11 +151,11 @@ class PropertiesServiceTest {
     void 사이드바_정상작동() {
         Pageable pageable = PageRequest.of(0, 20);
         lenient()
-                .when(propertyRepository.getPendingProperties(LocalDate.now(), pageable))
-                .thenReturn(List.of(property));
+                .when(propertyRepository.getPendingPropertiesDto(LocalDate.now(), pageable))
+                .thenReturn(List.of(new PropertyDateDto[] {}));
         lenient()
-                .when(propertyRepository.getCompletedProperties(LocalDate.now(), pageable))
-                .thenReturn(List.of(property));
+                .when(propertyRepository.getCompletedPropertiesDto(LocalDate.now(), pageable))
+                .thenReturn(List.of(new PropertyDateDto()));
         lenient().when(propertyRepository.getById(anyLong())).thenReturn(property);
 
         sideBarListResponse = propertiesService.getSideBarList(property.getId());
