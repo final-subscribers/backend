@@ -6,35 +6,32 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.model.KeywordDTO;
 import subscribers.clearbunyang.domain.property.model.PropertyRequestDTO;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
+import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/properties")
-public class PropertyController {
+public class AdminPropertyController {
 
     private final PropertyService propertyService;
 
-    //    @PostMapping("/add-test")
-    //    public ResponseEntity add(@RequestBody KeywordsRequestDTO requestBody) {
-    //        try {
-    //            // 서비스 계층에 전달하여 JSON 데이터를 저장
-    //            propertyService.saveKeywords(requestBody.getKeywords());
-    //            return ResponseEntity.ok("Success");
-    //        } catch (Exception e) {
-    //            return ResponseEntity.status(500).body("Error: " + e.getMessage());
-    //        }
-    //    }
+    /**
+     * 물건을 저장하는 메소드
+     *
+     * @param requestDTO
+     * @param CustomUserDetails jwt 토큰으로 받은 user 객체
+     * @return
+     */
     @PostMapping("")
-    public ResponseEntity addProperty(@Valid @RequestBody PropertyRequestDTO requestDTO) {
-        // 서비스 계층에 전달하여 JSON 데이터를 저장
-        Property property = propertyService.saveProperty(requestDTO);
-        System.out.println(property);
-        return ResponseEntity.ok("Success");
+    public void addProperty(
+            @Valid @RequestBody PropertyRequestDTO requestDTO,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        propertyService.saveProperty(requestDTO, customUserDetails.getUserId());
     }
 
     @GetMapping("")

@@ -3,6 +3,7 @@ package subscribers.clearbunyang.domain.property.model;
 
 import java.util.List;
 import lombok.*;
+import subscribers.clearbunyang.domain.file.model.FileDTO;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
 
 @Getter
