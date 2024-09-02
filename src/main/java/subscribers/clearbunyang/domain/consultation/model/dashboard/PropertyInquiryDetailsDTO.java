@@ -37,8 +37,7 @@ public class PropertyInquiryDetailsDTO {
         this.lms = lms;
     }
 
-    public PropertyInquiryDetailsDTO(String propertyName) {
-        this.propertyName = propertyName;
+    public PropertyInquiryDetailsDTO(Integer all) {
         this.all = 0;
     }
 }

@@ -26,8 +26,9 @@ public class DashboardController {
     private final DashboardService dashboardService;
 
     @GetMapping("dashboard")
-    public DashboardInitDTO getDashboard() {
-        return null;
+    public DashboardInitDTO getDashboard(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return dashboardService.getDashboard(customUserDetails.getUserId());
     }
 
     @GetMapping("dashboard/properties")

@@ -3,20 +3,20 @@ package subscribers.clearbunyang.domain.consultation.model.dashboard;
 
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 public class DashboardInitDTO {
     PropertyInquiryStatusDTO today;
-    PropertyInquiryStatusDTO thisWeek;
-    PropertyInquiryStatusDTO lastWeek;
-    List<PropertyInquiryStatusDTO> lastFiveWeeks;
+    List<ConsultationDateStatsDTO> lastFiveWeeks;
     PropertyInquiryStatusDTO highestConsultation;
     PropertyInquiryStatusDTO lowestConsultation;
-    Integer allProperties;
-    List<PropertyInquiryStatusDTO> properties;
-    List<String> statusProperties;
+    List<PropertySelectDTO> properties;
     PropertyInquiryDetailsDTO situation;
 }
