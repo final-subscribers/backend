@@ -1,6 +1,8 @@
 package subscribers.clearbunyang.domain.property.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,6 +25,7 @@ import subscribers.clearbunyang.domain.file.entity.File;
 import subscribers.clearbunyang.domain.like.entity.Likes;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
+import subscribers.clearbunyang.domain.property.model.PropertyRequestDTO;
 import subscribers.clearbunyang.domain.user.entity.Admin;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
@@ -93,21 +96,49 @@ public class Property extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "admin_id", nullable = false)
+    @JsonBackReference
     private Admin admin;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Set<Likes> likes;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<File> files = new ArrayList<>();
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Area> areas;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Keyword> keywords;
 
     public void setAdminId(Admin adminId) {
         this.admin = adminId;
+    }
+
+    public static Property toEntity(PropertyRequestDTO propertyDTO, Admin admin) {
+        return Property.builder()
+                .name(propertyDTO.getName())
+                .constructor(propertyDTO.getConstructor())
+                .areaAddr(propertyDTO.getAreaAddr())
+                .modelHouseAddr(propertyDTO.getModelhouseAddr())
+                .phoneNumber(propertyDTO.getPhoneNumber())
+                .contactChannel(propertyDTO.getContactChannel())
+                .homePage(propertyDTO.getHomepage())
+                .startDate(propertyDTO.getStartDate())
+                .endDate(propertyDTO.getEndDate())
+                .propertyType(propertyDTO.getPropertyType())
+                .salesType(propertyDTO.getSalesType())
+                .totalNumber(propertyDTO.getTotalNumber())
+                .companyName(propertyDTO.getCompanyName())
+                .addrDo(propertyDTO.getAddrDo())
+                .addrGu(propertyDTO.getAddrGu())
+                .addrDong(propertyDTO.getAddrDong())
+                .buildingName(propertyDTO.getBuildingName())
+                .admin(admin)
+                .build();
     }
 }

@@ -1,6 +1,8 @@
 package subscribers.clearbunyang.domain.consultation.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,7 +19,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
+import subscribers.clearbunyang.domain.consultation.model.request.NewCustomerAdditionRequest;
 import subscribers.clearbunyang.domain.property.entity.Property;
+import subscribers.clearbunyang.domain.property.model.ConsultationRequestDTO;
 import subscribers.clearbunyang.domain.user.entity.Member;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
@@ -35,6 +39,7 @@ public class MemberConsultation extends BaseEntity {
 
     private String memberMessage;
 
+    @Column(nullable = false)
     private LocalDate preferredAt;
 
     private String memberName;
@@ -47,13 +52,62 @@ public class MemberConsultation extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
+    @JsonBackReference
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id")
+    @JsonBackReference
     private Property property;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "admin_consultation_id")
+    @JsonBackReference
     private AdminConsultation adminConsultation;
+
+    public static MemberConsultation toEntity(
+            NewCustomerAdditionRequest request, Property property, AdminConsultation consultation) {
+        return MemberConsultation.builder()
+                .status(request.getStatus())
+                .memberMessage(null)
+                .preferredAt(request.getPreferredAt())
+                .memberName(request.getName())
+                .phoneNumber(request.getPhoneNumber())
+                .medium(request.getMedium())
+                .member(null)
+                .property(property)
+                .adminConsultation(consultation)
+                .build();
+    }
+
+    public static MemberConsultation toEntity(
+            ConsultationRequestDTO requestDTO, Property property) {
+        return MemberConsultation.builder()
+                .memberName(requestDTO.getName())
+                .phoneNumber(requestDTO.getPhoneNumber())
+                .preferredAt(requestDTO.getPreferredAt())
+                .memberMessage(requestDTO.getCounselingMessage())
+                .medium(Medium.LMS)
+                .status(Status.PENDING)
+                .property(property)
+                .build();
+    }
+
+    public static MemberConsultation toEntity(
+            ConsultationRequestDTO requestDTO, Property property, Member member) {
+        return MemberConsultation.builder()
+                .memberName(requestDTO.getName())
+                .phoneNumber(requestDTO.getPhoneNumber())
+                .preferredAt(requestDTO.getPreferredAt())
+                .memberMessage(requestDTO.getCounselingMessage())
+                .medium(Medium.LMS)
+                .status(Status.PENDING)
+                .property(property)
+                .member(member)
+                .build();
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 }
