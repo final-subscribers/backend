@@ -29,7 +29,7 @@ public class BatchConfig {
     private final MemberRepository memberRepository;
     private final PropertyRepository propertyRepository;
 
-    @Scheduled(cron = "0 0/27 * * * *") // 매 정각에 실행
+    @Scheduled(cron = "0 0 * * * *") // 매 정각에 실행
     @Async("likesExecutor")
     @Transactional
     public void syncLikesToDatabase() {
