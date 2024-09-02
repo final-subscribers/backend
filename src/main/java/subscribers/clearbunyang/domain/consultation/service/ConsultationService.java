@@ -20,6 +20,7 @@ import subscribers.clearbunyang.domain.consultation.repository.AdminConsultation
 import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
+import subscribers.clearbunyang.global.annotation.DistributedLock;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 
 @Service
@@ -71,6 +72,8 @@ public class ConsultationService {
         return ConsultantListResponse.toDto(consultantListResponses);
     }
 
+    // 동시에 같은 상담에 대해 상담사 이름 변경을 하려고 할 때 분산락 적용
+    @DistributedLock(key = "#adminConsultationId")
     @Transactional
     public ConsultantResponse changeConsultant(Long adminConsultationId, String consultant) {
         AdminConsultation adminConsultation = getAdminConsultation(adminConsultationId);
