@@ -9,6 +9,7 @@ import lombok.Getter;
 public enum Medium {
     PHONE,
     LMS,
+    CHANNEL,
     NONE;
 
     @JsonCreator
