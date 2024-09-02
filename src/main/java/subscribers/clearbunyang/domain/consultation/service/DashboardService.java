@@ -15,8 +15,9 @@ import subscribers.clearbunyang.domain.consultation.repository.dashboard.Dashboa
 public class DashboardService {
     private final DashboardRepository dashboardRepository;
 
-    public Page<PropertiesInquiryStatsDTO> getConsultationProgress(Long userId, Pageable pageable) {
-        return dashboardRepository.findConsultationProgress(userId, pageable);
+    public Page<PropertiesInquiryStatsDTO> getPropertiesInquiryStats(
+            Long userId, Pageable pageable) {
+        return dashboardRepository.findPropertiesInquiryStats(userId, pageable);
     }
 
     public PropertyInquiryDetailsDTO getPropertyInquiryDetails(

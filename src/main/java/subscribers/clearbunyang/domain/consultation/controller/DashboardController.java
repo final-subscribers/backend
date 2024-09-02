@@ -34,7 +34,7 @@ public class DashboardController {
     public Page<PropertiesInquiryStatsDTO> getDashboardProperties(
             @PageableDefault Pageable pageable,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        return dashboardService.getConsultationProgress(customUserDetails.getUserId(), pageable);
+        return dashboardService.getPropertiesInquiryStats(customUserDetails.getUserId(), pageable);
     }
 
     @GetMapping("/properties/{property_id}")

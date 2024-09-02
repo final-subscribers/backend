@@ -28,7 +28,7 @@ public class DashboardRepositoryImpl implements DashboardRepository {
 
     private final JPAQueryFactory query;
 
-    public Page<PropertiesInquiryStatsDTO> findConsultationProgress(
+    public Page<PropertiesInquiryStatsDTO> findPropertiesInquiryStats(
             Long userId, Pageable pageable) {
         NumberExpression<Integer> pendingCount = statusSumExpression(PENDING);
         NumberExpression<Integer> completedCount = statusSumExpression(COMPLETED);

@@ -8,7 +8,7 @@ import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertiesIn
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryDetailsDTO;
 
 public interface DashboardRepository {
-    Page<PropertiesInquiryStatsDTO> findConsultationProgress(Long userId, Pageable pageable);
+    Page<PropertiesInquiryStatsDTO> findPropertiesInquiryStats(Long userId, Pageable pageable);
 
     PropertyInquiryDetailsDTO findPropertyInquiryDetails(
             Long propertyId, LocalDate start, LocalDate end);
