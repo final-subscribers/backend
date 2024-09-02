@@ -34,6 +34,10 @@ public class CustomUserDetails implements UserDetails {
         return null;
     }
 
+    public boolean isInstanceOfAdmin() {
+        return user instanceof Admin;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();

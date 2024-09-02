@@ -47,12 +47,13 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     implementation 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    testImplementation 'org.springframework.security:spring-security-test'
 
     // redis
     implementation 'org.redisson:redisson-spring-boot-starter:3.31.0'
@@ -146,7 +147,7 @@ clean {	delete file('src/main/generated')}
 // git hook 설정
 spotless {
     java {
-        target("src/main/java/**/*.java")
+        target("src/main/java/**/*.java","src/test/java/**/*.java")
         googleJavaFormat().aosp()
         importOrder()
         removeUnusedImports()

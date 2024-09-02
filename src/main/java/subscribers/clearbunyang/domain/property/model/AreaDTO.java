@@ -1,6 +1,7 @@
 package subscribers.clearbunyang.domain.property.model;
 
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -23,6 +24,15 @@ public class AreaDTO {
     private Integer price; // 가격
 
     @NotNull @Min(1)
+    @Max(5000000)
+    private Integer discountPrice; // 할인 가격
+
+    @NotNull @Min(1)
     @Max(100)
     private Integer discountPercent; // 할인 분양가(퍼센트)
+
+    @AssertTrue(message = "price>=discountPrice")
+    public boolean isPriceValid() {
+        return price >= discountPrice;
+    }
 }

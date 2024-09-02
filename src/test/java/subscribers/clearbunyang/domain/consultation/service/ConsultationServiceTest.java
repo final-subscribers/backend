@@ -45,17 +45,13 @@ import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundExceptio
 @ExtendWith(MockitoExtension.class)
 class ConsultationServiceTest {
 
-    @InjectMocks
-    ConsultationService consultationService;
+    @InjectMocks ConsultationService consultationService;
 
-    @Mock
-    AdminConsultationRepository adminConsultationRepository;
+    @Mock AdminConsultationRepository adminConsultationRepository;
 
-    @Mock
-    MemberConsultationRepository memberConsultationRepository;
+    @Mock MemberConsultationRepository memberConsultationRepository;
 
-    @Mock
-    PropertyRepository propertyRepository;
+    @Mock PropertyRepository propertyRepository;
 
     private Property property;
 
@@ -65,62 +61,64 @@ class ConsultationServiceTest {
 
     @BeforeEach
     public void setUp() {
-        property = Property.builder()
-                .id(1L)
-                .name("propertyName")
-                .constructor("constructor")
-                .areaAddr("areaAddr")
-                .modelHouseAddr("modelHouseAddr")
-                .phoneNumber("010-1234-1234")
-                .contactChannel(null)
-                .homePage("https://")
-                .likeCount(5)
-                .startDate(LocalDate.now().minusYears(2))
-                .endDate(LocalDate.now().plusYears(1))
-                .propertyType(PropertyType.APARTMENT)
-                .salesType(SalesType.LEASE_SALE)
-                .totalNumber(500)
-                .companyName("companyName")
-                .admin(new Admin())
-                .likes(Set.of(new Likes()))
-                .files(List.of(new File()))
-                .areas(List.of(new Area()))
-                .build();
+        property =
+                Property.builder()
+                        .id(1L)
+                        .name("propertyName")
+                        .constructor("constructor")
+                        .areaAddr("areaAddr")
+                        .modelHouseAddr("modelHouseAddr")
+                        .phoneNumber("010-1234-1234")
+                        .contactChannel(null)
+                        .homePage("https://")
+                        .likeCount(5)
+                        .startDate(LocalDate.now().minusYears(2))
+                        .endDate(LocalDate.now().plusYears(1))
+                        .propertyType(PropertyType.APARTMENT)
+                        .salesType(SalesType.LEASE_SALE)
+                        .totalNumber(500)
+                        .companyName("companyName")
+                        .admin(new Admin())
+                        .likes(Set.of(new Likes()))
+                        .files(List.of(new File()))
+                        .areas(List.of(new Area()))
+                        .build();
 
-        memberConsultation = MemberConsultation.builder()
-                .id(1L)
-                .status(Status.COMPLETED)
-                .memberMessage("memberMessage")
-                .createdAt(LocalDateTime.now())
-                .preferredAt(LocalDate.now().plusDays(1))
-                .modifiedAt(LocalDateTime.now())
-                .memberName("memberName")
-                .phoneNumber("011-1234-1234")
-                .medium(Medium.LMS)
-                .property(new Property())
-                .adminConsultation(adminConsultation)
-                .build();
+        memberConsultation =
+                MemberConsultation.builder()
+                        .id(1L)
+                        .status(Status.COMPLETED)
+                        .memberMessage("memberMessage")
+                        .createdAt(LocalDateTime.now())
+                        .preferredAt(LocalDate.now().plusDays(1))
+                        .modifiedAt(LocalDateTime.now())
+                        .memberName("memberName")
+                        .phoneNumber("011-1234-1234")
+                        .medium(Medium.LMS)
+                        .property(new Property())
+                        .adminConsultation(adminConsultation)
+                        .build();
 
-        adminConsultation = AdminConsultation.builder()
-                .id(1L)
-                .createdAt(LocalDateTime.now())
-                .modifiedAt(LocalDateTime.now())
-                .tier(Tier.A)
-                .consultMessage("consultMessage")
-                .consultant("consultant")
-                .completedAt(LocalDate.now())
-                .memberConsultation(memberConsultation)
-                .build();
+        adminConsultation =
+                AdminConsultation.builder()
+                        .id(1L)
+                        .createdAt(LocalDateTime.now())
+                        .modifiedAt(LocalDateTime.now())
+                        .tier(Tier.A)
+                        .consultMessage("consultMessage")
+                        .consultant("consultant")
+                        .completedAt(LocalDate.now())
+                        .memberConsultation(memberConsultation)
+                        .build();
     }
-
 
     @Test
     void 상담완료_모달_정상작동() {
 
-        lenient().when(adminConsultationRepository.getById(anyLong()))
+        lenient()
+                .when(adminConsultationRepository.getById(anyLong()))
                 .thenReturn(adminConsultation);
-        ConsultCompletedResponse response = consultationService.getConsultCompletedResponse(
-                1L);
+        ConsultCompletedResponse response = consultationService.getConsultCompletedResponse(1L);
         assertNotNull(response);
 
         verify(adminConsultationRepository).getById(anyLong());
@@ -131,10 +129,12 @@ class ConsultationServiceTest {
 
         MemberConsultation memberConsultation1 = createMemberConsultation();
         AdminConsultation adminConsultation1 = createAdminConsultation(memberConsultation1);
-        lenient().when(memberConsultationRepository.getById(anyLong()))
+        lenient()
+                .when(memberConsultationRepository.getById(anyLong()))
                 .thenReturn(memberConsultation1);
 
-        lenient().when(memberConsultationRepository.checkExtraConsultation(anyString()))
+        lenient()
+                .when(memberConsultationRepository.checkExtraConsultation(anyString()))
                 .thenReturn(true);
 
         ConsultPendingResponse response = consultationService.getConsultPendingResponse(1L);
@@ -145,7 +145,8 @@ class ConsultationServiceTest {
     @Test
     void 상담사목록_정상작동() {
         lenient().when(propertyRepository.getIdById(anyLong())).thenReturn(property.getId());
-        lenient().when(adminConsultationRepository.findAllConsultantByPropertyId(any()))
+        lenient()
+                .when(adminConsultationRepository.findAllConsultantByPropertyId(any()))
                 .thenReturn(List.of(adminConsultation));
 
         ConsultantListResponse response = consultationService.getConsultants(1L);
@@ -157,10 +158,11 @@ class ConsultationServiceTest {
     @Test
     void 상담사메세지변경_정상작동() {
         adminConsultation.getMemberConsultation().setStatus(Status.COMPLETED);
-        lenient().when(adminConsultationRepository.getById(anyLong()))
+        lenient()
+                .when(adminConsultationRepository.getById(anyLong()))
                 .thenReturn(adminConsultation);
-        ConsultCompletedResponse response = consultationService.updateConsultMessage(
-                adminConsultation.getId(), "message");
+        ConsultCompletedResponse response =
+                consultationService.updateConsultMessage(adminConsultation.getId(), "message");
 
         assertNotNull(response);
 
@@ -181,14 +183,16 @@ class ConsultationServiceTest {
 
     @Test
     void 상담사변경_정상작동() {
-        lenient().when(adminConsultationRepository.getById(anyLong()))
+        lenient()
+                .when(adminConsultationRepository.getById(anyLong()))
                 .thenReturn(adminConsultation);
 
-        lenient().when(adminConsultationRepository.findByPropertyId(any()))
+        lenient()
+                .when(adminConsultationRepository.findByPropertyId(any()))
                 .thenReturn(List.of(adminConsultation));
 
-        ConsultantResponse response = consultationService.changeConsultant(1L,
-                adminConsultation.getConsultant());
+        ConsultantResponse response =
+                consultationService.changeConsultant(1L, adminConsultation.getConsultant());
 
         assertNotNull(response);
 
@@ -198,23 +202,27 @@ class ConsultationServiceTest {
     @Test
     void 상담글작성_memberConsultation_NOT_FOUND() {
         ConsultRequest request = createAdminConsultRequest();
-        when(memberConsultationRepository.getById(any())).thenThrow(
-                new EntityNotFoundException(ErrorCode.NOT_FOUND)
-        );
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
-                consultationService.createAdminConsult(anyLong(), request));
+        when(memberConsultationRepository.getById(any()))
+                .thenThrow(new EntityNotFoundException(ErrorCode.NOT_FOUND));
+        EntityNotFoundException exception =
+                assertThrows(
+                        EntityNotFoundException.class,
+                        () -> consultationService.createAdminConsult(anyLong(), request));
 
         assertTrue(exception.getMessage().contains(ErrorCode.NOT_FOUND.getMessage()));
     }
 
     @Test
     void 상담사메세지_변경_AdminConsultation_NOT_FOUND() {
-        when(adminConsultationRepository.getById(anyLong())).thenThrow(
-                new EntityNotFoundException(ErrorCode.NOT_FOUND));
+        when(adminConsultationRepository.getById(anyLong()))
+                .thenThrow(new EntityNotFoundException(ErrorCode.NOT_FOUND));
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
-            consultationService.updateConsultMessage(anyLong(), "sdf");
-        });
+        EntityNotFoundException exception =
+                assertThrows(
+                        EntityNotFoundException.class,
+                        () -> {
+                            consultationService.updateConsultMessage(anyLong(), "sdf");
+                        });
 
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
     }
@@ -225,124 +233,154 @@ class ConsultationServiceTest {
         AdminConsultation adminConsultation1 = createAdminConsultation(memberConsultation1);
         when(adminConsultationRepository.getById(anyLong())).thenReturn(adminConsultation1);
 
-        ConsultationException exception = assertThrows(ConsultationException.class, () -> {
-            consultationService.updateConsultMessage(anyLong(), "fg");
-        });
+        ConsultationException exception =
+                assertThrows(
+                        ConsultationException.class,
+                        () -> {
+                            consultationService.updateConsultMessage(anyLong(), "fg");
+                        });
 
         assertEquals(ErrorCode.NOT_FOUND, exception.getErrorCode());
     }
 
     @Test
     void 상담완료_모달_Admin_Consultation_NOT_FOUND() {
-        when(adminConsultationRepository.getById(anyLong())).thenThrow(
-                new EntityNotFoundException(ErrorCode.NOT_FOUND));
+        when(adminConsultationRepository.getById(anyLong()))
+                .thenThrow(new EntityNotFoundException(ErrorCode.NOT_FOUND));
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
-            consultationService.getConsultCompletedResponse(anyLong());
-        });
+        EntityNotFoundException exception =
+                assertThrows(
+                        EntityNotFoundException.class,
+                        () -> {
+                            consultationService.getConsultCompletedResponse(anyLong());
+                        });
 
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
     }
 
     @Test
     void 상담완료모달_상태가_PENDING() {
-        when(adminConsultationRepository.getById(anyLong())).thenThrow(
-                new EntityNotFoundException(ErrorCode.NOT_FOUND));
+        when(adminConsultationRepository.getById(anyLong()))
+                .thenThrow(new EntityNotFoundException(ErrorCode.NOT_FOUND));
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
-            consultationService.getConsultCompletedResponse(anyLong());
-        });
+        EntityNotFoundException exception =
+                assertThrows(
+                        EntityNotFoundException.class,
+                        () -> {
+                            consultationService.getConsultCompletedResponse(anyLong());
+                        });
 
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
-
     }
 
     @Test
     void 상담대기모달_상태가_COMPLETED() {
-        when(memberConsultationRepository.getById(anyLong())).thenThrow(
-                new EntityNotFoundException(ErrorCode.NOT_FOUND));
+        when(memberConsultationRepository.getById(anyLong()))
+                .thenThrow(new EntityNotFoundException(ErrorCode.NOT_FOUND));
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
-            consultationService.getConsultPendingResponse(anyLong());
-        });
+        EntityNotFoundException exception =
+                assertThrows(
+                        EntityNotFoundException.class,
+                        () -> {
+                            consultationService.getConsultPendingResponse(anyLong());
+                        });
 
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
     }
 
     @Test
     void 상담사변경_Admin_Consultation_NOT_FOUND() {
-        when(adminConsultationRepository.getById(anyLong())).thenThrow(
-                new EntityNotFoundException(ErrorCode.NOT_FOUND));
+        when(adminConsultationRepository.getById(anyLong()))
+                .thenThrow(new EntityNotFoundException(ErrorCode.NOT_FOUND));
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
-            consultationService.changeConsultant(anyLong(), "consultant");
-        });
+        EntityNotFoundException exception =
+                assertThrows(
+                        EntityNotFoundException.class,
+                        () -> {
+                            consultationService.changeConsultant(anyLong(), "consultant");
+                        });
 
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
     }
 
     @Test
     void 상담사변경_Property_NOT_FOUND() {
-        lenient().when(adminConsultationRepository.getById(anyLong()))
+        lenient()
+                .when(adminConsultationRepository.getById(anyLong()))
                 .thenReturn(adminConsultation);
 
-        when(adminConsultationRepository.getById(anyLong())).thenThrow(
-                new EntityNotFoundException(ErrorCode.NOT_FOUND))
-        ;
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
-            consultationService.changeConsultant(anyLong(), "consultant");
-        });
+        when(adminConsultationRepository.getById(anyLong()))
+                .thenThrow(new EntityNotFoundException(ErrorCode.NOT_FOUND));
+        EntityNotFoundException exception =
+                assertThrows(
+                        EntityNotFoundException.class,
+                        () -> {
+                            consultationService.changeConsultant(anyLong(), "consultant");
+                        });
 
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
     }
 
     @Test
     void 상담사변경_없는상담사선택() {
-        lenient().when(adminConsultationRepository.getById(anyLong()))
+        lenient()
+                .when(adminConsultationRepository.getById(anyLong()))
                 .thenReturn(adminConsultation);
 
         when(adminConsultationRepository.findByPropertyId(any()))
                 .thenThrow(new ConsultationException(ErrorCode.NOT_FOUND));
 
-        ConsultationException exception = assertThrows(ConsultationException.class, () -> {
-            consultationService.changeConsultant(anyLong(), "kb");
-        });
+        ConsultationException exception =
+                assertThrows(
+                        ConsultationException.class,
+                        () -> {
+                            consultationService.changeConsultant(anyLong(), "kb");
+                        });
 
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
     }
 
     @Test
     void 상담사리스트_Property_NOT_FOUND() {
-        when(propertyRepository.getIdById(anyLong())).thenThrow(
-                new EntityNotFoundException(ErrorCode.NOT_FOUND));
+        when(propertyRepository.getIdById(anyLong()))
+                .thenThrow(new EntityNotFoundException(ErrorCode.NOT_FOUND));
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
-            consultationService.getConsultants(anyLong());
-        });
+        EntityNotFoundException exception =
+                assertThrows(
+                        EntityNotFoundException.class,
+                        () -> {
+                            consultationService.getConsultants(anyLong());
+                        });
 
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
     }
 
     @Test
     void 상담사리스트_없는상담사선택() {
-        when(adminConsultationRepository.findAllConsultantByPropertyId(anyLong())).thenThrow(
-                new ConsultationException(ErrorCode.NOT_FOUND));
+        when(adminConsultationRepository.findAllConsultantByPropertyId(anyLong()))
+                .thenThrow(new ConsultationException(ErrorCode.NOT_FOUND));
 
-        ConsultationException exception = assertThrows(ConsultationException.class, () -> {
-            consultationService.getConsultants(anyLong());
-        });
+        ConsultationException exception =
+                assertThrows(
+                        ConsultationException.class,
+                        () -> {
+                            consultationService.getConsultants(anyLong());
+                        });
 
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
     }
 
     @Test
     void 상담대기모달_Admin_Consultation_NOT_FOUND() {
-        when(memberConsultationRepository.getById(anyLong())).thenThrow(
-                new EntityNotFoundException(ErrorCode.NOT_FOUND));
+        when(memberConsultationRepository.getById(anyLong()))
+                .thenThrow(new EntityNotFoundException(ErrorCode.NOT_FOUND));
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
-            consultationService.getConsultPendingResponse(anyLong());
-        });
+        EntityNotFoundException exception =
+                assertThrows(
+                        EntityNotFoundException.class,
+                        () -> {
+                            consultationService.getConsultPendingResponse(anyLong());
+                        });
 
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
     }
@@ -389,7 +427,6 @@ class ConsultationServiceTest {
                 .property(property)
                 .build();
     }
-
 
     private ConsultRequest createAdminConsultRequest() {
         return ConsultRequest.builder()

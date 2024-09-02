@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.property.model;
+package subscribers.clearbunyang.domain.file.model;
 
 
 import jakarta.validation.constraints.NotBlank;
