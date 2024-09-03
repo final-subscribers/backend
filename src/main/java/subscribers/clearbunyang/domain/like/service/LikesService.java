@@ -2,9 +2,12 @@ package subscribers.clearbunyang.domain.like.service;
 
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -88,6 +91,26 @@ public class LikesService {
                             member, currentDate, pageRequest, false);
         }
 
-        return properties.map(LikesPropertyResponse::fromEntity);
+        List<Property> filteredProperties =
+                properties.stream()
+                        .filter(
+                                property -> {
+                                    String key = memberId + ":" + property.getId();
+                                    Boolean isLikedInRedis =
+                                            (Boolean) redisTemplate.opsForHash().get("likes", key);
+
+                                    if (isLikedInRedis != null) {
+                                        // Redis에 정보가 있는 경우
+                                        return isLikedInRedis;
+                                    }
+
+                                    // Redis 값이 없을 경우 DB 상태로 결정
+                                    return likesRepository.existsByMemberIdAndPropertyId(
+                                            memberId, property.getId());
+                                })
+                        .collect(Collectors.toList());
+
+        return new PageImpl<>(filteredProperties, pageRequest, filteredProperties.size())
+                .map(LikesPropertyResponse::fromEntity);
     }
 }

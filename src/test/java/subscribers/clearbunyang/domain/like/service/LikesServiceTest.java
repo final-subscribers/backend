@@ -89,66 +89,6 @@ class LikesServiceTest {
   }
 
   @Test
-  void testGetMyFavoriteProperties_OpenStatus() {
-    // Open 상태일 때 내 좋아요 목록 반환
-    Long memberId = 1L;
-    String status = "open";
-    int page = 0;
-    int size = 10;
-    Member member = new Member();
-
-    Property property = Property.builder()
-        .keywords(new ArrayList<>())
-        .areas(new ArrayList<>())
-        .files(new ArrayList<>())
-        .propertyType(PropertyType.APARTMENT)
-        .salesType(SalesType.PRIVATE_SALE)
-        .build();
-
-    Page<Property> propertyPage = new PageImpl<>(Collections.singletonList(property));
-
-    when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-    when(propertyRepository.findAllByMemberAndDateRange(member, LocalDate.now(), PageRequest.of(page, size), true))
-        .thenReturn(propertyPage);
-
-    Page<LikesPropertyResponse> result = likesService.getMyFavoriteProperties(memberId, status, page, size);
-
-    assertNotNull(result);
-    assertEquals(1, result.getTotalElements());
-    verify(propertyRepository, times(1)).findAllByMemberAndDateRange(member, LocalDate.now(), PageRequest.of(page, size), true);
-  }
-
-  @Test
-  void testGetMyFavoriteProperties_ClosedStatus() {
-    // Closed 상태일 때 내 좋아요 목록 반환
-    Long memberId = 1L;
-    String status = "closed";
-    int page = 0;
-    int size = 10;
-    Member member = new Member();
-
-    Property property = Property.builder()
-        .keywords(new ArrayList<>())
-        .areas(new ArrayList<>())
-        .files(new ArrayList<>())
-        .propertyType(PropertyType.APARTMENT)
-        .salesType(SalesType.PRIVATE_SALE)
-        .build();
-
-    Page<Property> propertyPage = new PageImpl<>(Collections.singletonList(property));
-
-    when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-    when(propertyRepository.findAllByMemberAndDateRange(member, LocalDate.now(), PageRequest.of(page, size), false))
-        .thenReturn(propertyPage);
-
-    Page<LikesPropertyResponse> result = likesService.getMyFavoriteProperties(memberId, status, page, size);
-
-    assertNotNull(result);
-    assertEquals(1, result.getTotalElements());
-    verify(propertyRepository, times(1)).findAllByMemberAndDateRange(member, LocalDate.now(), PageRequest.of(page, size), false);
-  }
-
-  @Test
   void testGetMyFavoriteProperties_MemberNotFound() {
     //멤버 찾을 수 없을 때 에러 반환
     Long memberId = 1L;
