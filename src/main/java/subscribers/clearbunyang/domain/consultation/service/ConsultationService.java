@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.consultation.entity.AdminConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
+import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.domain.consultation.exception.ConsultationException;
 import subscribers.clearbunyang.domain.consultation.model.request.ConsultRequest;
@@ -57,6 +58,7 @@ public class ConsultationService {
         return ConsultPendingResponse.toDto(memberConsultation, extra);
     }
 
+    // TODO LMS 외 고객은 배정받은 상담사만 보이게
     @Transactional(readOnly = true)
     public ConsultantListResponse getConsultants(Long propertyId) {
         getPropertyId(propertyId);
@@ -72,16 +74,29 @@ public class ConsultationService {
         return ConsultantListResponse.toDto(consultantListResponses);
     }
 
-    // 동시에 같은 상담에 대해 상담사 이름 변경을 하려고 할 때 분산락 적용
+    /**
+     * 동시성 제어 기능을 사용하려면 상담사 변경 기능은 없어도 괜찮을거 같습니다! phone, none 일시 상담사 변경 불가 -> lms 일 시 한 번 등록하고, 변경
+     * 불가 덮어쓰기 불가 -> 여기서 동시성 제어
+     */
     @DistributedLock(key = "#adminConsultationId")
     @Transactional
-    public ConsultantResponse changeConsultant(Long adminConsultationId, String consultant) {
+    public ConsultantResponse registerConsultant(Long adminConsultationId, String consultant) {
         AdminConsultation adminConsultation = getAdminConsultation(adminConsultationId);
+
+        if (adminConsultation.getMemberConsultation().getMedium() != Medium.LMS) {
+            throw new ConsultationException(ErrorCode.BAD_REQUEST);
+        }
+
         Property property = adminConsultation.getMemberConsultation().getProperty();
 
         validateConsultantExists(property.getId(), consultant);
 
         adminConsultation.setConsultant(consultant);
+
+        String existingConsultant = adminConsultation.getConsultant();
+        if (!existingConsultant.isEmpty()) {
+            throw new ConsultationException(ErrorCode.UNABLE_TO_CHANGE_CONSULTANT);
+        }
 
         return ConsultantResponse.toDto(consultant);
     }

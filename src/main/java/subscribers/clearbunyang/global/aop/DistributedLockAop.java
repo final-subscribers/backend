@@ -14,7 +14,6 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.TransactionTimedOutException;
 import subscribers.clearbunyang.domain.consultation.exception.ConsultationException;
 import subscribers.clearbunyang.global.annotation.DistributedLock;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
@@ -31,6 +30,8 @@ public class DistributedLockAop {
     private final AopForTransaction aopForTransaction;
 
     // 실질적인 락 동작
+    // @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 5) // lease time 보다 짧게 시간
+    // 설정.
     @Around("@annotation(subscribers.clearbunyang.global.annotation.DistributedLock)")
     public Object lock(final ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
@@ -47,6 +48,8 @@ public class DistributedLockAop {
 
         boolean available = false;
 
+        log.info("{} - 락 획득 시도", key);
+
         try {
             available =
                     rLock.tryLock(
@@ -56,23 +59,18 @@ public class DistributedLockAop {
             if (!available) {
                 log.info("락 획득 실패={}", key); // TODO Exception 변경
                 throw new ConsultationException(
-                        ErrorCode.BAD_REQUEST); // ClassCastException 는 return false, return 0 일 때
+                        ErrorCode.LOCK_AQUISITION_FAILED); // ClassCastException 는 return false,
+                // return 0 일 때
                 // 발생.
             }
             log.info("로직 수행");
-            return aopForTransaction.proceed(joinPoint); // (3)
+            return joinPoint.proceed(); // (3)
         } catch (InterruptedException e) {
             log.info("에러 발생");
             throw e;
-        } catch (TransactionTimedOutException e) {
-            log.info("트랜잭션 타임아웃");
-            throw e;
-        } finally { // try catch 가 없다면 테스트상 접근 하나 통과, 로직 수행 log 한 번
-            // try { // try catch 가 있으면 테스트상 모든 접근 통과, 콘솔상 로직 수행이라는 log 한 번 나옴
-            rLock.unlock(); // (4) 획득 유무와 상관 없이 unlock
-            // } catch (IllegalMonitorStateException e) {
-            log.info("락 해제중  {} {}", method.getName(), key);
-            //  }
+        } finally {
+            log.info("락 해제");
+            rLock.unlock();
         }
     }
 

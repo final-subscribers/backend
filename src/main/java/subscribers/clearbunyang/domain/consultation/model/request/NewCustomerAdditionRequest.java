@@ -22,7 +22,8 @@ public class NewCustomerAdditionRequest {
 
     @NotBlank private String phoneNumber; // 고객 폰 번호
 
-    @NotBlank private String consultant; // 상담사
+    // @NotBlank 테스트를 위해 주석
+    private String consultant; // 상담사
 
     @NotNull private LocalDate preferredAt;
 

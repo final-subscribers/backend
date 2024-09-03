@@ -8,19 +8,19 @@ export const options = {
   duration: '1s', // 테스트 지속 시간
 };
 
-// 동일 id -> 10건 동시 요청
-
+// "C:\Project\fcfinal\src\test\java\subscribers\clearbunyang\domain\consultation\service\lockTest.js"
 randomSeed(12345); // For consistent randomness across test runs
 
 // 테스트 실패 수를 기록할 커스텀 카운터
 export const errorCounter = new Counter('errors');
 
+
 export default function () {
   const ip = 'localhost';
   const baseUrl = 'http://' + ip + ':8080/api/admin/consultations'; // 실제 API 엔드포인트로 변경
 
-  const adminConsultationId = 128;
-  const consultant = `a-10-${__VU}`;
+  const adminConsultationId = 133;
+  const consultant = `a-10`;
   //로그인 후 토큰값 획득 후 설정
   const MOCK_ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmdWxsbW9vbjAyMDdAbmF2ZXIuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzI1MjgwMzU4LCJleHAiOjE3MjY4ODUxNTh9.k3O38D6n21-NmsrGiGXSvA7c3H_rOJPeiBZX-Lz98XM';
   const MOCK_REFRESH_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmdWxsbW9vbjAyMDdAbmF2ZXIuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzI1MjgwMzU4LCJleHAiOjE3Mjc4ODUxNTh9.0dotdXiSt2EhYIzK5ApQdevAtN7wwuREXHGwQaOmmi0';
@@ -54,6 +54,5 @@ export default function () {
   }
 
   // 요청 후 짧은 대기 시간
-  sleep(1);
   console.log(response.body);
 }

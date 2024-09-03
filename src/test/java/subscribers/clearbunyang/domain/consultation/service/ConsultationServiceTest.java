@@ -192,7 +192,7 @@ class ConsultationServiceTest {
                 .thenReturn(List.of(adminConsultation));
 
         ConsultantResponse response =
-                consultationService.changeConsultant(1L, adminConsultation.getConsultant());
+                consultationService.registerConsultant(1L, adminConsultation.getConsultant());
 
         assertNotNull(response);
 
@@ -297,7 +297,7 @@ class ConsultationServiceTest {
                 assertThrows(
                         EntityNotFoundException.class,
                         () -> {
-                            consultationService.changeConsultant(anyLong(), "consultant");
+                            consultationService.registerConsultant(anyLong(), "consultant");
                         });
 
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
@@ -315,7 +315,7 @@ class ConsultationServiceTest {
                 assertThrows(
                         EntityNotFoundException.class,
                         () -> {
-                            consultationService.changeConsultant(anyLong(), "consultant");
+                            consultationService.registerConsultant(anyLong(), "consultant");
                         });
 
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
@@ -334,7 +334,7 @@ class ConsultationServiceTest {
                 assertThrows(
                         ConsultationException.class,
                         () -> {
-                            consultationService.changeConsultant(anyLong(), "kb");
+                            consultationService.registerConsultant(anyLong(), "kb");
                         });
 
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
