@@ -14,8 +14,8 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
-import subscribers.clearbunyang.domain.consultation.exception.ConsultationException;
 import subscribers.clearbunyang.global.annotation.DistributedLock;
+import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 
 @Aspect
@@ -27,11 +27,9 @@ public class DistributedLockAop {
     private static final String LOCK_PREFIX = "LOCK:";
 
     private final RedissonClient redissonClient;
-    private final AopForTransaction aopForTransaction;
 
     // 실질적인 락 동작
     // @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 5) // lease time 보다 짧게 시간
-    // 설정.
     @Around("@annotation(subscribers.clearbunyang.global.annotation.DistributedLock)")
     public Object lock(final ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
@@ -58,7 +56,7 @@ public class DistributedLockAop {
                             distributedLock.timeUnit()); // (2)
             if (!available) {
                 log.info("락 획득 실패={}", key); // TODO Exception 변경
-                throw new ConsultationException(
+                throw new InvalidValueException(
                         ErrorCode.LOCK_AQUISITION_FAILED); // ClassCastException 는 return false,
                 // return 0 일 때
                 // 발생.

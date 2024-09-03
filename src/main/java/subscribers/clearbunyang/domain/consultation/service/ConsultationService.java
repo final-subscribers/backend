@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.consultation.entity.AdminConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
-import subscribers.clearbunyang.domain.consultation.exception.ConsultationException;
 import subscribers.clearbunyang.domain.consultation.model.request.ConsultRequest;
 import subscribers.clearbunyang.domain.consultation.model.response.AdminConsultResponse;
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultCompletedResponse;
@@ -38,7 +37,7 @@ public class ConsultationService {
         AdminConsultation adminConsultation = getAdminConsultation(adminConsultationId);
 
         if (adminConsultation.getMemberConsultation().getStatus() != Status.COMPLETED) {
-            throw new ConsultationException(ErrorCode.NOT_FOUND);
+            throw new InvalidValueException(ErrorCode.NOT_FOUND);
         }
 
         return ConsultCompletedResponse.toDto(adminConsultation);
@@ -49,7 +48,7 @@ public class ConsultationService {
         MemberConsultation memberConsultation = getMemberConsultation(memberConsultationId);
 
         if (memberConsultation.getStatus() != Status.PENDING) {
-            throw new ConsultationException(ErrorCode.NOT_FOUND);
+            throw new InvalidValueException(ErrorCode.NOT_FOUND);
         }
 
         Boolean extra =
@@ -104,7 +103,7 @@ public class ConsultationService {
         getMemberConsultation(adminConsultation.getMemberConsultation().getId());
 
         if (adminConsultation.getMemberConsultation().getStatus() != Status.COMPLETED) {
-            throw new ConsultationException(ErrorCode.NOT_FOUND);
+            throw new InvalidValueException(ErrorCode.NOT_FOUND);
         }
 
         adminConsultation.setMessage(message);
@@ -144,13 +143,13 @@ public class ConsultationService {
                 adminConsultations.stream().anyMatch(ac -> ac.getConsultant().equals(consultant));
 
         if (!existsConsultant) {
-            throw new ConsultationException(ErrorCode.NOT_FOUND);
+            throw new InvalidValueException(ErrorCode.NOT_FOUND);
         }
     }
 
     private void validateRequest(ConsultRequest request) {
         if (request.getTier() == null) {
-            throw new ConsultationException(ErrorCode.INVALID_INPUT_VALUE);
+            throw new InvalidValueException(ErrorCode.INVALID_INPUT_VALUE);
         }
     }
 }
