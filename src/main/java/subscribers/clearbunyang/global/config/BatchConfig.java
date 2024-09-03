@@ -61,21 +61,24 @@ public class BatchConfig {
                     likesRepository.findByMemberAndProperty(member, property);
 
             if (Boolean.TRUE.equals(isLikedInRedis)) {
-                if (existingLike.isPresent()) {
-                    // DB에 좋아요가 존재하면 삭제
-                    likesRepository.delete(existingLike.get());
-                    property.setLikeCount(property.getLikeCount() - 1);
-                    System.out.println("Removed like for key " + key);
-                } else {
+                if (!existingLike.isPresent()) {
                     // DB에 좋아요가 없으면 추가
                     Likes like = Likes.builder().member(member).property(property).build();
                     likesRepository.save(like);
                     property.setLikeCount(property.getLikeCount() + 1);
-                    System.out.println("Added like for key " + key);
+                    System.out.println("좋아요를 추가했습니다. key: " + key);
+                } else {
+                    System.out.println("좋아요가 이미 존재합니다. key: " + key);
                 }
             } else {
-                // Redis 상태가 false일 때는 아무 작업도 하지 않음
-                System.out.println("No action needed for key " + key);
+                if (existingLike.isPresent()) {
+                    // DB에 좋아요가 존재하면 삭제
+                    likesRepository.delete(existingLike.get());
+                    property.setLikeCount(property.getLikeCount() - 1);
+                    System.out.println("좋아요를 삭제했습니다. key: " + key);
+                } else {
+                    System.out.println("삭제할 좋아요가 없습니다. key: " + key);
+                }
             }
 
             // DB에 변경 사항 저장

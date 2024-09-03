@@ -45,16 +45,22 @@ public class LikesService {
 
         String key = memberId + ":" + propertyId;
 
-        Boolean isLiked = (Boolean) redisTemplate.opsForHash().get("likes", key);
+        // DB에서 좋아요가 이미 존재하는지 확인
+        boolean isLikedInDb = likesRepository.existsByMemberIdAndPropertyId(memberId, propertyId);
 
-        System.out.println("Current like status for key " + key + ": " + isLiked);
+        // Redis에서 현재 좋아요 상태를 확인
+        Boolean isLikedInRedis = (Boolean) redisTemplate.opsForHash().get("likes", key);
 
-        if (Boolean.TRUE.equals(isLiked)) {
-            redisTemplate.opsForHash().put("likes", key, false);
-            System.out.println("Removed like for key " + key);
+        System.out.println("Current like status for key " + key + ": " + isLikedInRedis);
+
+        if (isLikedInRedis == null) {
+            // Redis에 정보가 없을 경우, DB 상태에 따라 초기 값을 설정
+            redisTemplate.opsForHash().put("likes", key, !isLikedInDb);
+            System.out.println("Set initial like status for key " + key + " to " + !isLikedInDb);
         } else {
-            redisTemplate.opsForHash().put("likes", key, true);
-            System.out.println("Added like for key " + key);
+            // Redis에 정보가 있는 경우, 반전된 값으로 설정
+            redisTemplate.opsForHash().put("likes", key, !isLikedInRedis);
+            System.out.println("Toggled like status for key " + key + " to " + !isLikedInRedis);
         }
     }
 
