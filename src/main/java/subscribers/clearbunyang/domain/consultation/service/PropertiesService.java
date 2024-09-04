@@ -43,7 +43,6 @@ public class PropertiesService {
 
     @Transactional
     public void createNewCustomerAddition(Long propertyId, NewCustomerAdditionRequest request) {
-        validDate(LocalDate.now(), request.getPreferredAt());
         checkPhoneNumberExists(request.getPhoneNumber());
         Property property = getProperty(propertyId);
 
@@ -141,12 +140,6 @@ public class PropertiesService {
 
     private Long getPropertyId(Long id) {
         return propertyRepository.getIdById(id);
-    }
-
-    private void validDate(LocalDate today, LocalDate preferredAt) {
-        if (today.isAfter(preferredAt) || preferredAt.isBefore(today)) {
-            throw new InvalidValueException(ErrorCode.DATETIME_INVALID);
-        }
     }
 
     private void checkPhoneNumberExists(String phoneNumber) {
