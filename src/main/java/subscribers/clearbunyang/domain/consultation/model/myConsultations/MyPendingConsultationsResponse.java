@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
+import subscribers.clearbunyang.domain.file.model.FileDTO;
 import subscribers.clearbunyang.domain.property.model.FileDTO;
 
 @Getter
