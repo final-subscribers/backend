@@ -11,11 +11,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+
 import org.mockito.junit.jupiter.MockitoExtension;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
@@ -44,6 +46,7 @@ public class MyConsultationServiceTest {
 
     @Mock MemberRepository memberRepository;
 
+
     private Property property1;
 
     private Property property2;
@@ -60,7 +63,6 @@ public class MyConsultationServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-
         member =
                 Member.builder()
                         .id(1L)
@@ -339,3 +341,4 @@ public class MyConsultationServiceTest {
                 .findPendingConsultationsByUserIdAndSearch(anyLong(), anyString());
     }
 }
+
