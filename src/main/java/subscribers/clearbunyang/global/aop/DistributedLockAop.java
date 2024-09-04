@@ -27,6 +27,7 @@ public class DistributedLockAop {
     private static final String LOCK_PREFIX = "LOCK:";
 
     private final RedissonClient redissonClient;
+    private final AopForTransaction aopForTransaction;
 
     // 실질적인 락 동작
     @Around("@annotation(subscribers.clearbunyang.global.annotation.DistributedLock)")
@@ -54,17 +55,20 @@ public class DistributedLockAop {
                             distributedLock.leaseTime(),
                             distributedLock.timeUnit()); // (2)
             if (!available) {
-                log.info("락 획득 실패={}", key); // TODO Exception 변경
+                log.info("락 획득 실패={}", key);
                 throw new DistributedLockException(ErrorCode.LOCK_AQUISITION_FAILED) {};
             }
             log.info("로직 수행");
-            return joinPoint.proceed(); // (3)
+            return aopForTransaction.proceed(joinPoint); // (3)
         } catch (InterruptedException e) {
             log.info("에러 발생");
             throw e;
         } finally {
-            log.info("락 해제");
-            rLock.unlock();
+            try {
+                rLock.unlock(); // (4) 획득 유무와 상관 없이 unlock
+            } catch (IllegalMonitorStateException e) {
+                log.info("Redisson Lock Already UnLock {} {}", method.getName(), key);
+            }
         }
     }
 
