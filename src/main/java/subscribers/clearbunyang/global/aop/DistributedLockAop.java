@@ -14,8 +14,8 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
+import subscribers.clearbunyang.domain.consultation.exception.DistributedLockException;
 import subscribers.clearbunyang.global.annotation.DistributedLock;
-import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 
 @Aspect
@@ -56,8 +56,8 @@ public class DistributedLockAop {
                             distributedLock.timeUnit()); // (2)
             if (!available) {
                 log.info("락 획득 실패={}", key); // TODO Exception 변경
-                throw new InvalidValueException(
-                        ErrorCode.LOCK_AQUISITION_FAILED); // ClassCastException 는 return false,
+                throw new DistributedLockException(
+                        ErrorCode.LOCK_AQUISITION_FAILED) {}; // ClassCastException 는 return false,
                 // return 0 일 때
                 // 발생.
             }

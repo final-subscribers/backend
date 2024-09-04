@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.consultation.entity.AdminConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
+import subscribers.clearbunyang.domain.consultation.exception.ConsultantException;
 import subscribers.clearbunyang.domain.consultation.model.request.ConsultRequest;
 import subscribers.clearbunyang.domain.consultation.model.response.AdminConsultResponse;
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultCompletedResponse;
@@ -89,7 +90,7 @@ public class ConsultationService {
 
         String existingConsultant = adminConsultation.getConsultant();
         if (!existingConsultant.isEmpty()) {
-            throw new InvalidValueException(ErrorCode.UNABLE_TO_CHANGE_CONSULTANT);
+            throw new ConsultantException(ErrorCode.UNABLE_TO_CHANGE_CONSULTANT);
         }
 
         adminConsultation.setConsultant(consultant);
