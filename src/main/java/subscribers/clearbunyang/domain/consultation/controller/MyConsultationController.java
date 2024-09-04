@@ -31,4 +31,15 @@ public class MyConsultationController {
         Long userId = user.getUserId();
         return myConsultationService.getMyPendingConsultationsList(userId, search, page, size);
     }
+
+    @Operation(summary = "상담 완료 상태")
+    @GetMapping("/completed")
+    public ConsultationPagedResponse getMyCompletedConsultationsList(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false, value = "page", defaultValue = "0") int page,
+            @RequestParam(required = false, value = "size", defaultValue = "5") int size) {
+        Long userId = user.getUserId();
+        return myConsultationService.getMyCompletedConsultationsList(userId, search, page, size);
+    }
 }
