@@ -5,6 +5,7 @@ import {Counter} from 'k6/metrics';
 export const options = {
   vus: 30, // 동시 사용자 수
   duration: '1s', // 테스트 지속 시간
+
 };
 
 // "C:\Project\fcfinal\src\test\java\subscribers\clearbunyang\domain\consultation\service\lockTest.js"
@@ -16,14 +17,14 @@ export default function () { //시나리오 실행
   const ip = 'localhost';
   const baseUrl = 'http://' + ip + ':8080/api/admin/consultations'; // 실제 API 엔드포인트로 변경
 
-  const adminConsultationId = 170;
+  const adminConsultationId = 195;
   const consultant = `a-11`;
   //로그인 후 토큰값 획득 후 설정
   const MOCK_ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmdWxsbW9vbjAyMDdAbmF2ZXIuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzI1MjgwMzU4LCJleHAiOjE3MjY4ODUxNTh9.k3O38D6n21-NmsrGiGXSvA7c3H_rOJPeiBZX-Lz98XM';
   const MOCK_REFRESH_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmdWxsbW9vbjAyMDdAbmF2ZXIuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzI1MjgwMzU4LCJleHAiOjE3Mjc4ODUxNTh9.0dotdXiSt2EhYIzK5ApQdevAtN7wwuREXHGwQaOmmi0';
 
   const payload = JSON.stringify({
-    consultant: "a-10"// 테스트 데이터
+    consultant: "a-11"// 테스트 데이터
   });
 
   const fullUrl = `${baseUrl}/${adminConsultationId}?consultant=${encodeURIComponent(
