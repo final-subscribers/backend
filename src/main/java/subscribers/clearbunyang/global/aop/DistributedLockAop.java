@@ -29,7 +29,6 @@ public class DistributedLockAop {
     private final RedissonClient redissonClient;
 
     // 실질적인 락 동작
-    // @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 5) // lease time 보다 짧게 시간
     @Around("@annotation(subscribers.clearbunyang.global.annotation.DistributedLock)")
     public Object lock(final ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
@@ -56,10 +55,7 @@ public class DistributedLockAop {
                             distributedLock.timeUnit()); // (2)
             if (!available) {
                 log.info("락 획득 실패={}", key); // TODO Exception 변경
-                throw new DistributedLockException(
-                        ErrorCode.LOCK_AQUISITION_FAILED) {}; // ClassCastException 는 return false,
-                // return 0 일 때
-                // 발생.
+                throw new DistributedLockException(ErrorCode.LOCK_AQUISITION_FAILED) {};
             }
             log.info("로직 수행");
             return joinPoint.proceed(); // (3)
