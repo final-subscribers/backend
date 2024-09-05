@@ -14,9 +14,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DashboardInitDTO {
     PropertyInquiryStatusDTO today;
-    List<ConsultationDateStatsDTO> lastFiveWeeks;
+    List<ConsultationDateStatsDTO> totalNumberByWeek;
     PropertyInquiryStatusDTO highestConsultation;
     PropertyInquiryStatusDTO lowestConsultation;
-    List<PropertySelectDTO> properties;
+    List<PropertySelectDTO> dropdown;
     PropertyInquiryDetailsDTO situation;
 }
