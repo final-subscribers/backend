@@ -4,7 +4,7 @@ package subscribers.clearbunyang.domain.consultation.model.request;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,8 +24,8 @@ public class NewCustomerAdditionRequest {
     @NotBlank private String name; // 고객 이름
 
     @NotBlank
-    @Size(min = 1, max = 12)
     @NumericValidation
+    @Pattern(regexp = "^\\d{11}$")
     private String phoneNumber; // 고객 폰 번호
 
     // @NotBlank 테스트를 위해 주석
