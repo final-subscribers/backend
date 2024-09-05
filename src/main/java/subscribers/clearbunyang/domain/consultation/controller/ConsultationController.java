@@ -49,12 +49,12 @@ public class ConsultationController {
         return consultationService.getConsultants(propertyId);
     }
 
-    @Tag(name = "상담사 변경", description = "상담 대기 상담사 변경")
-    @Operation(summary = "상담사 변경")
+    @Tag(name = "상담사 등록", description = "상담 대기 상담사 등록")
+    @Operation(summary = "상담사 등록")
     @PutMapping("/{adminConsultationId}")
     public ConsultantResponse updateConsultant(
             @PathVariable Long adminConsultationId, @RequestParam String consultant) {
-        return consultationService.changeConsultant(adminConsultationId, consultant);
+        return consultationService.registerConsultant(adminConsultationId, consultant);
     }
 
     @Tag(name = "상담사 메모 수정", description = "상담 완료 메모 수정")

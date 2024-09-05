@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
-import subscribers.clearbunyang.domain.consultation.exception.ConsultationException;
+import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 
@@ -53,7 +53,7 @@ public interface MemberConsultationRepository extends JpaRepository<MemberConsul
 
     default void checkPhoneNumberExists(String phoneNumber) {
         if (existsByPhoneNumber(phoneNumber)) {
-            throw new ConsultationException(ErrorCode.PHONE_NUMBER_DUPLICATION);
+            throw new InvalidValueException(ErrorCode.PHONE_NUMBER_DUPLICATION);
         }
     }
 
