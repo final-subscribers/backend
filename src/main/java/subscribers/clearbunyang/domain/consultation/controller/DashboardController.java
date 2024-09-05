@@ -26,15 +26,16 @@ public class DashboardController {
     private final DashboardService dashboardService;
 
     @GetMapping("dashboard")
-    public DashboardInitDTO getDashboard() {
-        return null;
+    public DashboardInitDTO getDashboard(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return dashboardService.getDashboard(customUserDetails.getUserId());
     }
 
     @GetMapping("dashboard/properties")
     public Page<PropertiesInquiryStatsDTO> getDashboardProperties(
             @PageableDefault Pageable pageable,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        return dashboardService.getConsultationProgress(customUserDetails.getUserId(), pageable);
+        return dashboardService.getPropertiesInquiryStats(customUserDetails.getUserId(), pageable);
     }
 
     @GetMapping("/properties/{property_id}")

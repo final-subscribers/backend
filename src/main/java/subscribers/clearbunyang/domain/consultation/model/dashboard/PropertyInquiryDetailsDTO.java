@@ -4,16 +4,12 @@ package subscribers.clearbunyang.domain.consultation.model.dashboard;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 public class PropertyInquiryDetailsDTO {
     String propertyName;
     Integer pending = 0;
@@ -41,8 +37,7 @@ public class PropertyInquiryDetailsDTO {
         this.lms = lms;
     }
 
-    public PropertyInquiryDetailsDTO(String propertyName) {
-        this.propertyName = propertyName;
+    public PropertyInquiryDetailsDTO(Integer all) {
         this.all = 0;
     }
 }
