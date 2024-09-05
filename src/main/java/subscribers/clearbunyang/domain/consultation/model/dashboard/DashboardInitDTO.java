@@ -13,14 +13,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class DashboardInitDTO {
-    PropertiesInquiryStatsDTO today;
-    PropertiesInquiryStatsDTO thisWeek;
-    PropertiesInquiryStatsDTO lastWeek;
-    List<PropertiesInquiryStatsDTO> lastFiveWeeks;
-    PropertiesInquiryStatsDTO highestConsultation;
-    PropertiesInquiryStatsDTO lowestConsultation;
-    Integer allProperties;
-    List<PropertiesInquiryStatsDTO> properties;
-    List<String> statusProperties;
+    PropertyInquiryStatusDTO today;
+    List<ConsultationDateStatsDTO> lastFiveWeeks;
+    PropertyInquiryStatusDTO highestConsultation;
+    PropertyInquiryStatusDTO lowestConsultation;
+    List<PropertySelectDTO> properties;
     PropertyInquiryDetailsDTO situation;
 }
