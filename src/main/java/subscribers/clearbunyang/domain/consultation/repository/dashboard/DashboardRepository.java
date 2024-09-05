@@ -12,11 +12,11 @@ import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInqu
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertySelectDTO;
 
 public interface DashboardRepository {
-    List<PropertySelectDTO> findPropertySelects(Long adminId);
+    List<PropertySelectDTO> findDropdownSelects(Long adminId);
 
     PropertyInquiryStatusDTO findTodayStats(Long adminId);
 
-    List<ConsultationDateStatsDTO> findLastFiveWeeksStats(Long adminId);
+    List<ConsultationDateStatsDTO> findTotalNumberByWeek(Long adminId);
 
     List<PropertyInquiryStatusDTO> findStatsOrderByCountDesc(Long adminId);
 

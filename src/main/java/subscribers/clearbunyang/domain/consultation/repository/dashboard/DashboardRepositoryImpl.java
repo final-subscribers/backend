@@ -40,7 +40,7 @@ public class DashboardRepositoryImpl implements DashboardRepository {
     NumberExpression<Integer> pendingCount = statusSumExpression(PENDING);
     NumberExpression<Integer> completedCount = statusSumExpression(COMPLETED);
 
-    public List<PropertySelectDTO> findPropertySelects(Long adminId) {
+    public List<PropertySelectDTO> findDropdownSelects(Long adminId) {
         return query.select(
                         Projections.constructor(
                                 PropertySelectDTO.class, property.id, property.name))
@@ -72,7 +72,7 @@ public class DashboardRepositoryImpl implements DashboardRepository {
         return result.orElse(new PropertyInquiryStatusDTO(0, 0));
     }
 
-    public List<ConsultationDateStatsDTO> findLastFiveWeeksStats(Long adminId) {
+    public List<ConsultationDateStatsDTO> findTotalNumberByWeek(Long adminId) {
         // 현재 날짜 기준으로 지난 다섯 주의 날짜를 계산합니다.
         LocalDate now = LocalDate.now();
         List<YearWeek> lastFiveWeeks =
