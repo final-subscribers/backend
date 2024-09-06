@@ -12,6 +12,8 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import subscribers.clearbunyang.domain.consultation.exception.ConsultantException;
+import subscribers.clearbunyang.domain.consultation.exception.DistributedLockException;
 import subscribers.clearbunyang.global.api.Response;
 import subscribers.clearbunyang.global.api.Result;
 import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
@@ -22,6 +24,7 @@ import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundExceptio
 @Priority(Integer.MAX_VALUE)
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Response<Object>> handleEntityNotFoundException(
             EntityNotFoundException e) {
@@ -97,23 +100,21 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    // Valid annotation
-    /* @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Response<Map<String, String>> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult()
-                .getAllErrors()
-                .forEach(
-                        (error) -> {
-                            String fieldName = ((FieldError) error).getField();
-                            String errorMessage = error.getDefaultMessage();
-                            errors.put(fieldName, errorMessage);
-                        });
+    // lockaop 서 락획득 실패
+    @ExceptionHandler(DistributedLockException.class)
+    public ResponseEntity<Response<Object>> distributedLockException(DistributedLockException e) {
+        log.error("", e);
 
-        return Response.<Map<String, String>>builder()
-                .result(Result.Error(ErrorCode.INVALID_INPUT_VALUE))
-                .body(errors)
-                .build();
-    }*/
+        return ResponseEntity.status(ErrorCode.LOCK_AQUISITION_FAILED.getStatus())
+                .body(Response.ERROR(ErrorCode.LOCK_AQUISITION_FAILED));
+    }
+
+    // service 서
+    @ExceptionHandler(ConsultantException.class)
+    public ResponseEntity<Response<Object>> consultantException(ConsultantException e) {
+        log.error("", e);
+
+        return ResponseEntity.status(ErrorCode.UNABLE_TO_CHANGE_CONSULTANT.getStatus())
+                .body(Response.ERROR(ErrorCode.UNABLE_TO_CHANGE_CONSULTANT));
+    }
 }

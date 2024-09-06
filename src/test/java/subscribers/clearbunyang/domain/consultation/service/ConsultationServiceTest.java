@@ -22,7 +22,6 @@ import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
-import subscribers.clearbunyang.domain.consultation.exception.ConsultationException;
 import subscribers.clearbunyang.domain.consultation.model.request.ConsultRequest;
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultCompletedResponse;
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultPendingResponse;
@@ -38,6 +37,7 @@ import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.domain.user.entity.Admin;
+import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 
@@ -191,7 +191,7 @@ class ConsultationServiceTest {
                 .thenReturn(List.of(adminConsultation));
 
         ConsultantResponse response =
-                consultationService.changeConsultant(1L, adminConsultation.getConsultant());
+                consultationService.registerConsultant(1L, adminConsultation.getConsultant());
 
         assertNotNull(response);
 
@@ -232,9 +232,9 @@ class ConsultationServiceTest {
         AdminConsultation adminConsultation1 = createAdminConsultation(memberConsultation1);
         when(adminConsultationRepository.getById(anyLong())).thenReturn(adminConsultation1);
 
-        ConsultationException exception =
+        InvalidValueException exception =
                 assertThrows(
-                        ConsultationException.class,
+                        InvalidValueException.class,
                         () -> {
                             consultationService.updateConsultMessage(anyLong(), "fg");
                         });
@@ -296,7 +296,7 @@ class ConsultationServiceTest {
                 assertThrows(
                         EntityNotFoundException.class,
                         () -> {
-                            consultationService.changeConsultant(anyLong(), "consultant");
+                            consultationService.registerConsultant(anyLong(), "consultant");
                         });
 
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
@@ -314,7 +314,7 @@ class ConsultationServiceTest {
                 assertThrows(
                         EntityNotFoundException.class,
                         () -> {
-                            consultationService.changeConsultant(anyLong(), "consultant");
+                            consultationService.registerConsultant(anyLong(), "consultant");
                         });
 
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
@@ -327,13 +327,13 @@ class ConsultationServiceTest {
                 .thenReturn(adminConsultation);
 
         when(adminConsultationRepository.findByPropertyId(any()))
-                .thenThrow(new ConsultationException(ErrorCode.NOT_FOUND));
+                .thenThrow(new InvalidValueException(ErrorCode.NOT_FOUND));
 
-        ConsultationException exception =
+        InvalidValueException exception =
                 assertThrows(
-                        ConsultationException.class,
+                        InvalidValueException.class,
                         () -> {
-                            consultationService.changeConsultant(anyLong(), "kb");
+                            consultationService.registerConsultant(anyLong(), "kb");
                         });
 
         assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
@@ -357,11 +357,11 @@ class ConsultationServiceTest {
     @Test
     void 상담사리스트_없는상담사선택() {
         when(adminConsultationRepository.findAllConsultantByPropertyId(anyLong()))
-                .thenThrow(new ConsultationException(ErrorCode.NOT_FOUND));
+                .thenThrow(new InvalidValueException(ErrorCode.NOT_FOUND));
 
-        ConsultationException exception =
+        InvalidValueException exception =
                 assertThrows(
-                        ConsultationException.class,
+                        InvalidValueException.class,
                         () -> {
                             consultationService.getConsultants(anyLong());
                         });

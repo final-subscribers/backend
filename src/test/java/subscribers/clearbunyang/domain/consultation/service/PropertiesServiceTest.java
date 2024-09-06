@@ -25,7 +25,6 @@ import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
-import subscribers.clearbunyang.domain.consultation.exception.ConsultationException;
 import subscribers.clearbunyang.domain.consultation.model.request.ConsultRequest;
 import subscribers.clearbunyang.domain.consultation.model.request.NewCustomerAdditionRequest;
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultCompletedListResponse;
@@ -43,6 +42,7 @@ import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
 import subscribers.clearbunyang.domain.property.model.PropertyDateDto;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.domain.user.entity.Admin;
+import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 
@@ -244,15 +244,15 @@ class PropertiesServiceTest {
     @Test
     void 신규고객등록시_전화번호_중복() {
         String number = memberConsultation.getPhoneNumber();
-        doThrow(new ConsultationException(ErrorCode.PHONE_NUMBER_DUPLICATION))
+        doThrow(new InvalidValueException(ErrorCode.PHONE_NUMBER_DUPLICATION))
                 .when(memberConsultationRepository)
                 .checkPhoneNumberExists(number);
 
         NewCustomerAdditionRequest request = createNewCustomerAdditionRequest();
 
-        ConsultationException exception =
+        InvalidValueException exception =
                 assertThrows(
-                        ConsultationException.class,
+                        InvalidValueException.class,
                         () -> {
                             propertiesService.createNewCustomerAddition(anyLong(), request);
                         });

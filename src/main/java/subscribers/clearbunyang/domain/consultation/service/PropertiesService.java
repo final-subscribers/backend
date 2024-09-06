@@ -15,7 +15,6 @@ import subscribers.clearbunyang.domain.consultation.entity.AdminConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
-import subscribers.clearbunyang.domain.consultation.exception.ConsultationException;
 import subscribers.clearbunyang.domain.consultation.model.request.NewCustomerAdditionRequest;
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultCompletedListResponse;
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultCompletedSummaryResponse;
@@ -30,6 +29,7 @@ import subscribers.clearbunyang.domain.consultation.repository.AdminConsultation
 import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
+import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 
 @Slf4j
@@ -43,7 +43,6 @@ public class PropertiesService {
 
     @Transactional
     public void createNewCustomerAddition(Long propertyId, NewCustomerAdditionRequest request) {
-        validDate(LocalDate.now(), request.getPreferredAt());
         checkPhoneNumberExists(request.getPhoneNumber());
         Property property = getProperty(propertyId);
 
@@ -143,12 +142,6 @@ public class PropertiesService {
         return propertyRepository.getIdById(id);
     }
 
-    private void validDate(LocalDate today, LocalDate preferredAt) {
-        if (today.isAfter(preferredAt) || preferredAt.isBefore(today)) {
-            throw new ConsultationException(ErrorCode.DATETIME_INVALID);
-        }
-    }
-
     private void checkPhoneNumberExists(String phoneNumber) {
         memberConsultationRepository.checkPhoneNumberExists(phoneNumber);
     }
@@ -181,14 +174,14 @@ public class PropertiesService {
             if (request.getTier() != null) {
                 // TIER 이외의 값 입력시 에러,이게 없으면 pending 일 때 이상한 값(R,3,6) 입력이 됨
                 if (!Tier.isValidStatus(request.getTier().name())) {
-                    throw new ConsultationException(ErrorCode.TIER_CANNOT_BE_SPECIFIED);
+                    throw new InvalidValueException(ErrorCode.TIER_CANNOT_BE_SPECIFIED);
                 } // TIER 입력시 에러
-                throw new ConsultationException(ErrorCode.TIER_CANNOT_BE_SPECIFIED);
+                throw new InvalidValueException(ErrorCode.TIER_CANNOT_BE_SPECIFIED);
             }
         } else if (request.getStatus().equals(Status.COMPLETED)) {
             if (request.getTier() == null) {
                 // COMPLETED 일 때 TIER가 비어있는 경우 에러
-                throw new ConsultationException(ErrorCode.INVALID_INPUT_VALUE);
+                throw new InvalidValueException(ErrorCode.INVALID_INPUT_VALUE);
             }
         }
     }
