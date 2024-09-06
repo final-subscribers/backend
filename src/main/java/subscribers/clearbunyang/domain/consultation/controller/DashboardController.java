@@ -3,6 +3,7 @@ package subscribers.clearbunyang.domain.consultation.controller;
 
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -25,6 +26,7 @@ public class DashboardController {
 
     private final DashboardService dashboardService;
 
+    @Cacheable
     @GetMapping("dashboard")
     public DashboardInitDTO getDashboard(
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {

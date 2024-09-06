@@ -31,6 +31,8 @@ public class RedisConfig {
 
     private static final String REDISSON_HOST_PREFIX = "redis://";
 
+    public static final Long DEFAULT_CACHE_TTL = 10L;
+
     @Bean
     public RedissonClient redissonClient() {
         Config config = new Config();
@@ -64,7 +66,7 @@ public class RedisConfig {
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisCacheConfiguration cacheConfig =
                 RedisCacheConfiguration.defaultCacheConfig()
-                        .entryTtl(Duration.ofMinutes(10)) // 캐시 수명 설정
+                        .entryTtl(Duration.ofMinutes(DEFAULT_CACHE_TTL)) // 캐시 수명 설정
                         .disableCachingNullValues();
         return RedisCacheManager.builder(redisConnectionFactory).cacheDefaults(cacheConfig).build();
     }
