@@ -1,8 +1,9 @@
-package subscribers.clearbunyang.domain.property.model;
+package subscribers.clearbunyang.domain.property.model.response;
 
 
 import java.util.List;
 import lombok.*;
+import subscribers.clearbunyang.domain.property.model.MyPropertyDTO;
 
 @Getter
 @NoArgsConstructor

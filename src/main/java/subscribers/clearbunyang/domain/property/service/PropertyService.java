@@ -3,9 +3,7 @@ package subscribers.clearbunyang.domain.property.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,16 +11,20 @@ import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
 import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
 import subscribers.clearbunyang.domain.file.entity.File;
-import subscribers.clearbunyang.domain.file.model.FileDTO;
+import subscribers.clearbunyang.domain.file.model.FileRequestDTO;
 import subscribers.clearbunyang.domain.file.repository.FileRepository;
+import subscribers.clearbunyang.domain.like.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.entity.Area;
 import subscribers.clearbunyang.domain.property.entity.Keyword;
 import subscribers.clearbunyang.domain.property.entity.Property;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
 import subscribers.clearbunyang.domain.property.exception.JsonConversionException;
-import subscribers.clearbunyang.domain.property.model.AreaDTO;
-import subscribers.clearbunyang.domain.property.model.ConsultationRequestDTO;
-import subscribers.clearbunyang.domain.property.model.KeywordDTO;
-import subscribers.clearbunyang.domain.property.model.PropertyRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.AreaRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.ConsultationRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.KeywordRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.PropertyRequestDTO;
+import subscribers.clearbunyang.domain.property.model.response.KeywordResponseDTO;
+import subscribers.clearbunyang.domain.property.model.response.PropertyDetailsResponseDTO;
 import subscribers.clearbunyang.domain.property.repository.AreaRepository;
 import subscribers.clearbunyang.domain.property.repository.KeywordRepository;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
@@ -41,24 +43,27 @@ public class PropertyService {
     private final FileRepository fileRepository;
     private final MemberConsultationRepository memberConsultationRepository;
     private final MemberRepository memberRepository;
+    private final LikesRepository likesRepository;
     private final ObjectMapper objectMapper;
 
     /**
      * 키워드들을 저장하는 메소드
      *
-     * @param keywordDTOS
+     * @param keywordRequestDTOS
      * @param property
      */
-    public void saveKeywords(List<KeywordDTO> keywordDTOS, Property property) {
+    public void saveKeywords(List<KeywordRequestDTO> keywordRequestDTOS, Property property) {
         List<Keyword> searchableKeywords = new ArrayList<>();
-        List<KeywordDTO> nonSearchableKeywords = new ArrayList<>();
+        List<KeywordRequestDTO> nonSearchableKeywords = new ArrayList<>();
 
-        for (KeywordDTO keywordDTO : keywordDTOS) {
-            if (keywordDTO.getSearchEnabled()) {
-                Keyword keyword = Keyword.toEntity(keywordDTO, objectToJson(keywordDTO), property);
+        for (KeywordRequestDTO keywordRequestDTO : keywordRequestDTOS) {
+            if (keywordRequestDTO.getSearchEnabled()) {
+                Keyword keyword =
+                        Keyword.toEntity(
+                                keywordRequestDTO, objectToJson(keywordRequestDTO), property);
                 searchableKeywords.add(keyword);
             } else {
-                nonSearchableKeywords.add(keywordDTO);
+                nonSearchableKeywords.add(keywordRequestDTO);
             }
         }
         keywordRepository.saveAll(searchableKeywords);
@@ -75,7 +80,7 @@ public class PropertyService {
      * @param property
      */
     private void saveNonSearchableKeywordsAsJson(
-            List<KeywordDTO> nonSearchableKeywords, Property property) {
+            List<KeywordRequestDTO> nonSearchableKeywords, Property property) {
         Keyword keyword = Keyword.toEntity(objectToJson(nonSearchableKeywords), property);
         keywordRepository.save(keyword);
     }
@@ -98,12 +103,12 @@ public class PropertyService {
     /**
      * 세대 면적을 저장하는 메소드
      *
-     * @param areaDTOs
+     * @param areaRequestDTOS
      * @param property
      */
-    private void saveAreas(List<AreaDTO> areaDTOs, Property property) {
+    private void saveAreas(List<AreaRequestDTO> areaRequestDTOS, Property property) {
         List<Area> areas =
-                areaDTOs.stream()
+                areaRequestDTOS.stream()
                         .map(areaDTO -> Area.toEntity(areaDTO, property))
                         .collect(Collectors.toList());
 
@@ -113,13 +118,13 @@ public class PropertyService {
     /**
      * 파일을 저장하는 메소드
      *
-     * @param fileDTOs
+     * @param fileRequestDTOS
      * @param property
      * @param admin
      */
-    private void saveFiles(List<FileDTO> fileDTOs, Property property, Admin admin) {
+    private void saveFiles(List<FileRequestDTO> fileRequestDTOS, Property property, Admin admin) {
         List<File> files =
-                fileDTOs.stream()
+                fileRequestDTOS.stream()
                         .map(fileDTO -> File.toEntity(fileDTO, property, admin))
                         .collect(Collectors.toList());
 
@@ -146,29 +151,32 @@ public class PropertyService {
         return savedProperty;
     }
 
-    public Map<String, List<KeywordDTO>> categorizedKeywords(Long propertyId) {
+    /**
+     * keyword를 type(infra/benefit)에 따라 카테고리화해 리턴하는 메소드
+     *
+     * @param propertyId
+     * @return
+     */
+    public Map<KeywordType, List<KeywordResponseDTO>> categorizedKeywords(Long propertyId) {
         List<Keyword> keywords = keywordRepository.findByPropertyId(propertyId);
         try {
-            List<KeywordDTO> keywordList = new ArrayList<>();
+            List<KeywordResponseDTO> keywordList = new ArrayList<>();
             for (Keyword keyword : keywords) {
 
                 if (keyword.isSearchable()) { // 단일 객체를 읽어드림
                     keywordList.add(
-                            objectMapper.readValue(keyword.getJsonValue(), KeywordDTO.class));
+                            objectMapper.readValue(
+                                    keyword.getJsonValue(), KeywordResponseDTO.class));
                 } else { // 리스트로 읽어 들임
-                    List<KeywordDTO> keywordDTOS =
+                    List<KeywordResponseDTO> keywordRequestDTOS =
                             objectMapper.readValue(
                                     keyword.getJsonValue(),
-                                    new TypeReference<List<KeywordDTO>>() {});
-                    keywordList.addAll(keywordDTOS);
+                                    new TypeReference<List<KeywordResponseDTO>>() {});
+                    keywordList.addAll(keywordRequestDTOS);
                 }
             }
 
-            // type에 따라 두 개의 리스트로 분류
-            Map<String, List<KeywordDTO>> categorizedKeywords =
-                    keywordList.stream().collect(Collectors.groupingBy(KeywordDTO::getType));
-
-            return categorizedKeywords;
+            return keywordList.stream().collect(Collectors.groupingBy(KeywordResponseDTO::getType));
 
         } catch (Exception e) {
             throw new JsonConversionException();
@@ -190,5 +198,25 @@ public class PropertyService {
         MemberConsultation memberConsultation =
                 MemberConsultation.toEntity(requestDTO, property, member);
         memberConsultationRepository.save(memberConsultation);
+    }
+
+    /**
+     * 매물 상세 정보를 리턴하는 매소드
+     *
+     * @param propertyId
+     * @param memberId
+     * @return
+     */
+    public PropertyDetailsResponseDTO getPropertyDetails(Long propertyId, Long memberId) {
+        Property property = propertyRepository.getByPropertyUsingFetchJoin(propertyId);
+        boolean likesExisted = false;
+        if (memberId != null) {
+            likesExisted = likesRepository.existsByMemberIdAndPropertyId(memberId, propertyId);
+        }
+
+        Map<KeywordType, List<KeywordResponseDTO>> categorizedKeywords =
+                categorizedKeywords(propertyId);
+
+        return PropertyDetailsResponseDTO.toDTO(property, categorizedKeywords, likesExisted);
     }
 }

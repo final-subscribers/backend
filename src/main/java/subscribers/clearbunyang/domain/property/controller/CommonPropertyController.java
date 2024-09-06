@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import subscribers.clearbunyang.domain.property.model.ConsultationRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.ConsultationRequestDTO;
+import subscribers.clearbunyang.domain.property.model.response.PropertyDetailsResponseDTO;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
@@ -40,5 +41,20 @@ public class CommonPropertyController {
             memberId = null;
         }
         propertyService.saveConsultation(propertyId, requestDTO, memberId);
+    }
+
+    /**
+     * 매물 상세 정보를 가져오는 메소드
+     *
+     * @param propertyId
+     * @param customUserDetails
+     * @return
+     */
+    @GetMapping("{propertyId}")
+    public PropertyDetailsResponseDTO getProperty(
+            @PathVariable Long propertyId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Long memberId = customUserDetails != null ? customUserDetails.getUserId() : null;
+        return propertyService.getPropertyDetails(propertyId, memberId);
     }
 }

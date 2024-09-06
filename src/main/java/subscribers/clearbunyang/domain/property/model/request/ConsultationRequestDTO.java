@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.property.model;
+package subscribers.clearbunyang.domain.property.model.request;
 
 
 import jakarta.validation.constraints.FutureOrPresent;

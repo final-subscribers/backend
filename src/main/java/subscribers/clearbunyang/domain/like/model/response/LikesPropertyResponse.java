@@ -57,7 +57,12 @@ public class LikesPropertyResponse {
                 .keyword(
                         property.getKeywords().stream()
                                 .limit(3)
-                                .map(k -> new String[] {k.getName(), k.getType()})
+                                .map(
+                                        k ->
+                                                new String[] {
+                                                    String.valueOf(k.getName()),
+                                                    String.valueOf(k.getType())
+                                                })
                                 .collect(Collectors.toList()))
                 .imageUrl(imageUrl)
                 .name(property.getName())

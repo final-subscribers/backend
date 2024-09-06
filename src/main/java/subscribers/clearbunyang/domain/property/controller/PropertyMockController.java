@@ -4,9 +4,9 @@ package subscribers.clearbunyang.domain.property.controller;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.web.bind.annotation.*;
-import subscribers.clearbunyang.domain.property.model.MyPropertiesResponseDTO;
 import subscribers.clearbunyang.domain.property.model.MyPropertyCardDTO;
 import subscribers.clearbunyang.domain.property.model.MyPropertyTableDTO;
+import subscribers.clearbunyang.domain.property.model.response.MyPropertiesResponseDTO;
 
 @RestController
 @RequestMapping("/api/mock/admin/my-properties")

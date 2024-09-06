@@ -14,7 +14,7 @@ import subscribers.clearbunyang.domain.file.entity.enums.FileType;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FileDTO {
+public class FileRequestDTO {
     @NotBlank
     @Size(min = 1, max = 255)
     private String name; // 이름

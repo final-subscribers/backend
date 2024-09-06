@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.property;
+package subscribers.clearbunyang.domain.property.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -20,14 +20,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import subscribers.clearbunyang.domain.file.entity.enums.FileType;
-import subscribers.clearbunyang.domain.file.model.FileDTO;
-import subscribers.clearbunyang.domain.property.controller.AdminPropertyController;
+import subscribers.clearbunyang.domain.file.model.FileRequestDTO;
 import subscribers.clearbunyang.domain.property.entity.Property;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordName;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
-import subscribers.clearbunyang.domain.property.model.AreaDTO;
-import subscribers.clearbunyang.domain.property.model.KeywordDTO;
-import subscribers.clearbunyang.domain.property.model.PropertyRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.AreaRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.KeywordRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.PropertyRequestDTO;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.global.config.SecurityConfig;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
@@ -36,6 +37,7 @@ import subscribers.clearbunyang.security.annotation.WithMockCustomAdmin;
 
 @WebMvcTest(AdminPropertyController.class)
 @Import(SecurityConfig.class)
+@DisplayName("admin-property-controller")
 public class AdminPropertyControllerTest {
 
     @Autowired private MockMvc mockMvc;
@@ -66,7 +68,7 @@ public class AdminPropertyControllerTest {
     @WithMockCustomAdmin
     public void addProperty2() throws Exception {
         PropertyRequestDTO requestDTO = createTestPropertyRequestDTO();
-        requestDTO.getAreas().add(new AreaDTO(60, 50000, 60000, 10));
+        requestDTO.getAreas().add(new AreaRequestDTO(60, 50000, 60000, 10));
         Property mockProperty = new Property();
 
         when(propertyService.saveProperty(any(PropertyRequestDTO.class), any(Long.class)))
@@ -84,27 +86,31 @@ public class AdminPropertyControllerTest {
     }
 
     private PropertyRequestDTO createTestPropertyRequestDTO() {
-        List<AreaDTO> areas = new ArrayList<>();
-        areas.add(new AreaDTO(60, 50000, 45000, 10));
-        areas.add(new AreaDTO(80, 60000, 55000, 8));
+        List<AreaRequestDTO> areas = new ArrayList<>();
+        areas.add(new AreaRequestDTO(60, 50000, 45000, 10));
+        areas.add(new AreaRequestDTO(80, 60000, 55000, 8));
 
-        List<FileDTO> files = new ArrayList<>();
+        List<FileRequestDTO> files = new ArrayList<>();
         files.add(
-                new FileDTO(
+                new FileRequestDTO(
                         "property_image.jpg",
                         "https://example.com/image.jpg",
                         FileType.PROPERTY_IMAGE));
         files.add(
-                new FileDTO(
+                new FileRequestDTO(
                         "supply_information.pdf",
                         "https://example.com/supply.pdf",
                         FileType.SUPPLY_INFORMATION));
 
-        List<KeywordDTO> keywords = new ArrayList<>();
-        keywords.add(new KeywordDTO("CASH_PAYMENT", "BENEFIT", true, 100));
+        List<KeywordRequestDTO> keywords = new ArrayList<>();
         keywords.add(
-                new KeywordDTO(
-                        "SUBWAY", "INFRA", true, Map.of("station", "Gangnam", "distance", "500m")));
+                new KeywordRequestDTO(KeywordName.CASH_PAYMENT, KeywordType.BENEFIT, true, 100));
+        keywords.add(
+                new KeywordRequestDTO(
+                        KeywordName.SUBWAY,
+                        KeywordType.INFRA,
+                        true,
+                        Map.of("station", "Gangnam", "distance", "500m")));
 
         return new PropertyRequestDTO(
                 "푸르지오 아파트",

@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.property.model;
+package subscribers.clearbunyang.domain.property.model.request;
 
 
 import jakarta.validation.constraints.AssertTrue;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AreaDTO {
+public class AreaRequestDTO {
     @NotNull @Min(1)
     @Max(300)
     private Integer squareMeter; // 면적

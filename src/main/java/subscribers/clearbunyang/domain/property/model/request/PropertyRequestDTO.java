@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.property.model;
+package subscribers.clearbunyang.domain.property.model.request;
 
 
 import jakarta.validation.Valid;
@@ -8,7 +8,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import subscribers.clearbunyang.domain.file.model.FileDTO;
+import subscribers.clearbunyang.domain.file.model.FileRequestDTO;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
 import subscribers.clearbunyang.global.validation.NumericValidation;
@@ -76,9 +76,9 @@ public class PropertyRequestDTO {
     @Size(max = 255)
     private String contactChannel; // 채널 링크
 
-    @NotNull @Valid private List<AreaDTO> areas; // 면적 정보 리스트
+    @NotNull @Valid private List<AreaRequestDTO> areas; // 면적 정보 리스트
 
-    @NotNull @Valid private List<FileDTO> files; // 파일 정보 리스트
+    @NotNull @Valid private List<FileRequestDTO> files; // 파일 정보 리스트
 
-    @NotNull @Valid private List<KeywordDTO> keywords; // 키워드 정보 리스트
+    @NotNull @Valid private List<KeywordRequestDTO> keywords; // 키워드 정보 리스트
 }

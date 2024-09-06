@@ -10,4 +10,10 @@ import subscribers.clearbunyang.domain.user.entity.Member;
 public interface LikesRepository extends JpaRepository<Likes, Long> {
 
     Optional<Likes> findByMemberAndProperty(Member member, Property property);
+
+    Optional<Likes> findByMemberIdAndPropertyId(Long memberId, Long propertyId);
+
+    default boolean existsByMemberIdAndPropertyId(Long memberId, Long propertyId) {
+        return findByMemberIdAndPropertyId(memberId, propertyId).isPresent();
+    }
 }

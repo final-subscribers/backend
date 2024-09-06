@@ -21,7 +21,7 @@ import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.domain.consultation.model.request.NewCustomerAdditionRequest;
 import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.domain.property.model.ConsultationRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.ConsultationRequestDTO;
 import subscribers.clearbunyang.domain.user.entity.Member;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
