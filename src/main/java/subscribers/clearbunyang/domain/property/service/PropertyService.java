@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
@@ -190,6 +191,7 @@ public class PropertyService {
      * @param requestDTO
      * @param memberId
      */
+    @CacheEvict(value = "dashboardDropdownCache", allEntries = true)
     @Transactional
     public void saveConsultation(
             Long propertyId, ConsultationRequestDTO requestDTO, Long memberId) {

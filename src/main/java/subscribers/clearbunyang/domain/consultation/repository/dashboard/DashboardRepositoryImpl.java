@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -43,6 +44,7 @@ public class DashboardRepositoryImpl implements DashboardRepository {
     NumberExpression<Integer> pendingCount = statusSumExpression(PENDING);
     NumberExpression<Integer> completedCount = statusSumExpression(COMPLETED);
 
+    @Cacheable(value = "dashboardDropdownCache", keyGenerator = "keyGenerator")
     public List<PropertySelectDTO> findDropdownSelects(Long adminId, Phase phase) {
         return query.select(
                         Projections.constructor(

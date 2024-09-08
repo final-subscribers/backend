@@ -4,6 +4,7 @@ package subscribers.clearbunyang.domain.consultation.service;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.consultation.entity.AdminConsultation;
@@ -111,6 +112,7 @@ public class ConsultationService {
         return ConsultCompletedResponse.toDto(adminConsultation);
     }
 
+    @CacheEvict(value = "dashboardDropdownCache", allEntries = true)
     @Transactional
     public AdminConsultResponse createAdminConsult(
             Long memberConsultationId, ConsultRequest request) {

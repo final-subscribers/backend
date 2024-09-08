@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +42,7 @@ public class PropertiesService {
     private final MemberConsultationRepository memberConsultationRepository;
     private final PropertyRepository propertyRepository;
 
+    @CacheEvict(value = "dashboardDropdownCache", allEntries = true)
     @Transactional
     public void createNewCustomerAddition(Long propertyId, NewCustomerAdditionRequest request) {
         checkPhoneNumberExists(request.getPhoneNumber());
