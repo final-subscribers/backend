@@ -1,5 +1,6 @@
 package subscribers.clearbunyang.domain.consultation.service;
 
+import static subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.Phase.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,7 +23,7 @@ public class DashboardService {
     private final DashboardRepository dashboardRepository;
 
     public DashboardInitDTO getDashboard(Long adminId) {
-        List<PropertySelectDTO> selects = dashboardRepository.findDropdownSelects(adminId);
+        List<PropertySelectDTO> selects = dashboardRepository.findDropdownSelects(adminId, OPEN);
         PropertyInquiryStatusDTO todayStats = dashboardRepository.findTodayStats(adminId);
         List<PropertyInquiryStatusDTO> properties =
                 dashboardRepository.findStatsOrderByCountDesc(adminId);
