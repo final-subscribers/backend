@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.Phase;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.ConsultationDateStatsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertiesInquiryStatsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryDetailsDTO;
@@ -12,7 +13,7 @@ import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInqu
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertySelectDTO;
 
 public interface DashboardRepository {
-    List<PropertySelectDTO> findDropdownSelects(Long adminId);
+    List<PropertySelectDTO> findDropdownSelects(Long adminId, Phase phase);
 
     PropertyInquiryStatusDTO findTodayStats(Long adminId);
 
