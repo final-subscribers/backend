@@ -2,6 +2,9 @@ package subscribers.clearbunyang.global.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.time.Duration;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
@@ -54,7 +57,9 @@ public class RedisConfig {
     @Bean
     @Primary
     public RedisTemplate<String, Object> redisTemplate(
-            RedisConnectionFactory redisConnectionFactory, ObjectMapper objectMapper) {
+            RedisConnectionFactory redisConnectionFactory) {
+        ObjectMapper objectMapper = createObjectMapper();
+
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
@@ -65,8 +70,9 @@ public class RedisConfig {
 
     // 캐시 매니저 설정
     @Bean
-    public CacheManager cacheManager(
-            RedisConnectionFactory redisConnectionFactory, ObjectMapper objectMapper) {
+    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+        ObjectMapper objectMapper = createObjectMapper();
+
         RedisCacheConfiguration cacheConfig =
                 RedisCacheConfiguration.defaultCacheConfig()
                         .entryTtl(Duration.ofMinutes(DEFAULT_CACHE_TTL)) // 캐시 수명 설정
@@ -89,5 +95,15 @@ public class RedisConfig {
             }
             return sb.toString();
         };
+    }
+
+    private ObjectMapper createObjectMapper() {
+        PolymorphicTypeValidator typeValidator =
+                BasicPolymorphicTypeValidator.builder().allowIfSubType(Object.class).build();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.activateDefaultTyping(typeValidator, ObjectMapper.DefaultTyping.NON_FINAL);
+        return objectMapper;
     }
 }
