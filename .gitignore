@@ -38,3 +38,7 @@ out/
 
 application.yaml
 application-*.yaml
+gradle.properties
+
+src/main/generated/
+src/main/java/subscribers/clearbunyang/global/service/DBInit.java

@@ -1,16 +1,14 @@
 package subscribers.clearbunyang.domain.property.entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordName;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
+import subscribers.clearbunyang.domain.property.model.request.KeywordRequestDTO;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
 @Entity
@@ -24,15 +22,35 @@ public class Keyword extends BaseEntity {
     @Column(columnDefinition = "JSON", nullable = false)
     private String jsonValue;
 
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private KeywordName name;
 
-    private String type; // 혜택/인프라
+    @Enumerated(EnumType.STRING)
+    private KeywordType type; // 혜택/인프라
 
     @Column(nullable = false)
     private boolean isSearchable;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id", nullable = false)
-    //    @JoinColumn(name = "property_id", nullable = true)
     private Property property;
+
+    public static Keyword toEntity(
+            KeywordRequestDTO keywordRequestDTO, String jsonValue, Property property) {
+        return Keyword.builder()
+                .name(keywordRequestDTO.getName())
+                .type(keywordRequestDTO.getName().getType())
+                .jsonValue(jsonValue)
+                .isSearchable(keywordRequestDTO.getSearchEnabled())
+                .property(property)
+                .build();
+    }
+
+    public static Keyword toEntity(String jsonValue, Property property) {
+        return Keyword.builder()
+                .jsonValue(jsonValue)
+                .isSearchable(false)
+                .property(property)
+                .build();
+    }
 }

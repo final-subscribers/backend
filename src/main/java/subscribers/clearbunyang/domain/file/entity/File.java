@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import subscribers.clearbunyang.domain.file.entity.enums.FileType;
+import subscribers.clearbunyang.domain.file.model.FileRequestDTO;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.user.entity.Admin;
 import subscribers.clearbunyang.global.entity.BaseEntity;
@@ -24,7 +25,7 @@ public class File extends BaseEntity {
     private Admin admin;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "property_id", nullable = false)
+    @JoinColumn(name = "property_id")
     private Property property;
 
     @Column(nullable = false)
@@ -36,4 +37,14 @@ public class File extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private FileType type;
+
+    public static File toEntity(FileRequestDTO fileRequestDTO, Property property, Admin admin) {
+        return File.builder()
+                .property(property)
+                .admin(admin)
+                .name(fileRequestDTO.getName())
+                .link(fileRequestDTO.getUrl())
+                .type(fileRequestDTO.getType())
+                .build();
+    }
 }

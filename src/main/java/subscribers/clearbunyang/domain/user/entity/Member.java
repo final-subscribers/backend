@@ -43,7 +43,7 @@ public class Member extends BaseEntity {
 
     @Setter
     @Enumerated(EnumType.STRING)
-    private UserRole role = UserRole.USER;
+    private UserRole role = UserRole.MEMBER;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private Set<Likes> likes;

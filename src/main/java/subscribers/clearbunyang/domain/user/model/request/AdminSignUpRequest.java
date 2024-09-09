@@ -30,7 +30,17 @@ public class AdminSignUpRequest {
 
     private String business;
 
-    private String housingFileUrl;
+    private FileInfo housingFile;
 
-    private String registrationFileUrl;
+    private FileInfo registrationFile;
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FileInfo {
+        private String name;
+        private String url;
+        private String type;
+    }
 }

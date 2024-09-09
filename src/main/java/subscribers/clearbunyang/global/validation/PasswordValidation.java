@@ -14,8 +14,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PasswordValidation {
-    // 비밀번호 양식에 맞게 정규표현식 수정해야함
-    String message() default "비밀번호는 8자이상 16자이어야 합니다.";
+    String message() default "비밀번호는 영문, 숫자, 특수문자를 포함해 10자 이상이어야 합니다.";
 
     Class<?>[] groups() default {};
 

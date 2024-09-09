@@ -1,27 +1,21 @@
 package subscribers.clearbunyang.domain.property.entity;
 
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import subscribers.clearbunyang.domain.file.entity.File;
 import subscribers.clearbunyang.domain.likes.entity.Likes;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
+import subscribers.clearbunyang.domain.property.model.request.PropertyRequestDTO;
 import subscribers.clearbunyang.domain.user.entity.Admin;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
@@ -54,6 +48,7 @@ public class Property extends BaseEntity {
     @Column(nullable = true)
     private String homePage;
 
+    @Setter
     @Column(nullable = false)
     private int likeCount;
 
@@ -77,28 +72,63 @@ public class Property extends BaseEntity {
     @Column(nullable = false)
     private String companyName;
 
-    /* @Column(nullable = false)
-    private String areaCategory;*/
+    @Column(nullable = false)
+    private String addrDo;
 
     @Column(nullable = false)
-    private String addr_dong;
+    private String addrGu;
 
-    @Column private String addr_gu;
+    @Column(nullable = false)
+    private String addrDong;
 
-    @ManyToOne
+    @Column(nullable = false)
+    private String buildingName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id", nullable = false)
+    @JsonBackReference
     private Admin admin;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
-    private Set<Likes> likes;
+    @JsonManagedReference
+    private List<Likes> likes;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
-    private List<File> files = new ArrayList<>();
+    @JsonManagedReference
+    private List<File> files;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Area> areas;
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Keyword> keywords;
 
     public void setAdminId(Admin adminId) {
         this.admin = adminId;
+    }
+
+    public static Property toEntity(PropertyRequestDTO propertyDTO, Admin admin) {
+        return Property.builder()
+                .name(propertyDTO.getName())
+                .constructor(propertyDTO.getConstructor())
+                .areaAddr(propertyDTO.getAreaAddr())
+                .modelHouseAddr(propertyDTO.getModelhouseAddr())
+                .phoneNumber(propertyDTO.getPhoneNumber())
+                .contactChannel(propertyDTO.getContactChannel())
+                .homePage(propertyDTO.getHomepage())
+                .startDate(propertyDTO.getStartDate())
+                .endDate(propertyDTO.getEndDate())
+                .propertyType(propertyDTO.getPropertyType())
+                .salesType(propertyDTO.getSalesType())
+                .totalNumber(propertyDTO.getTotalNumber())
+                .companyName(propertyDTO.getCompanyName())
+                .addrDo(propertyDTO.getAddrDo())
+                .addrGu(propertyDTO.getAddrGu())
+                .addrDong(propertyDTO.getAddrDong())
+                .buildingName(propertyDTO.getBuildingName())
+                .admin(admin)
+                .build();
     }
 }
