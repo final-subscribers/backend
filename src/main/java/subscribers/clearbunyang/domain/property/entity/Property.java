@@ -3,19 +3,9 @@ package subscribers.clearbunyang.domain.property.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +15,7 @@ import subscribers.clearbunyang.domain.file.entity.File;
 import subscribers.clearbunyang.domain.like.entity.Likes;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
-import subscribers.clearbunyang.domain.property.model.PropertyRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.PropertyRequestDTO;
 import subscribers.clearbunyang.domain.user.entity.Admin;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
@@ -94,18 +84,18 @@ public class Property extends BaseEntity {
     @Column(nullable = false)
     private String buildingName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id", nullable = false)
     @JsonBackReference
     private Admin admin;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private Set<Likes> likes;
+    private List<Likes> likes;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<File> files = new ArrayList<>();
+    private List<File> files;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
     @JsonManagedReference

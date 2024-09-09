@@ -3,9 +3,11 @@ package subscribers.clearbunyang.domain.consultation.repository.dashboard;
 import static subscribers.clearbunyang.domain.consultation.entity.QMemberConsultation.*;
 import static subscribers.clearbunyang.domain.consultation.entity.enums.Medium.*;
 import static subscribers.clearbunyang.domain.consultation.entity.enums.Status.*;
+import static subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.Phase.*;
 import static subscribers.clearbunyang.domain.property.entity.QProperty.*;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -26,6 +28,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
+import subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.Phase;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.ConsultationDateStatsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertiesInquiryStatsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryDetailsDTO;
@@ -40,12 +43,12 @@ public class DashboardRepositoryImpl implements DashboardRepository {
     NumberExpression<Integer> pendingCount = statusSumExpression(PENDING);
     NumberExpression<Integer> completedCount = statusSumExpression(COMPLETED);
 
-    public List<PropertySelectDTO> findPropertySelects(Long adminId) {
+    public List<PropertySelectDTO> findDropdownSelects(Long adminId, Phase phase) {
         return query.select(
                         Projections.constructor(
                                 PropertySelectDTO.class, property.id, property.name))
                 .from(property)
-                .where(property.admin.id.eq(adminId))
+                .where(property.admin.id.eq(adminId), phaseEq(phase))
                 .orderBy(property.createdAt.desc())
                 .fetch();
     }
@@ -72,7 +75,7 @@ public class DashboardRepositoryImpl implements DashboardRepository {
         return result.orElse(new PropertyInquiryStatusDTO(0, 0));
     }
 
-    public List<ConsultationDateStatsDTO> findLastFiveWeeksStats(Long adminId) {
+    public List<ConsultationDateStatsDTO> findTotalNumberByWeek(Long adminId) {
         // 현재 날짜 기준으로 지난 다섯 주의 날짜를 계산합니다.
         LocalDate now = LocalDate.now();
         List<YearWeek> lastFiveWeeks =
@@ -218,6 +221,16 @@ public class DashboardRepositoryImpl implements DashboardRepository {
         result.ifPresent(detailsDTO -> detailsDTO.setTimeStamps(stampsQuery.fetch()));
 
         return result.orElse(new PropertyInquiryDetailsDTO(0));
+    }
+
+    private BooleanExpression phaseEq(Phase phase) {
+        LocalDate now = LocalDate.now();
+        if (phase == OPEN) {
+            return property.startDate.loe(now).and(property.endDate.gt(now));
+        } else if (phase == CLOSED) {
+            return property.endDate.lt(now).or(property.startDate.gt(now));
+        }
+        return null;
     }
 
     private NumberExpression<Integer> statusSumExpression(Status status) {

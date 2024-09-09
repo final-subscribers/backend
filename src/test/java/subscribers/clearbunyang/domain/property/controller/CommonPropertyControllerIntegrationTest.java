@@ -1,6 +1,7 @@
-package subscribers.clearbunyang.domain.property;
+package subscribers.clearbunyang.domain.property.controller;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -8,24 +9,28 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
-import subscribers.clearbunyang.domain.property.controller.CommonPropertyController;
-import subscribers.clearbunyang.domain.property.model.ConsultationRequestDTO;
+import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.property.model.request.ConsultationRequestDTO;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.global.config.SecurityConfig;
 import subscribers.clearbunyang.global.token.JwtTokenProcessor;
 import subscribers.clearbunyang.security.annotation.WithMockCustomAdmin;
 import subscribers.clearbunyang.security.annotation.WithMockCustomMember;
 
-@WebMvcTest(CommonPropertyController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 @Import(SecurityConfig.class)
-public class CommonPropertyControllerTest {
-    @Autowired MockMvc mockMvc;
+@DisplayName("통합 테스트")
+@Transactional
+public class CommonPropertyControllerIntegrationTest {
+    @Autowired private MockMvc mockMvc;
 
-    @MockBean private PropertyService propertyService;
+    @Autowired private PropertyService propertyService;
     @Autowired private ObjectMapper objectMapper;
 
     @MockBean private JwtTokenProcessor jwtTokenProcessor;
@@ -36,7 +41,7 @@ public class CommonPropertyControllerTest {
         ConsultationRequestDTO requestDTO = createTestConsultationRequestDTO();
 
         mockMvc.perform(
-                        post("/api/common/properties/{propertyId}/consultation", 1L)
+                        post("/api/common/properties/{propertyId}/consultation", 2L)
                                 .contentType("application/json")
                                 .content(objectMapper.writeValueAsString(requestDTO))
                                 .with(csrf()))
@@ -50,7 +55,7 @@ public class CommonPropertyControllerTest {
         ConsultationRequestDTO requestDTO = createTestConsultationRequestDTO();
 
         mockMvc.perform(
-                        post("/api/common/properties/{propertyId}/consultation", 1L)
+                        post("/api/common/properties/{propertyId}/consultation", 2L)
                                 .contentType("application/json")
                                 .content(objectMapper.writeValueAsString(requestDTO))
                                 .with(csrf()))
@@ -64,11 +69,24 @@ public class CommonPropertyControllerTest {
         ConsultationRequestDTO requestDTO = createTestConsultationRequestDTO();
 
         mockMvc.perform(
-                        post("/api/common/properties/{propertyId}/consultation", 1L)
+                        post("/api/common/properties/{propertyId}/consultation", 2L)
                                 .contentType("application/json")
                                 .content(objectMapper.writeValueAsString(requestDTO))
                                 .with(csrf()))
                 .andExpect(status().isForbidden());
+    }
+
+    @DisplayName("매물 읽어오기")
+    @Test
+    @WithMockCustomAdmin
+    public void getProperty() throws Exception {
+        ConsultationRequestDTO requestDTO = createTestConsultationRequestDTO();
+
+        mockMvc.perform(
+                        get("/api/common/properties/{propertyId}", 20L)
+                                .contentType("application/json")
+                                .with(csrf()))
+                .andDo(System.out::println);
     }
 
     private ConsultationRequestDTO createTestConsultationRequestDTO() {

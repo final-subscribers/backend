@@ -47,7 +47,11 @@ public enum ErrorCode {
     INVALID_ACCESS_TOKEN(400, "J007", "엑세스 토큰이 올바르지 않습니다."),
 
     // like
-    PROPERTY_NOT_FOUND(404, "L002", "존재하지 않는 물건 정보입니다.");
+    PROPERTY_NOT_FOUND(404, "L002", "존재하지 않는 물건 정보입니다."),
+
+    // file
+    FILE_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "F001", "파일 타입이 존재하지 않습니다");
+    ;
 
     private final Integer status;
     private final String code;

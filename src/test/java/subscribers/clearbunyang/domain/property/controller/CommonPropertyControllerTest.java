@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.property;
+package subscribers.clearbunyang.domain.property.controller;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -8,26 +8,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
-import subscribers.clearbunyang.domain.property.model.ConsultationRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.ConsultationRequestDTO;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.global.config.SecurityConfig;
 import subscribers.clearbunyang.global.token.JwtTokenProcessor;
 import subscribers.clearbunyang.security.annotation.WithMockCustomAdmin;
 import subscribers.clearbunyang.security.annotation.WithMockCustomMember;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(CommonPropertyController.class)
 @Import(SecurityConfig.class)
-@DisplayName("통합 테스트")
-public class CommonPropertyControllerIntegrationTest {
-    @Autowired private MockMvc mockMvc;
+@DisplayName("common-property-controller")
+public class CommonPropertyControllerTest {
+    @Autowired MockMvc mockMvc;
 
-    @Autowired private PropertyService propertyService;
+    @MockBean private PropertyService propertyService;
     @Autowired private ObjectMapper objectMapper;
 
     @MockBean private JwtTokenProcessor jwtTokenProcessor;
@@ -38,7 +36,7 @@ public class CommonPropertyControllerIntegrationTest {
         ConsultationRequestDTO requestDTO = createTestConsultationRequestDTO();
 
         mockMvc.perform(
-                        post("/api/common/properties/{propertyId}/consultation", 2L)
+                        post("/api/common/properties/{propertyId}/consultation", 1L)
                                 .contentType("application/json")
                                 .content(objectMapper.writeValueAsString(requestDTO))
                                 .with(csrf()))
@@ -52,7 +50,7 @@ public class CommonPropertyControllerIntegrationTest {
         ConsultationRequestDTO requestDTO = createTestConsultationRequestDTO();
 
         mockMvc.perform(
-                        post("/api/common/properties/{propertyId}/consultation", 2L)
+                        post("/api/common/properties/{propertyId}/consultation", 1L)
                                 .contentType("application/json")
                                 .content(objectMapper.writeValueAsString(requestDTO))
                                 .with(csrf()))
@@ -66,7 +64,7 @@ public class CommonPropertyControllerIntegrationTest {
         ConsultationRequestDTO requestDTO = createTestConsultationRequestDTO();
 
         mockMvc.perform(
-                        post("/api/common/properties/{propertyId}/consultation", 2L)
+                        post("/api/common/properties/{propertyId}/consultation", 1L)
                                 .contentType("application/json")
                                 .content(objectMapper.writeValueAsString(requestDTO))
                                 .with(csrf()))
