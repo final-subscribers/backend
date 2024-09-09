@@ -19,4 +19,13 @@ public class PagedDto<T> {
     private int currentPage; // 현 페이지 번호
 
     private T content;
+
+    public static <T> PagedDto toDTO(int currentPage, int size, int totalCount, T Content) {
+        return PagedDto.builder()
+                .currentPage(currentPage)
+                .pageSize(size)
+                .totalPages((totalCount + size - 1) / size)
+                .content(Content)
+                .build();
+    }
 }

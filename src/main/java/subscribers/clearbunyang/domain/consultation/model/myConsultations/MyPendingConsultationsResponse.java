@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
-import subscribers.clearbunyang.domain.file.model.FileDTO;
+import subscribers.clearbunyang.domain.file.model.FileResponseDTO;
 
 @Getter
 @NoArgsConstructor
@@ -15,7 +15,7 @@ import subscribers.clearbunyang.domain.file.model.FileDTO;
 @Builder
 public class MyPendingConsultationsResponse {
 
-    private FileDTO imageUrl;
+    private FileResponseDTO imageUrl;
     private Long id;
     private String name;
     private LocalDate consultationCreatedAt;
