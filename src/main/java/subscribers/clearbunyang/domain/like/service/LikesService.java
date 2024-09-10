@@ -76,19 +76,15 @@ public class LikesService {
                         .orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
 
         LocalDate currentDate = LocalDate.now();
-
         PageRequest pageRequest = PageRequest.of(page, size);
 
         Page<Property> properties;
 
+        // 상태 open인지 closed인지에 따라 날짜에 해당하는 페이징된 물건값 싹 다 받아와서 필터 통과시키기
         if (status.equalsIgnoreCase("open")) {
-            properties =
-                    propertyRepository.findAllByMemberAndDateRange(
-                            member, currentDate, pageRequest, true);
+            properties = propertyRepository.findByDateRange(currentDate, pageRequest, true);
         } else {
-            properties =
-                    propertyRepository.findAllByMemberAndDateRange(
-                            member, currentDate, pageRequest, false);
+            properties = propertyRepository.findByDateRange(currentDate, pageRequest, false);
         }
 
         List<Property> filteredProperties =
@@ -99,12 +95,17 @@ public class LikesService {
                                     Boolean isLikedInRedis =
                                             (Boolean) redisTemplate.opsForHash().get("likes", key);
 
-                                    if (isLikedInRedis != null) {
-                                        // Redis에 정보가 있는 경우
-                                        return isLikedInRedis;
+                                    // Redis에서 키값 true인경우 물건값 반환되어야함
+                                    if (Boolean.TRUE.equals(isLikedInRedis)) {
+                                        return true;
                                     }
 
-                                    // Redis 값이 없을 경우 DB 상태로 결정
+                                    // Redis에서 키값 false인경우 물건값 반환되면 안됨
+                                    if (Boolean.FALSE.equals(isLikedInRedis)) {
+                                        return false;
+                                    }
+
+                                    // Redis에서 키값 없으면 좋아요 유무 db에서 확인해서 반환여부 결정
                                     return likesRepository.existsByMemberIdAndPropertyId(
                                             memberId, property.getId());
                                 })

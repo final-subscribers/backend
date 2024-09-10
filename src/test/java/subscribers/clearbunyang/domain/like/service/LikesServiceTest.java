@@ -102,6 +102,6 @@ class LikesServiceTest {
         () -> likesService.getMyFavoriteProperties(memberId, status, page, size));
 
     assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
-    verify(propertyRepository, never()).findAllByMemberAndDateRange(any(Member.class), any(LocalDate.class), any(PageRequest.class), anyBoolean());
+    verify(propertyRepository, never()).findByDateRange(any(LocalDate.class), any(PageRequest.class), anyBoolean());
   }
 }

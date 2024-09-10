@@ -8,16 +8,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.domain.user.entity.Member;
 
 public interface PropertyRepository extends JpaRepository<Property, Long> {
 
     @Query(
-            "SELECT p FROM Property p JOIN p.likes l WHERE l.member = :member AND "
+            "SELECT p FROM Property p WHERE "
                     + "(:isOpen = true AND p.startDate <= :currentDate AND p.endDate >= :currentDate) "
                     + "OR (:isOpen = false AND p.endDate < :currentDate)")
-    Page<Property> findAllByMemberAndDateRange(
-            @Param("member") Member member,
+    Page<Property> findByDateRange(
             @Param("currentDate") LocalDate currentDate,
             @Param("pageable") Pageable pageable,
             @Param("isOpen") boolean isOpen);
