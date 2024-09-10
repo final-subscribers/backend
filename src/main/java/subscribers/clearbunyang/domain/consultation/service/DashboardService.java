@@ -1,5 +1,6 @@
 package subscribers.clearbunyang.domain.consultation.service;
 
+import static subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.Phase.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,6 +15,8 @@ import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInqu
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryStatusDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertySelectDTO;
 import subscribers.clearbunyang.domain.consultation.repository.dashboard.DashboardRepository;
+import subscribers.clearbunyang.global.model.PagedDto;
+import subscribers.clearbunyang.global.util.PageToPagedDtoConverter;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +25,7 @@ public class DashboardService {
     private final DashboardRepository dashboardRepository;
 
     public DashboardInitDTO getDashboard(Long adminId) {
-        List<PropertySelectDTO> selects = dashboardRepository.findDropdownSelects(adminId);
+        List<PropertySelectDTO> selects = dashboardRepository.findDropdownSelects(adminId, OPEN);
         PropertyInquiryStatusDTO todayStats = dashboardRepository.findTodayStats(adminId);
         List<PropertyInquiryStatusDTO> properties =
                 dashboardRepository.findStatsOrderByCountDesc(adminId);
@@ -42,9 +45,12 @@ public class DashboardService {
                 .build();
     }
 
-    public Page<PropertiesInquiryStatsDTO> getPropertiesInquiryStats(
+    public PagedDto<PropertiesInquiryStatsDTO> getPropertiesInquiryStats(
             Long adminId, Pageable pageable) {
-        return dashboardRepository.findPropertiesInquiryStats(adminId, pageable);
+        Page<PropertiesInquiryStatsDTO> propertiesInquiryStats =
+                dashboardRepository.findPropertiesInquiryStats(adminId, pageable);
+
+        return PageToPagedDtoConverter.convertToPagedDto(propertiesInquiryStats);
     }
 
     public PropertyInquiryDetailsDTO getPropertyInquiryDetails(
