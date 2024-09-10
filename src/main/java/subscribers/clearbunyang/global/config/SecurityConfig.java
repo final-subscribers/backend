@@ -1,22 +1,30 @@
 package subscribers.clearbunyang.global.config;
 
 
+import jakarta.annotation.PostConstruct;
+import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 import subscribers.clearbunyang.global.security.filter.AuthenticationFilter;
 import subscribers.clearbunyang.global.token.JwtTokenProcessor;
 
@@ -26,6 +34,15 @@ import subscribers.clearbunyang.global.token.JwtTokenProcessor;
 public class SecurityConfig {
 
     private final JwtTokenProcessor jwtTokenProcessor;
+
+    @Value("${deploy.server.port}") private String allowedIpv4Address;
+
+    private IpAddressMatcher ipv4AddressMatcher;
+
+    @PostConstruct
+    public void init() {
+        this.ipv4AddressMatcher = new IpAddressMatcher(allowedIpv4Address + "/32");
+    }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -60,6 +77,8 @@ public class SecurityConfig {
                                         .hasAuthority("ADMIN")
                                         .requestMatchers("/api/member/**")
                                         .hasAuthority("MEMBER")
+                                        .requestMatchers("/actuator/health")
+                                        .access(this::hasIpAddress)
                                         .anyRequest()
                                         .authenticated())
                 .addFilterBefore(
@@ -82,5 +101,12 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    private AuthorizationDecision hasIpAddress(
+            Supplier<Authentication> authentication, RequestAuthorizationContext object) {
+        return new AuthorizationDecision(
+                (authentication.get() instanceof AnonymousAuthenticationToken)
+                        && ipv4AddressMatcher.matches(object.getRequest()));
     }
 }
