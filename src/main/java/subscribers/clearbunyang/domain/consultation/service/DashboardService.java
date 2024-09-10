@@ -15,6 +15,8 @@ import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInqu
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryStatusDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertySelectDTO;
 import subscribers.clearbunyang.domain.consultation.repository.dashboard.DashboardRepository;
+import subscribers.clearbunyang.global.model.PagedDto;
+import subscribers.clearbunyang.global.util.PageToPagedDtoConverter;
 
 @Service
 @RequiredArgsConstructor
@@ -43,9 +45,12 @@ public class DashboardService {
                 .build();
     }
 
-    public Page<PropertiesInquiryStatsDTO> getPropertiesInquiryStats(
+    public PagedDto<PropertiesInquiryStatsDTO> getPropertiesInquiryStats(
             Long adminId, Pageable pageable) {
-        return dashboardRepository.findPropertiesInquiryStats(adminId, pageable);
+        Page<PropertiesInquiryStatsDTO> propertiesInquiryStats =
+                dashboardRepository.findPropertiesInquiryStats(adminId, pageable);
+
+        return PageToPagedDtoConverter.convertToPagedDto(propertiesInquiryStats);
     }
 
     public PropertyInquiryDetailsDTO getPropertyInquiryDetails(
