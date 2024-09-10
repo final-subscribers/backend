@@ -3,7 +3,6 @@ package subscribers.clearbunyang.domain.consultation.controller;
 
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,6 +15,7 @@ import subscribers.clearbunyang.domain.consultation.model.dashboard.DashboardIni
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertiesInquiryStatsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryDetailsDTO;
 import subscribers.clearbunyang.domain.consultation.service.DashboardService;
+import subscribers.clearbunyang.global.model.PagedDto;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
 @RestController
@@ -32,7 +32,7 @@ public class DashboardController {
     }
 
     @GetMapping("dashboard/properties")
-    public Page<PropertiesInquiryStatsDTO> getDashboardProperties(
+    public PagedDto<PropertiesInquiryStatsDTO> getDashboardProperties(
             @PageableDefault Pageable pageable,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return dashboardService.getPropertiesInquiryStats(customUserDetails.getUserId(), pageable);
