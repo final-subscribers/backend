@@ -29,7 +29,6 @@ import subscribers.clearbunyang.domain.consultation.model.request.ConsultRequest
 import subscribers.clearbunyang.domain.consultation.model.request.NewCustomerAdditionRequest;
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultCompletedListResponse;
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultPendingListResponse;
-import subscribers.clearbunyang.domain.consultation.model.response.PagedDTO;
 import subscribers.clearbunyang.domain.consultation.model.response.SideBarListResponse;
 import subscribers.clearbunyang.domain.consultation.repository.AdminConsultationRepository;
 import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
@@ -45,6 +44,7 @@ import subscribers.clearbunyang.domain.user.entity.Admin;
 import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
+import subscribers.clearbunyang.global.model.PagedDto;
 
 @ExtendWith(MockitoExtension.class)
 class PropertiesServiceTest {
@@ -192,7 +192,7 @@ class PropertiesServiceTest {
                 .when(memberConsultationRepository.checkExtraConsultation(anyString()))
                 .thenReturn(true);
 
-        PagedDTO<ConsultPendingListResponse> pagedDTO =
+        PagedDto<ConsultPendingListResponse> pagedDTO =
                 propertiesService.getConsultPendingListResponse(
                         property.getId(), "name 010", "a", LocalDate.now().plusDays(1), 0, 1);
 
@@ -224,7 +224,7 @@ class PropertiesServiceTest {
                                 any(Pageable.class)))
                 .thenReturn(page);
 
-        PagedDTO<ConsultCompletedListResponse> pagedDTO =
+        PagedDto<ConsultCompletedListResponse> pagedDTO =
                 propertiesService.getConsultCompletedListResponse(
                         property.getId(),
                         "name 010",

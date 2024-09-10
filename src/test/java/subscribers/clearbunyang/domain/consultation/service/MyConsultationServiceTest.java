@@ -10,7 +10,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -89,7 +88,7 @@ public class MyConsultationServiceTest {
                         .totalNumber(500)
                         .companyName("companyName")
                         .admin(new Admin())
-                        .likes(Set.of(new Likes()))
+                        .likes(List.of(new Likes()))
                         .files(List.of(new File()))
                         .areas(List.of(new Area()))
                         .build();
@@ -112,7 +111,7 @@ public class MyConsultationServiceTest {
                         .totalNumber(500)
                         .companyName("companyName")
                         .admin(new Admin())
-                        .likes(Set.of(new Likes()))
+                        .likes(List.of(new Likes()))
                         .files(List.of(new File()))
                         .areas(List.of(new Area()))
                         .build();
