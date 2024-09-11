@@ -1,22 +1,6 @@
+/*
 package subscribers.clearbunyang.domain.consultation.service;
 
-import static subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.Phase.*;
-
-import java.time.LocalDate;
-import java.util.List;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import subscribers.clearbunyang.domain.consultation.model.dashboard.ConsultationDateStatsDTO;
-import subscribers.clearbunyang.domain.consultation.model.dashboard.DashboardInitDTO;
-import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertiesInquiryStatsDTO;
-import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryDetailsDTO;
-import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryStatusDTO;
-import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertySelectDTO;
-import subscribers.clearbunyang.domain.consultation.repository.dashboard.DashboardRepository;
-import subscribers.clearbunyang.global.model.PagedDto;
-import subscribers.clearbunyang.global.util.PageToPagedDtoConverter;
 
 @Service
 @RequiredArgsConstructor
@@ -58,3 +42,4 @@ public class DashboardService {
         return dashboardRepository.findPropertyInquiryDetails(propertyId, start, end);
     }
 }
+*/

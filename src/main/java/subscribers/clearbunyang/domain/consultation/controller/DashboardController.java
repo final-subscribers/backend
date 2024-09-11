@@ -1,22 +1,7 @@
+/*
 package subscribers.clearbunyang.domain.consultation.controller;
 
 
-import java.time.LocalDate;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import subscribers.clearbunyang.domain.consultation.model.dashboard.DashboardInitDTO;
-import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertiesInquiryStatsDTO;
-import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryDetailsDTO;
-import subscribers.clearbunyang.domain.consultation.service.DashboardService;
-import subscribers.clearbunyang.global.model.PagedDto;
-import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,3 +31,4 @@ public class DashboardController {
         return dashboardService.getPropertyInquiryDetails(Long.valueOf(propertyId), start, end);
     }
 }
+*/
