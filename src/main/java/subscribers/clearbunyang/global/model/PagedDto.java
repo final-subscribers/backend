@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 
 @Getter
 @NoArgsConstructor
@@ -28,6 +29,15 @@ public class PagedDto<T> {
                 .pageSize(size)
                 .totalPages(totalCount)
                 .contents(contents)
+                .build();
+    }
+
+    public static <T> PagedDto<T> toDTO(Page<T> page) {
+        return PagedDto.<T>builder()
+                .totalPages(page.getTotalPages())
+                .pageSize(page.getSize())
+                .currentPage(page.getNumber())
+                .contents(page.getContent())
                 .build();
     }
 }
