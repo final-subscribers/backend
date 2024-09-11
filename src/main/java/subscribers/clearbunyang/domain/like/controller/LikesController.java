@@ -1,6 +1,8 @@
 package subscribers.clearbunyang.domain.like.controller;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +21,12 @@ import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 @RestController
 @RequestMapping("/api/member/")
 @RequiredArgsConstructor
+@Tag(name = "Likes", description = "좋아요 토글/좋아요 목록조회")
 public class LikesController {
 
     private final LikesService likesService;
 
+    @Operation(summary = "좋아요 토글")
     @PostMapping("properties/{propertyId}/like")
     public ResponseEntity<String> toggleLike(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -31,6 +35,7 @@ public class LikesController {
         return ResponseEntity.ok("좋아요 성공");
     }
 
+    @Operation(summary = "좋아요 목록조회")
     @GetMapping("my-favorites")
     public ResponseEntity<LikesPageResponse> getMyFavorites(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,

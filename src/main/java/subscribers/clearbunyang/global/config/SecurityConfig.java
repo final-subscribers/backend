@@ -2,6 +2,8 @@ package subscribers.clearbunyang.global.config;
 
 
 import jakarta.annotation.PostConstruct;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +27,9 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import subscribers.clearbunyang.global.security.filter.AuthenticationFilter;
 import subscribers.clearbunyang.global.token.JwtTokenProcessor;
 
@@ -87,8 +92,8 @@ public class SecurityConfig {
                 .exceptionHandling(
                         exception ->
                                 exception.authenticationEntryPoint(
-                                        new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
-
+                                        new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
         return http.build();
     }
 
@@ -108,5 +113,27 @@ public class SecurityConfig {
         return new AuthorizationDecision(
                 (authentication.get() instanceof AnonymousAuthenticationToken)
                         && ipv4AddressMatcher.matches(object.getRequest()));
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        List<String> allowed =
+                Arrays.asList(
+                        "http://localhost:5173",
+                        "https://final-project-l15zu1wpp-yeojins-projects-a26b6f35.vercel.app",
+                        "https://final-project-eta-silk.vercel.app");
+        configuration.setAllowedOrigins(allowed);
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(
+                Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 }

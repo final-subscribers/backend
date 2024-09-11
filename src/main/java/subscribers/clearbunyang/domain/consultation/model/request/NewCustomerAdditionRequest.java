@@ -24,8 +24,8 @@ public class NewCustomerAdditionRequest {
     @NotBlank private String name; // 고객 이름
 
     @NotBlank
-    @Size(min = 1, max = 12)
     @NumericValidation
+    @Size(min = 12, max = 12)
     private String phoneNumber; // 고객 폰 번호
 
     // @NotBlank 테스트를 위해 주석
