@@ -5,8 +5,7 @@ public enum FileType { // 파일 타입
     PROPERTY_IMAGE, // 물건 이미지
     MARKETING, // 마케팅 자료
     REGISTRATION, // 사업자 등록 파일
-    HOUSING, // ??
-    pdf // 에러 때문에 생성
+    HOUSING // ??
 ;
 
     //    @JsonCreator
