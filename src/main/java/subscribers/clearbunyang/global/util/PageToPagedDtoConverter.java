@@ -1,8 +1,7 @@
+/*
 package subscribers.clearbunyang.global.util;
 
 
-import org.springframework.data.domain.Page;
-import subscribers.clearbunyang.global.model.PagedDto;
 
 public class PageToPagedDtoConverter {
     public static <T> PagedDto<T> convertToPagedDto(Page<T> page) {
@@ -14,3 +13,4 @@ public class PageToPagedDtoConverter {
                 .build();
     }
 }
+*/

@@ -74,6 +74,7 @@ public class PropertiesService {
                 sideBarPendingResponse, completedSummaryResponse, sideBarSelectedPropertyResponse);
     }
 
+    @Cacheable(value = "ConsultPendingList", key = "#propertyId")
     @Transactional(readOnly = true)
     public PagedDto<ConsultPendingListResponse> getConsultPendingListResponse(
             Long propertyId,
@@ -90,19 +91,17 @@ public class PropertiesService {
         List<ConsultPendingSummaryResponse> summaryResponseList =
                 createSummaryResponseList(adminConsultationPage.getContent());
 
-        int totalPages = adminConsultationPage.getTotalPages();
-
         ConsultPendingListResponse consultPendingListResponse =
                 ConsultPendingListResponse.toDto(summaryResponseList);
 
-        return PagedDto.<ConsultPendingListResponse>builder()
-                .totalPages(totalPages)
-                .pageSize(size)
-                .currentPage(page)
-                .content(consultPendingListResponse)
-                .build();
+        return PagedDto.toDTO(
+                page,
+                size,
+                adminConsultationPage.getTotalPages(),
+                List.of(consultPendingListResponse));
     }
 
+    @Cacheable(value = "ConsultCompletedList", key = "#propertyId")
     @Transactional(readOnly = true)
     public PagedDto<ConsultCompletedListResponse> getConsultCompletedListResponse(
             Long propertyId,
@@ -123,17 +122,14 @@ public class PropertiesService {
                         .map(ConsultCompletedSummaryResponse::toDto)
                         .collect(Collectors.toList());
 
-        int totalPages = adminConsultationPage.getTotalPages();
-
         ConsultCompletedListResponse counselCompletedListResponse =
                 ConsultCompletedListResponse.toDto(summaryList);
 
-        return PagedDto.<ConsultCompletedListResponse>builder()
-                .totalPages(totalPages)
-                .pageSize(size)
-                .currentPage(page)
-                .content(counselCompletedListResponse)
-                .build();
+        return PagedDto.toDTO(
+                page,
+                size,
+                adminConsultationPage.getTotalPages(),
+                List.of(counselCompletedListResponse));
     }
 
     private Property getProperty(Long propertyId) {
