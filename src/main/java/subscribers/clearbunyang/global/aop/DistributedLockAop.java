@@ -27,7 +27,6 @@ public class DistributedLockAop {
     private static final String LOCK_PREFIX = "LOCK:";
 
     private final RedissonClient redissonClient;
-    private final AopForTransaction aopForTransaction;
 
     // 실질적인 락 동작
     @Around("@annotation(subscribers.clearbunyang.global.annotation.DistributedLock)")
@@ -44,7 +43,7 @@ public class DistributedLockAop {
                                 distributedLock.key()); // 키 설정
         RLock rLock = redissonClient.getLock(key); // 1
 
-        boolean available = false;
+        boolean available;
 
         log.info("{} - 락 획득 시도", key);
 
@@ -53,22 +52,31 @@ public class DistributedLockAop {
                     rLock.tryLock(
                             distributedLock.waitTime(),
                             distributedLock.leaseTime(),
-                            distributedLock.timeUnit()); // (2)
-            if (!available) {
-                log.info("락 획득 실패={}", key);
+                            distributedLock.timeUnit());
+
+            if (available) {
+                log.info("락 획득 성공: {}", key);
+                // 락을 성공적으로 획득한 경우에만 로직을 수행
+                try {
+                    log.info("실행: {}", key);
+                    return joinPoint.proceed();
+                } finally {
+                    // 로직 수행 후 락 해제
+                    try {
+                        rLock.unlock();
+                        log.info("락 해제 성공: {}", key);
+                    } catch (IllegalMonitorStateException e) {
+                        log.error("락 해제 실패: {} - 이미 해제되었거나 상태가 일치하지 않습니다.", key, e);
+                    }
+                }
+            } else {
+                log.warn("락 획득 실패: {}", key);
                 throw new DistributedLockException(ErrorCode.LOCK_AQUISITION_FAILED) {};
             }
-            log.info("로직 수행");
-            return aopForTransaction.proceed(joinPoint); // (3)
         } catch (InterruptedException e) {
-            log.info("에러 발생");
-            throw e;
-        } finally {
-            try {
-                rLock.unlock(); // (4) 획득 유무와 상관 없이 unlock
-            } catch (IllegalMonitorStateException e) {
-                log.info("Redisson Lock Already UnLock {} {}", method.getName(), key);
-            }
+            Thread.currentThread().interrupt();
+            log.error("락 획득 중 인터럽트 발생: {}", key, e);
+            throw new DistributedLockException(ErrorCode.LOCK_AQUISITION_FAILED) {};
         }
     }
 
