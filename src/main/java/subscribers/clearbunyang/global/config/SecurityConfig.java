@@ -5,6 +5,7 @@ import jakarta.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -40,13 +41,18 @@ public class SecurityConfig {
 
     private final JwtTokenProcessor jwtTokenProcessor;
 
-    @Value("${deploy.server.port}") private String allowedIpv4Address;
+    @Value("${deploy.server.port}") private String allowedServerIpv4Address;
 
-    private IpAddressMatcher ipv4AddressMatcher;
+    @Value("${deploy.monitoring-server.port}") private String allowedMonitoringIpv4Address;
+
+    private List<IpAddressMatcher> ipv4AddressMatchers;
 
     @PostConstruct
     public void init() {
-        this.ipv4AddressMatcher = new IpAddressMatcher(allowedIpv4Address + "/32");
+        this.ipv4AddressMatchers =
+                Arrays.asList(allowedServerIpv4Address, allowedMonitoringIpv4Address).stream()
+                        .map(ip -> new IpAddressMatcher(ip + "/32"))
+                        .collect(Collectors.toList());
     }
 
     @Bean
@@ -82,7 +88,7 @@ public class SecurityConfig {
                                         .hasAuthority("ADMIN")
                                         .requestMatchers("/api/member/**")
                                         .hasAuthority("MEMBER")
-                                        .requestMatchers("/actuator/health")
+                                        .requestMatchers("/actuator/**")
                                         .access(this::hasIpAddress)
                                         .anyRequest()
                                         .authenticated())
@@ -110,9 +116,12 @@ public class SecurityConfig {
 
     private AuthorizationDecision hasIpAddress(
             Supplier<Authentication> authentication, RequestAuthorizationContext object) {
+        String requestIp = object.getRequest().getRemoteAddr();
+        boolean isIpMatched =
+                ipv4AddressMatchers.stream().anyMatch(matcher -> matcher.matches(requestIp));
+
         return new AuthorizationDecision(
-                (authentication.get() instanceof AnonymousAuthenticationToken)
-                        && ipv4AddressMatcher.matches(object.getRequest()));
+                (authentication.get() instanceof AnonymousAuthenticationToken) && isIpMatched);
     }
 
     @Bean
