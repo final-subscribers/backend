@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +16,9 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-import subscribers.clearbunyang.domain.likes.entity.Likes;
-import subscribers.clearbunyang.domain.likes.model.response.LikesPropertyResponse;
-import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
-import subscribers.clearbunyang.domain.likes.service.LikesService;
+import subscribers.clearbunyang.domain.like.entity.Likes;
+import subscribers.clearbunyang.domain.like.model.response.LikesPropertyResponse;
+import subscribers.clearbunyang.domain.like.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
@@ -34,6 +32,7 @@ import subscribers.clearbunyang.domain.user.repository.MemberRepository;
 import subscribers.clearbunyang.global.config.BatchConfig;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
+import subscribers.clearbunyang.global.model.PagedDto;
 
 @SpringBootTest
 @Testcontainers
@@ -358,11 +357,12 @@ class LikesRedisServiceTest {
 
         likesRepository.save(Likes.builder().member(member).property(property).build());
 
-        Page<LikesPropertyResponse> response =
+        PagedDto<LikesPropertyResponse> response =
                 likesService.getMyFavoriteProperties(member.getId(), status, page, size);
 
-        assertThat(response).isNotEmpty();
-        assertThat(response.getTotalElements()).isEqualTo(1);
+        assertThat(response.getContents()).isNotEmpty();
+        assertThat(response.getContents().size()).isEqualTo(1);
+        assertThat(response.getTotalPages()).isEqualTo(1);
     }
 
     @Test
@@ -386,12 +386,12 @@ class LikesRedisServiceTest {
         String redisKey = member.getId() + ":2";
         redisTemplate.opsForHash().put("likes", redisKey, true);
 
-        Page<LikesPropertyResponse> response =
+        PagedDto<LikesPropertyResponse> response =
                 likesService.getMyFavoriteProperties(member.getId(), status, page, size);
 
-        System.out.println(response);
-        assertThat(response).isNotEmpty();
-        assertThat(response.getTotalElements()).isEqualTo(1);
+        assertThat(response.getContents()).isNotEmpty();
+        assertThat(response.getContents().size()).isEqualTo(1);
+        assertThat(response.getTotalPages()).isEqualTo(1);
     }
 
     @Test
@@ -417,10 +417,10 @@ class LikesRedisServiceTest {
 
         likesRepository.save(Likes.builder().member(member).property(property).build());
 
-        Page<LikesPropertyResponse> response =
+        PagedDto<LikesPropertyResponse> response =
                 likesService.getMyFavoriteProperties(member.getId(), status, page, size);
 
-        assertThat(response).isEmpty();
+        assertThat(response.getContents()).isEmpty();
     }
 
     @Test
@@ -444,10 +444,10 @@ class LikesRedisServiceTest {
         String redisKey = member.getId() + ":2";
         redisTemplate.opsForHash().put("likes", redisKey, false);
 
-        Page<LikesPropertyResponse> response =
+        PagedDto<LikesPropertyResponse> response =
                 likesService.getMyFavoriteProperties(member.getId(), status, page, size);
 
-        assertThat(response).isEmpty();
+        assertThat(response.getContents()).isEmpty();
     }
 
     @Test
@@ -501,11 +501,11 @@ class LikesRedisServiceTest {
         int page = 0;
         int size = 10;
 
-        Page<LikesPropertyResponse> response =
+        PagedDto<LikesPropertyResponse> response =
                 likesService.getMyFavoriteProperties(member.getId(), status, page, size);
 
-        assertThat(response).isNotEmpty();
+        assertThat(response.getContents()).isNotEmpty();
+        assertThat(response.getContents().size()).isEqualTo(4); // PropertyId: 2,3,4,5
         assertThat(response.getTotalPages()).isEqualTo(1);
-        assertThat(response.getTotalElements()).isEqualTo(4); // PropertyId: 2,3,4,5
     }
 }
