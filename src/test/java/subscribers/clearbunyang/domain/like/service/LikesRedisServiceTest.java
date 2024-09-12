@@ -17,7 +17,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-import subscribers.clearbunyang.domain.like.entity.Likes;
+import subscribers.clearbunyang.domain.likes.entity.Likes;
 import subscribers.clearbunyang.domain.likes.model.response.LikesPropertyResponse;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.likes.service.LikesService;
