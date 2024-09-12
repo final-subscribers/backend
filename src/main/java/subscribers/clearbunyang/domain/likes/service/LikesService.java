@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.like.service;
+package subscribers.clearbunyang.domain.likes.service;
 
 
 import java.time.LocalDate;
@@ -12,8 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import subscribers.clearbunyang.domain.like.model.response.LikesPropertyResponse;
-import subscribers.clearbunyang.domain.like.repository.LikesRepository;
+import subscribers.clearbunyang.domain.likes.model.response.LikesPropertyResponse;
+import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.domain.user.entity.Member;

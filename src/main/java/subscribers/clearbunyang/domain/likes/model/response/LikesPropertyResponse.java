@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.like.model.response;
+package subscribers.clearbunyang.domain.likes.model.response;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;

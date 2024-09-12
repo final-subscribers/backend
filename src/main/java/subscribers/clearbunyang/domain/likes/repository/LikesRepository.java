@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.like.repository;
+package subscribers.clearbunyang.domain.likes.repository;
 
 
 import java.util.Optional;
