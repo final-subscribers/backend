@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.like.controller;
+package subscribers.clearbunyang.domain.likes.controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import subscribers.clearbunyang.domain.like.model.response.LikesPropertyResponse;
-import subscribers.clearbunyang.domain.like.service.LikesService;
+import subscribers.clearbunyang.domain.likes.model.response.LikesPropertyResponse;
+import subscribers.clearbunyang.domain.likes.service.LikesService;
 import subscribers.clearbunyang.global.model.PagedDto;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
