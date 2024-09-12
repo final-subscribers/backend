@@ -37,17 +37,13 @@ import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundExceptio
 
 class LikesServiceTest {
 
-  @Mock
-  private LikesRepository likesRepository;
+  @Mock private LikesRepository likesRepository;
 
-  @Mock
-  private MemberRepository memberRepository;
+  @Mock private MemberRepository memberRepository;
 
-  @Mock
-  private PropertyRepository propertyRepository;
+  @Mock private PropertyRepository propertyRepository;
 
-  @InjectMocks
-  private LikesService likesService;
+  @InjectMocks private LikesService likesService;
 
   @BeforeEach
   void setUp() {
@@ -56,14 +52,16 @@ class LikesServiceTest {
 
   @Test
   void testToggleLike_MemberNotFound() {
-    //멤버 찾을 수 없을 때 에러 반환
+    // 멤버 찾을 수 없을 때 에러 반환
     Long memberId = 1L;
     Long propertyId = 1L;
 
     when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
 
-    EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-        () -> likesService.toggleLike(memberId, propertyId));
+    EntityNotFoundException exception =
+        assertThrows(
+            EntityNotFoundException.class,
+            () -> likesService.toggleLike(memberId, propertyId));
 
     assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
     verify(likesRepository, never()).save(any(Likes.class));
@@ -72,7 +70,7 @@ class LikesServiceTest {
 
   @Test
   void testToggleLike_PropertyNotFound() {
-    //물건 찾을 수 없을 때 에러 반환
+    // 물건 찾을 수 없을 때 에러 반환
     Long memberId = 1L;
     Long propertyId = 1L;
     Member member = new Member();
@@ -80,8 +78,10 @@ class LikesServiceTest {
     when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
     when(propertyRepository.findById(propertyId)).thenReturn(Optional.empty());
 
-    EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-        () -> likesService.toggleLike(memberId, propertyId));
+    EntityNotFoundException exception =
+        assertThrows(
+            EntityNotFoundException.class,
+            () -> likesService.toggleLike(memberId, propertyId));
 
     assertEquals(ErrorCode.PROPERTY_NOT_FOUND, exception.getErrorCode());
     verify(likesRepository, never()).save(any(Likes.class));
@@ -90,7 +90,7 @@ class LikesServiceTest {
 
   @Test
   void testGetMyFavoriteProperties_MemberNotFound() {
-    //멤버 찾을 수 없을 때 에러 반환
+    // 멤버 찾을 수 없을 때 에러 반환
     Long memberId = 1L;
     String status = "open";
     int page = 0;
@@ -98,10 +98,13 @@ class LikesServiceTest {
 
     when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
 
-    EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-        () -> likesService.getMyFavoriteProperties(memberId, status, page, size));
+    EntityNotFoundException exception =
+        assertThrows(
+            EntityNotFoundException.class,
+            () -> likesService.getMyFavoriteProperties(memberId, status, page, size));
 
     assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
-    verify(propertyRepository, never()).findByDateRange(any(LocalDate.class), any(PageRequest.class), anyBoolean());
+    verify(propertyRepository, never())
+        .findByDateRange(any(LocalDate.class), any(PageRequest.class), anyBoolean());
   }
 }
