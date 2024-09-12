@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class SidebarScheduler {
 
-    @Scheduled(cron = " 0 2 12 * * ?") // 매일 자정에 실행 0 0 0 * * ?
+    @Scheduled(cron = " 0 0 0 * * ?") // 매일 자정에 실행 0 0 0 * * ?
     @CacheEvict(value = "sidebarList", allEntries = true)
     public void sidebarCache() {
         log.info("sidebarList 캐시 무효화");
