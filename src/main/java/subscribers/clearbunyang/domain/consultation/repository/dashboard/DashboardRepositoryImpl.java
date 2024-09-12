@@ -14,7 +14,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -194,7 +193,6 @@ public class DashboardRepositoryImpl implements DashboardRepository {
                         query.select(
                                         Projections.constructor(
                                                 PropertyInquiryDetailsDTO.class,
-                                                memberConsultation.property.name,
                                                 pendingCount,
                                                 completedCount,
                                                 phoneCount,
@@ -208,16 +206,6 @@ public class DashboardRepositoryImpl implements DashboardRepository {
                                                 end.plusDays(1L).atStartOfDay()))
                                 .groupBy(memberConsultation.property.id)
                                 .fetchOne());
-
-        JPAQuery<LocalDateTime> stampsQuery =
-                query.select(memberConsultation.createdAt)
-                        .from(memberConsultation)
-                        .where(
-                                memberConsultation.property.id.eq(propertyId),
-                                memberConsultation.createdAt.goe(start.atStartOfDay()),
-                                memberConsultation.createdAt.lt(end.plusDays(1L).atStartOfDay()));
-
-        result.ifPresent(detailsDTO -> detailsDTO.setTimeStamps(stampsQuery.fetch()));
 
         return result.orElse(new PropertyInquiryDetailsDTO(0));
     }
