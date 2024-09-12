@@ -30,7 +30,6 @@ import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.Phase;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.ConsultationDateStatsDTO;
-import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertiesInquiryStatsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryDetailsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryStatusDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertySelectDTO;
@@ -154,13 +153,13 @@ public class DashboardRepositoryImpl implements DashboardRepository {
                 .fetch();
     }
 
-    public Page<PropertiesInquiryStatsDTO> findPropertiesInquiryStats(
+    public Page<PropertyInquiryStatusDTO> findPropertiesInquiryStats(
             Long adminId, Pageable pageable) {
 
-        List<PropertiesInquiryStatsDTO> list =
+        List<PropertyInquiryStatusDTO> list =
                 query.select(
                                 Projections.constructor(
-                                        PropertiesInquiryStatsDTO.class,
+                                        PropertyInquiryStatusDTO.class,
                                         memberConsultation.property.id,
                                         memberConsultation.property.name,
                                         pendingCount,

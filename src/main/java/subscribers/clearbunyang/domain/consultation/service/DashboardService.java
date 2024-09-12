@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.ConsultationDateStatsDTO;
-import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertiesInquiryStatsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryDetailsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryStatusDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.response.CardComponentResponse;
@@ -53,9 +52,9 @@ public class DashboardService {
                 .build();
     }
 
-    public PagedDto<PropertiesInquiryStatsDTO> getPropertiesInquiryStats(
+    public PagedDto<PropertyInquiryStatusDTO> getPropertiesInquiryStats(
             Long adminId, Pageable pageable) {
-        Page<PropertiesInquiryStatsDTO> propertiesInquiryStats =
+        Page<PropertyInquiryStatusDTO> propertiesInquiryStats =
                 dashboardRepository.findPropertiesInquiryStats(adminId, pageable);
 
         return PagedDto.toDTO(propertiesInquiryStats);
