@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.GraphInterval;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.ConsultationDateStatsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryDetailsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryStatusDTO;
@@ -64,8 +65,8 @@ public class DashboardService {
     }
 
     public PropertyInquiryDetailsDTO getPropertyInquiryDetails(
-            Long propertyId, LocalDate start, LocalDate end) {
-        return dashboardRepository.findPropertyInquiryDetails(propertyId, start, end);
+            Long propertyId, LocalDate end, GraphInterval graphInterval) {
+        return dashboardRepository.findPropertyInquiryDetails(propertyId, end, graphInterval);
     }
 
     private List<Integer> getTotalNumberByWeek(List<ConsultationDateStatsDTO> totalStatsByWeek) {

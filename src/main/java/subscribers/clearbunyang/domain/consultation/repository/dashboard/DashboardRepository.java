@@ -5,8 +5,10 @@ import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.GraphInterval;
 import subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.Phase;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.ConsultationDateStatsDTO;
+import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyGraphRequirementsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryDetailsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryStatusDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertySelectDTO;
@@ -23,5 +25,7 @@ public interface DashboardRepository {
     Page<PropertyInquiryStatusDTO> findPropertiesInquiryStats(Long adminId, Pageable pageable);
 
     PropertyInquiryDetailsDTO findPropertyInquiryDetails(
-            Long propertyId, LocalDate start, LocalDate end);
+            Long propertyId, LocalDate end, GraphInterval graphInterval);
+
+    PropertyGraphRequirementsDTO findPropertyGraphRequirements();
 }

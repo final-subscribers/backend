@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.GraphInterval;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryDetailsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.response.CardComponentResponse;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.response.PropertyInquiryStatusResponse;
@@ -41,8 +42,9 @@ public class DashboardController {
     @GetMapping("/properties/{property_id}")
     public PropertyInquiryDetailsDTO getDashboardProperty(
             @PathVariable(name = "property_id") String propertyId,
-            @RequestParam(name = "start") LocalDate start,
-            @RequestParam(name = "end") LocalDate end) {
-        return dashboardService.getPropertyInquiryDetails(Long.valueOf(propertyId), start, end);
+            @RequestParam(name = "end") LocalDate end,
+            @RequestParam(name = "graphInterval") GraphInterval graphInterval) {
+        return dashboardService.getPropertyInquiryDetails(
+                Long.valueOf(propertyId), end, graphInterval);
     }
 }

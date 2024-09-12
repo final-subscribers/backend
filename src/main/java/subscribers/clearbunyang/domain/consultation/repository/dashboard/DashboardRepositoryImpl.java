@@ -5,6 +5,7 @@ import static subscribers.clearbunyang.domain.consultation.entity.enums.Medium.*
 import static subscribers.clearbunyang.domain.consultation.entity.enums.Status.*;
 import static subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.Phase.*;
 import static subscribers.clearbunyang.domain.property.entity.QProperty.*;
+import static subscribers.clearbunyang.global.exception.errorCode.ErrorCode.*;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -27,8 +28,10 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
+import subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.GraphInterval;
 import subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.Phase;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.ConsultationDateStatsDTO;
+import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyGraphRequirementsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryDetailsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryStatusDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertySelectDTO;
@@ -182,7 +185,8 @@ public class DashboardRepositoryImpl implements DashboardRepository {
 
     @Override
     public PropertyInquiryDetailsDTO findPropertyInquiryDetails(
-            Long propertyId, LocalDate start, LocalDate end) {
+            Long propertyId, LocalDate end, GraphInterval graphInterval) {
+        LocalDate start = getStartDate(end, graphInterval);
 
         NumberExpression<Integer> phoneCount = mediumSumExpression(PHONE);
         NumberExpression<Integer> channelCount = mediumSumExpression(CHANNEL);
@@ -210,6 +214,11 @@ public class DashboardRepositoryImpl implements DashboardRepository {
         return result.orElse(new PropertyInquiryDetailsDTO(0));
     }
 
+    @Override
+    public PropertyGraphRequirementsDTO findPropertyGraphRequirements() {
+        return null;
+    }
+
     private BooleanExpression phaseEq(Phase phase) {
         LocalDate now = LocalDate.now();
         if (phase == OPEN) {
@@ -226,6 +235,17 @@ public class DashboardRepositoryImpl implements DashboardRepository {
 
     private NumberExpression<Integer> mediumSumExpression(Medium medium) {
         return memberConsultation.medium.when(medium).then(1).otherwise(0).sum().coalesce(0);
+    }
+
+    private LocalDate getStartDate(LocalDate endDate, GraphInterval graphInterval) {
+        if (graphInterval == GraphInterval.DAILY) {
+            return endDate;
+        } else if (graphInterval == GraphInterval.WEEKLY) {
+            return endDate.minusWeeks(1L);
+        } else if (graphInterval == GraphInterval.MONTHLY) {
+            return endDate.minusMonths(1L);
+        }
+        throw new IllegalArgumentException(INVALID_INPUT_VALUE.getMessage());
     }
 
     public DashboardRepositoryImpl(EntityManager em) {
