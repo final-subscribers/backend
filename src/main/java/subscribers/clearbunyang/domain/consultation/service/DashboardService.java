@@ -14,6 +14,7 @@ import subscribers.clearbunyang.domain.consultation.model.dashboard.response.Car
 import subscribers.clearbunyang.domain.consultation.model.dashboard.response.CardCountDescResponse;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.response.CardTodayStatusResponse;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.response.CardWeekProgressResponse;
+import subscribers.clearbunyang.domain.consultation.model.dashboard.response.PropertyInquiryStatusResponse;
 import subscribers.clearbunyang.domain.consultation.repository.dashboard.DashboardRepository;
 import subscribers.clearbunyang.global.model.PagedDto;
 
@@ -52,10 +53,12 @@ public class DashboardService {
                 .build();
     }
 
-    public PagedDto<PropertyInquiryStatusDTO> getPropertiesInquiryStats(
+    public PagedDto<PropertyInquiryStatusResponse> getPropertiesInquiryStats(
             Long adminId, Pageable pageable) {
-        Page<PropertyInquiryStatusDTO> propertiesInquiryStats =
-                dashboardRepository.findPropertiesInquiryStats(adminId, pageable);
+        Page<PropertyInquiryStatusResponse> propertiesInquiryStats =
+                dashboardRepository
+                        .findPropertiesInquiryStats(adminId, pageable)
+                        .map(PropertyInquiryStatusResponse::fromDTO);
 
         return PagedDto.toDTO(propertiesInquiryStats);
     }

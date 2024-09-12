@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryDetailsDTO;
-import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryStatusDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.response.CardComponentResponse;
+import subscribers.clearbunyang.domain.consultation.model.dashboard.response.PropertyInquiryStatusResponse;
 import subscribers.clearbunyang.domain.consultation.service.DashboardService;
 import subscribers.clearbunyang.global.model.PagedDto;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
@@ -32,8 +32,8 @@ public class DashboardController {
     }
 
     @GetMapping("dashboard/properties")
-    public PagedDto<PropertyInquiryStatusDTO> getDashboardProperties(
-            @PageableDefault Pageable pageable,
+    public PagedDto<PropertyInquiryStatusResponse> getDashboardProperties(
+            @PageableDefault(size = 5) Pageable pageable,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return dashboardService.getPropertiesInquiryStats(customUserDetails.getUserId(), pageable);
     }
