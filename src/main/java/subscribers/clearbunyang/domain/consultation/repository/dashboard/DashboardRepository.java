@@ -17,7 +17,7 @@ public interface DashboardRepository {
 
     PropertyInquiryStatusDTO findTodayStats(Long adminId);
 
-    List<ConsultationDateStatsDTO> findTotalNumberByWeek(Long adminId);
+    List<ConsultationDateStatsDTO> findTotalStatsByWeek(Long adminId);
 
     List<PropertyInquiryStatusDTO> findStatsOrderByCountDesc(Long adminId);
 
