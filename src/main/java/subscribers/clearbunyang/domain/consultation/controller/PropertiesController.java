@@ -17,9 +17,9 @@ import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
 import subscribers.clearbunyang.domain.consultation.model.request.NewCustomerAdditionRequest;
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultCompletedListResponse;
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultPendingListResponse;
-import subscribers.clearbunyang.domain.consultation.model.response.PagedDTO;
 import subscribers.clearbunyang.domain.consultation.model.response.SideBarListResponse;
 import subscribers.clearbunyang.domain.consultation.service.PropertiesService;
+import subscribers.clearbunyang.global.model.PagedDto;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,7 +49,7 @@ public class PropertiesController {
     @Tag(name = "상담 대기 리스트", description = "상담 대기 리스트 조회")
     @Operation(summary = "상담 대기 리스트 ")
     @GetMapping("/pending")
-    public PagedDTO<ConsultPendingListResponse> getConsultPendingList(
+    public PagedDto<ConsultPendingListResponse> getConsultPendingList(
             @PathVariable Long propertyId,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String consultant,
@@ -57,7 +57,7 @@ public class PropertiesController {
             @RequestParam(required = false, value = "page", defaultValue = "0") int page,
             @RequestParam(required = false, value = "size", defaultValue = "5") int size) {
 
-        PagedDTO<ConsultPendingListResponse> response =
+        PagedDto<ConsultPendingListResponse> response =
                 propertiesService.getConsultPendingListResponse(
                         propertyId, search, consultant, preferredAt, page, size);
 
@@ -67,7 +67,7 @@ public class PropertiesController {
     @Tag(name = "상담 완료 리스트", description = "상담 완료 리스트 조회")
     @Operation(summary = "상담 완료 리스트 ")
     @GetMapping("/completed")
-    public PagedDTO<ConsultCompletedListResponse> getConsultCompletedList(
+    public PagedDto<ConsultCompletedListResponse> getConsultCompletedList(
             @PathVariable(required = false) Long propertyId,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Tier tier,
@@ -76,7 +76,7 @@ public class PropertiesController {
             @RequestParam(required = false, value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "5") int size) {
 
-        PagedDTO<ConsultCompletedListResponse> response =
+        PagedDto<ConsultCompletedListResponse> response =
                 propertiesService.getConsultCompletedListResponse(
                         propertyId, search, tier, consultant, preferredAt, page, size);
 

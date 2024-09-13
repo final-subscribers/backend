@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +21,6 @@ import subscribers.clearbunyang.domain.consultation.model.response.ConsultComple
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultCompletedSummaryResponse;
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultPendingListResponse;
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultPendingSummaryResponse;
-import subscribers.clearbunyang.domain.consultation.model.response.PagedDTO;
 import subscribers.clearbunyang.domain.consultation.model.response.SideBarCompletedResponse;
 import subscribers.clearbunyang.domain.consultation.model.response.SideBarListResponse;
 import subscribers.clearbunyang.domain.consultation.model.response.SideBarPendingResponse;
@@ -31,6 +31,7 @@ import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
+import subscribers.clearbunyang.global.model.PagedDto;
 
 @Slf4j
 @Service
@@ -53,6 +54,7 @@ public class PropertiesService {
         memberConsultationRepository.save(memberConsultation);
     }
 
+    @Cacheable(value = "sidebarList", keyGenerator = "keyGenerator")
     @Transactional(readOnly = true)
     public SideBarListResponse getSideBarList(Long propertyId) {
         LocalDate today = LocalDate.now();
@@ -72,8 +74,9 @@ public class PropertiesService {
                 sideBarPendingResponse, completedSummaryResponse, sideBarSelectedPropertyResponse);
     }
 
+    @Cacheable(value = "ConsultPendingList", key = "#propertyId")
     @Transactional(readOnly = true)
-    public PagedDTO<ConsultPendingListResponse> getConsultPendingListResponse(
+    public PagedDto<ConsultPendingListResponse> getConsultPendingListResponse(
             Long propertyId,
             String search,
             String consultant,
@@ -88,21 +91,19 @@ public class PropertiesService {
         List<ConsultPendingSummaryResponse> summaryResponseList =
                 createSummaryResponseList(adminConsultationPage.getContent());
 
-        int totalPages = adminConsultationPage.getTotalPages();
-
         ConsultPendingListResponse consultPendingListResponse =
                 ConsultPendingListResponse.toDto(summaryResponseList);
 
-        return PagedDTO.<ConsultPendingListResponse>builder()
-                .totalPages(totalPages)
-                .pageSize(size)
-                .currentPage(page)
-                .content(consultPendingListResponse)
-                .build();
+        return PagedDto.toDTO(
+                page,
+                size,
+                adminConsultationPage.getTotalPages(),
+                List.of(consultPendingListResponse));
     }
 
+    @Cacheable(value = "ConsultCompletedList", key = "#propertyId")
     @Transactional(readOnly = true)
-    public PagedDTO<ConsultCompletedListResponse> getConsultCompletedListResponse(
+    public PagedDto<ConsultCompletedListResponse> getConsultCompletedListResponse(
             Long propertyId,
             String search,
             Tier tier,
@@ -121,17 +122,14 @@ public class PropertiesService {
                         .map(ConsultCompletedSummaryResponse::toDto)
                         .collect(Collectors.toList());
 
-        int totalPages = adminConsultationPage.getTotalPages();
-
         ConsultCompletedListResponse counselCompletedListResponse =
                 ConsultCompletedListResponse.toDto(summaryList);
 
-        return PagedDTO.<ConsultCompletedListResponse>builder()
-                .totalPages(totalPages)
-                .pageSize(size)
-                .currentPage(page)
-                .content(counselCompletedListResponse)
-                .build();
+        return PagedDto.toDTO(
+                page,
+                size,
+                adminConsultationPage.getTotalPages(),
+                List.of(counselCompletedListResponse));
     }
 
     private Property getProperty(Long propertyId) {

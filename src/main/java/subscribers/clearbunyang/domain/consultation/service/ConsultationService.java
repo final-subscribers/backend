@@ -88,11 +88,14 @@ public class ConsultationService {
         validateConsultantExists(property.getId(), consultant);
 
         String existingConsultant = adminConsultation.getConsultant();
-        if (!existingConsultant.isEmpty()) {
+        if (existingConsultant != null && !existingConsultant.isEmpty()) {
             throw new ConsultantException(ErrorCode.UNABLE_TO_CHANGE_CONSULTANT);
         }
 
-        adminConsultation.setConsultant(consultant);
+        adminConsultation.setConsultant(
+                consultant); // 이ㅓㄹ면 정합성 문제 발생 확률 문제 - 하나의 트랜잭션 안에 3가지의 작업, adminConsultationId 찾기,
+        // set 저장 : 정합성 문제
+        // where adminconsultaion id update 를 바로 할 수 있어야 정합성 문제가 일어나지 않음
 
         return ConsultantResponse.toDto(consultant);
     }

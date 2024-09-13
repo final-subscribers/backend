@@ -83,7 +83,7 @@ public class CommonPropertyControllerIntegrationTest {
         ConsultationRequestDTO requestDTO = createTestConsultationRequestDTO();
 
         mockMvc.perform(
-                        get("/api/common/properties/{propertyId}", 20L)
+                        get("/api/common/properties/{propertyId}", 28L)
                                 .contentType("application/json")
                                 .with(csrf()))
                 .andDo(System.out::println);
