@@ -46,9 +46,6 @@ public class Admin extends BaseEntity {
     private String companyName;
 
     @Column(nullable = false)
-    private Long registrationNumber;
-
-    @Column(nullable = false)
     private String address;
 
     @Column(nullable = false)

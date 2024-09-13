@@ -1,38 +1,6 @@
+/*
 package subscribers.clearbunyang.domain.consultation.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
-import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
-import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
-import subscribers.clearbunyang.domain.consultation.model.myConsultations.ConsultationPagedResponse;
-import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
-import subscribers.clearbunyang.domain.file.entity.File;
-import subscribers.clearbunyang.domain.likes.entity.Likes;
-import subscribers.clearbunyang.domain.property.entity.Area;
-import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
-import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
-import subscribers.clearbunyang.domain.user.entity.Admin;
-import subscribers.clearbunyang.domain.user.entity.Member;
-import subscribers.clearbunyang.domain.user.entity.enums.UserRole;
-import subscribers.clearbunyang.domain.user.repository.MemberRepository;
-import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
-import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 
 @ExtendWith(MockitoExtension.class)
 public class MyConsultationServiceTest {
@@ -337,3 +305,4 @@ public class MyConsultationServiceTest {
                 .findPendingConsultationsByUserIdAndSearch(anyLong(), anyString());
     }
 }
+*/

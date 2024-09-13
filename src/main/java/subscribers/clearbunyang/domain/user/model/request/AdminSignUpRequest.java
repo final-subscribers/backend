@@ -24,8 +24,6 @@ public class AdminSignUpRequest {
 
     private String companyName;
 
-    private Long registrationNumber;
-
     private String address;
 
     private String business;

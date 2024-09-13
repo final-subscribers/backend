@@ -16,7 +16,7 @@ import subscribers.clearbunyang.domain.consultation.repository.MemberConsultatio
 import subscribers.clearbunyang.domain.file.entity.File;
 import subscribers.clearbunyang.domain.file.model.FileRequestDTO;
 import subscribers.clearbunyang.domain.file.repository.FileRepository;
-import subscribers.clearbunyang.domain.like.repository.LikesRepository;
+import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.entity.Area;
 import subscribers.clearbunyang.domain.property.entity.Keyword;
 import subscribers.clearbunyang.domain.property.entity.Property;

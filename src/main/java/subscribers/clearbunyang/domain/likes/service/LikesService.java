@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.like.service;
+package subscribers.clearbunyang.domain.likes.service;
 
 
 import java.time.LocalDate;
@@ -12,14 +12,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import subscribers.clearbunyang.domain.like.model.response.LikesPropertyResponse;
-import subscribers.clearbunyang.domain.like.repository.LikesRepository;
+import subscribers.clearbunyang.domain.likes.model.response.LikesPropertyResponse;
+import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.domain.user.entity.Member;
 import subscribers.clearbunyang.domain.user.repository.MemberRepository;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
+import subscribers.clearbunyang.global.model.PagedDto;
 
 @Service
 @Transactional
@@ -68,7 +69,7 @@ public class LikesService {
     }
 
     @Transactional(readOnly = true)
-    public Page<LikesPropertyResponse> getMyFavoriteProperties(
+    public PagedDto<LikesPropertyResponse> getMyFavoriteProperties(
             Long memberId, String status, int page, int size) {
         Member member =
                 memberRepository
@@ -111,7 +112,12 @@ public class LikesService {
                                 })
                         .collect(Collectors.toList());
 
-        return new PageImpl<>(filteredProperties, pageRequest, filteredProperties.size())
-                .map(LikesPropertyResponse::fromEntity);
+        PageImpl<Property> filteredPage =
+                new PageImpl<>(filteredProperties, pageRequest, filteredProperties.size());
+
+        Page<LikesPropertyResponse> responsePage =
+                filteredPage.map(LikesPropertyResponse::fromEntity);
+
+        return PagedDto.toFavoriteDTO(responsePage);
     }
 }
