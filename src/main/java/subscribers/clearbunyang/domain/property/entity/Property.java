@@ -105,6 +105,15 @@ public class Property extends BaseEntity {
     @JsonManagedReference
     private List<Keyword> keywords;
 
+    @Column(nullable = false)
+    private Integer price;
+
+    @Column(nullable = true)
+    private Integer discountPrice;
+
+    @Column(nullable = true)
+    private Integer discountPercent;
+
     public void setAdminId(Admin adminId) {
         this.admin = adminId;
     }
