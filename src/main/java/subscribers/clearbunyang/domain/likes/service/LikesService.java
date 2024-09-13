@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.like.service;
+package subscribers.clearbunyang.domain.likes.service;
 
 
 import java.time.LocalDate;
@@ -12,14 +12,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import subscribers.clearbunyang.domain.like.model.response.LikesPropertyResponse;
-import subscribers.clearbunyang.domain.like.repository.LikesRepository;
+import subscribers.clearbunyang.domain.likes.model.response.LikesPropertyResponse;
+import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.domain.user.entity.Member;
 import subscribers.clearbunyang.domain.user.repository.MemberRepository;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
+import subscribers.clearbunyang.global.model.PagedDto;
 
 @Service
 @Transactional
@@ -68,7 +69,7 @@ public class LikesService {
     }
 
     @Transactional(readOnly = true)
-    public Page<LikesPropertyResponse> getMyFavoriteProperties(
+    public PagedDto<LikesPropertyResponse> getMyFavoriteProperties(
             Long memberId, String status, int page, int size) {
         Member member =
                 memberRepository
@@ -76,19 +77,15 @@ public class LikesService {
                         .orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
 
         LocalDate currentDate = LocalDate.now();
-
         PageRequest pageRequest = PageRequest.of(page, size);
 
         Page<Property> properties;
 
+        // 상태 open인지 closed인지에 따라 날짜에 해당하는 페이징된 물건값 싹 다 받아와서 필터 통과시키기
         if (status.equalsIgnoreCase("open")) {
-            properties =
-                    propertyRepository.findAllByMemberAndDateRange(
-                            member, currentDate, pageRequest, true);
+            properties = propertyRepository.findByDateRange(currentDate, pageRequest, true);
         } else {
-            properties =
-                    propertyRepository.findAllByMemberAndDateRange(
-                            member, currentDate, pageRequest, false);
+            properties = propertyRepository.findByDateRange(currentDate, pageRequest, false);
         }
 
         List<Property> filteredProperties =
@@ -99,18 +96,28 @@ public class LikesService {
                                     Boolean isLikedInRedis =
                                             (Boolean) redisTemplate.opsForHash().get("likes", key);
 
-                                    if (isLikedInRedis != null) {
-                                        // Redis에 정보가 있는 경우
-                                        return isLikedInRedis;
+                                    // Redis에서 키값 true인경우 물건값 반환되어야함
+                                    if (Boolean.TRUE.equals(isLikedInRedis)) {
+                                        return true;
                                     }
 
-                                    // Redis 값이 없을 경우 DB 상태로 결정
+                                    // Redis에서 키값 false인경우 물건값 반환되면 안됨
+                                    if (Boolean.FALSE.equals(isLikedInRedis)) {
+                                        return false;
+                                    }
+
+                                    // Redis에서 키값 없으면 좋아요 유무 db에서 확인해서 반환여부 결정
                                     return likesRepository.existsByMemberIdAndPropertyId(
                                             memberId, property.getId());
                                 })
                         .collect(Collectors.toList());
 
-        return new PageImpl<>(filteredProperties, pageRequest, filteredProperties.size())
-                .map(LikesPropertyResponse::fromEntity);
+        PageImpl<Property> filteredPage =
+                new PageImpl<>(filteredProperties, pageRequest, filteredProperties.size());
+
+        Page<LikesPropertyResponse> responsePage =
+                filteredPage.map(LikesPropertyResponse::fromEntity);
+
+        return PagedDto.toFavoriteDTO(responsePage);
     }
 }

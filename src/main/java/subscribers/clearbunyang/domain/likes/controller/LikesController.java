@@ -1,8 +1,9 @@
-package subscribers.clearbunyang.domain.like.controller;
+package subscribers.clearbunyang.domain.likes.controller;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,18 +12,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import subscribers.clearbunyang.domain.like.model.response.LikesPageResponse;
-import subscribers.clearbunyang.domain.like.model.response.LikesPropertyResponse;
-import subscribers.clearbunyang.domain.like.service.LikesService;
+import subscribers.clearbunyang.domain.likes.model.response.LikesPropertyResponse;
+import subscribers.clearbunyang.domain.likes.service.LikesService;
+import subscribers.clearbunyang.global.model.PagedDto;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
 @RestController
 @RequestMapping("/api/member/")
 @RequiredArgsConstructor
+@Tag(name = "Likes", description = "좋아요 토글/좋아요 목록조회")
 public class LikesController {
 
     private final LikesService likesService;
 
+    @Operation(summary = "좋아요 토글")
     @PostMapping("properties/{propertyId}/like")
     public ResponseEntity<String> toggleLike(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -31,19 +34,18 @@ public class LikesController {
         return ResponseEntity.ok("좋아요 성공");
     }
 
+    @Operation(summary = "좋아요 목록조회")
     @GetMapping("my-favorites")
-    public ResponseEntity<LikesPageResponse> getMyFavorites(
+    public ResponseEntity<PagedDto<LikesPropertyResponse>> getMyFavorites(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestParam("status") String status,
             @RequestParam("page") int page,
             @RequestParam("size") int size) {
 
-        Page<LikesPropertyResponse> propertyPage =
+        PagedDto<LikesPropertyResponse> pagedDto =
                 likesService.getMyFavoriteProperties(
                         customUserDetails.getUserId(), status, page, size);
 
-        LikesPageResponse response = LikesPageResponse.fromPage(propertyPage, size, page);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(pagedDto);
     }
 }

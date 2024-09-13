@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -22,7 +23,9 @@ import java.util.Map;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@OpenAPIDefinition(info = @Info(title = "청약자들 명세서", description = "청약자들", version = "v1"))
+@OpenAPIDefinition(
+        servers = {@Server(url = "https://entj.site", description = "Default Server URL")},
+        info = @Info(title = "청약자들 명세서", description = "청약자들", version = "v1"))
 @Configuration
 public class SwaggerConfig {
 

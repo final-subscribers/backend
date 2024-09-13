@@ -79,7 +79,6 @@ public class AuthService {
                         .password(passwordEncoder.encode(request.getPassword()))
                         .phoneNumber(request.getPhoneNumber())
                         .companyName(request.getCompanyName())
-                        .registrationNumber(request.getRegistrationNumber())
                         .address(request.getAddress())
                         .business(request.getBusiness())
                         .status(AdminState.ACCEPTED)
