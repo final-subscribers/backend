@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import subscribers.clearbunyang.global.model.PagedDto;
 
 @Getter
 @NoArgsConstructor
@@ -15,5 +14,5 @@ import subscribers.clearbunyang.global.model.PagedDto;
 public class ConsultationPagedResponse {
 
     private int totalCount;
-    private PagedDto<List<MyPendingConsultationsResponse>> pagedData;
+    private List<MyPendingConsultationsResponse> pagedData;
 }
