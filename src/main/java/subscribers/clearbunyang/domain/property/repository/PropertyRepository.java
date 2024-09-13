@@ -79,4 +79,6 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
         return findByPropertyIdUsingFetchJoin(propertyId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
     }
+
+    List<Property> findTop20ByOrderByLikeCountDesc();
 }
