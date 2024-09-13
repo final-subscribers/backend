@@ -130,7 +130,7 @@ public class SecurityConfig {
         List<String> allowed =
                 Arrays.asList(
                         "http://localhost:5173",
-                        "https://entj.site",
+                        "http://entj.site",
                         "https://final-project-l15zu1wpp-yeojins-projects-a26b6f35.vercel.app",
                         "https://final-project-eta-silk.vercel.app");
         configuration.setAllowedOrigins(allowed);
