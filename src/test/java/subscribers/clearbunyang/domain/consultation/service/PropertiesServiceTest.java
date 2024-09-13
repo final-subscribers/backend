@@ -197,8 +197,9 @@ class PropertiesServiceTest {
                         property.getId(), "name 010", "a", LocalDate.now().plusDays(1), 0, 1);
 
         assertNotNull(pagedDTO);
-        ConsultPendingListResponse consultPendingListResponse = pagedDTO.getContent();
-        assertNotNull(consultPendingListResponse);
+        List<ConsultPendingListResponse> consultPendingListResponses = pagedDTO.getContents();
+        assertNotNull(consultPendingListResponses);
+        assertFalse(consultPendingListResponses.isEmpty());
         verify(propertyRepository).getIdById(anyLong());
     }
 
@@ -235,9 +236,9 @@ class PropertiesServiceTest {
                         1);
 
         assertNotNull(pagedDTO);
-        ConsultCompletedListResponse counselCompletedListResponse = pagedDTO.getContent();
-        assertNotNull(counselCompletedListResponse);
-
+        List<ConsultCompletedListResponse> consultCompletedListResponses = pagedDTO.getContents();
+        assertNotNull(consultCompletedListResponses);
+        assertFalse(consultCompletedListResponses.isEmpty());
         verify(propertyRepository).getIdById(anyLong());
     }
 
