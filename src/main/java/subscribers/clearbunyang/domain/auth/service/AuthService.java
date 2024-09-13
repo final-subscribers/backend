@@ -79,7 +79,6 @@ public class AuthService {
                         .password(passwordEncoder.encode(request.getPassword()))
                         .phoneNumber(request.getPhoneNumber())
                         .companyName(request.getCompanyName())
-                        .registrationNumber(request.getRegistrationNumber())
                         .address(request.getAddress())
                         .business(request.getBusiness())
                         .status(AdminState.ACCEPTED)
@@ -148,6 +147,8 @@ public class AuthService {
         if (memberRepository.existsByEmail(request.getEmail())) {
             throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
         }
+
+        authEmailService.isEmailVerified(request);
 
         authSmsService.isVerified(request);
 
