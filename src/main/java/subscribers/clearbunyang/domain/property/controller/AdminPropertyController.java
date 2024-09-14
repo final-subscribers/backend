@@ -13,7 +13,7 @@ import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/common")
+@RequestMapping("/api/admin")
 public class AdminPropertyController {
 
     private final PropertyService propertyService;

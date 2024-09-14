@@ -8,10 +8,17 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import subscribers.clearbunyang.domain.file.entity.File;
+import subscribers.clearbunyang.domain.file.model.FileRequestDTO;
+import subscribers.clearbunyang.domain.file.repository.FileRepository;
+import subscribers.clearbunyang.domain.property.entity.Property;
+import subscribers.clearbunyang.domain.user.entity.Admin;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +28,23 @@ public class FileService {
     @Value("${aws.s3.accountId}") private String accountId;
 
     private final AmazonS3 amazonS3;
+    private final FileRepository fileRepository;
+
+    /**
+     * 파일을 저장하는 메소드
+     *
+     * @param fileRequestDTOS
+     * @param property
+     * @param admin
+     */
+    public void saveFiles(List<FileRequestDTO> fileRequestDTOS, Property property, Admin admin) {
+        List<File> files =
+                fileRequestDTOS.stream()
+                        .map(fileDTO -> File.toEntity(fileDTO, property, admin))
+                        .collect(Collectors.toList());
+
+        fileRepository.saveAll(files);
+    }
 
     /**
      * presigned url 발급
