@@ -97,7 +97,7 @@ class LikesRedisServiceTest {
                         .password("password123!")
                         .companyName("testCompany")
                         .phoneNumber("01000000000")
-                        .registrationNumber(0L)
+                        //    .registrationNumber(0L)
                         .address("Sample Address")
                         .business("Test Business")
                         .status(AdminState.ACCEPTED)
