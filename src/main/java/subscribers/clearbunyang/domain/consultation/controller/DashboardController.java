@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertiesInquiryStatsDTO;
-import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryDetailsDTO;
+import subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.GraphInterval;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.response.CardComponentResponse;
+import subscribers.clearbunyang.domain.consultation.model.dashboard.response.DropdownSelectsResponse;
+import subscribers.clearbunyang.domain.consultation.model.dashboard.response.PropertyInquiryDetailsResponse;
+import subscribers.clearbunyang.domain.consultation.model.dashboard.response.PropertyInquiryStatusResponse;
 import subscribers.clearbunyang.domain.consultation.service.DashboardService;
 import subscribers.clearbunyang.global.model.PagedDto;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
@@ -25,6 +27,12 @@ public class DashboardController {
 
     private final DashboardService dashboardService;
 
+    @GetMapping("dashboard/dropdown-selects")
+    public DropdownSelectsResponse getDropdownSelects(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return dashboardService.getDropdownSelects(customUserDetails.getUserId());
+    }
+
     @GetMapping("dashboard/cards")
     public CardComponentResponse getCards(
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
@@ -32,17 +40,18 @@ public class DashboardController {
     }
 
     @GetMapping("dashboard/properties")
-    public PagedDto<PropertiesInquiryStatsDTO> getDashboardProperties(
-            @PageableDefault Pageable pageable,
+    public PagedDto<PropertyInquiryStatusResponse> getDashboardProperties(
+            @PageableDefault(size = 5) Pageable pageable,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return dashboardService.getPropertiesInquiryStats(customUserDetails.getUserId(), pageable);
     }
 
-    @GetMapping("/properties/{property_id}")
-    public PropertyInquiryDetailsDTO getDashboardProperty(
+    @GetMapping("/dashboard/properties/{property_id}")
+    public PropertyInquiryDetailsResponse getDashboardProperty(
             @PathVariable(name = "property_id") String propertyId,
-            @RequestParam(name = "start") LocalDate start,
-            @RequestParam(name = "end") LocalDate end) {
-        return dashboardService.getPropertyInquiryDetails(Long.valueOf(propertyId), start, end);
+            @RequestParam(name = "end") LocalDate end,
+            @RequestParam(name = "graphInterval") GraphInterval graphInterval) {
+        return dashboardService.getPropertyInquiryDetails(
+                Long.valueOf(propertyId), end, graphInterval);
     }
 }

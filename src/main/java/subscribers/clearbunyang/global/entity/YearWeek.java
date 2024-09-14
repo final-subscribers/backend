@@ -4,17 +4,8 @@ package subscribers.clearbunyang.global.entity;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
-import lombok.Getter;
 
-@Getter
-public class YearWeek implements Comparable<YearWeek> {
-    private final int year;
-    private final int week;
-
-    public YearWeek(int year, int week) {
-        this.year = year;
-        this.week = week;
-    }
+public record YearWeek(int year, int week) implements Comparable<YearWeek> {
 
     public static YearWeek of(int year, int week) {
         return new YearWeek(year, week);
@@ -32,29 +23,6 @@ public class YearWeek implements Comparable<YearWeek> {
         return LocalDate.ofYearDay(year, 1)
                 .with(weekFields.weekOfWeekBasedYear(), week)
                 .with(weekFields.dayOfWeek(), dayOfWeek);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        YearWeek yearWeek = (YearWeek) o;
-
-        if (year != yearWeek.year) return false;
-        return week == yearWeek.week;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = year;
-        result = 31 * result + week;
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "YearWeek{" + "year=" + year + ", week=" + week + '}';
     }
 
     @Override

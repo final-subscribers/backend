@@ -1,17 +1,13 @@
 package subscribers.clearbunyang.domain.consultation.model.dashboard;
 
 
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class PropertyInquiryDetailsDTO {
-    String propertyName;
     Integer pending = 0;
     Integer completed = 0;
     Integer all;
@@ -19,16 +15,8 @@ public class PropertyInquiryDetailsDTO {
     Integer channel = 0;
     Integer lms = 0;
 
-    @Setter List<LocalDateTime> timeStamps = List.of();
-
     public PropertyInquiryDetailsDTO(
-            String propertyName,
-            Integer pending,
-            Integer completed,
-            Integer phone,
-            Integer channel,
-            Integer lms) {
-        this.propertyName = propertyName;
+            Integer pending, Integer completed, Integer phone, Integer channel, Integer lms) {
         this.pending = pending;
         this.completed = completed;
         this.all = pending + completed;
