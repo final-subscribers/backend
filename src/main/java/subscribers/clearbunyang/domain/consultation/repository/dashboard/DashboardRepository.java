@@ -3,6 +3,7 @@ package subscribers.clearbunyang.domain.consultation.repository.dashboard;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.GraphInterval;
@@ -24,8 +25,12 @@ public interface DashboardRepository {
 
     Page<PropertyInquiryStatusDTO> findPropertiesInquiryStats(Long adminId, Pageable pageable);
 
-    PropertyInquiryDetailsDTO findPropertyInquiryDetails(
+    Optional<PropertyInquiryDetailsDTO> findPropertyInquiryDetails(
             Long propertyId, LocalDate end, GraphInterval graphInterval);
 
-    PropertyGraphRequirementsDTO findPropertyGraphRequirements();
+    List<PropertyGraphRequirementsDTO> findPropertyGraphDaily(Long propertyId, LocalDate end);
+
+    List<PropertyGraphRequirementsDTO> findPropertyGraphWeekly(Long propertyId, LocalDate end);
+
+    List<PropertyGraphRequirementsDTO> findPropertyGraphMonthly(Long propertyId, LocalDate end);
 }
