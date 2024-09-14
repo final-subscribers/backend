@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import subscribers.clearbunyang.domain.consultation.model.myConsultations.ConsultationPagedResponse;
+import subscribers.clearbunyang.domain.consultation.model.myConsultations.ConsultationResponse;
 import subscribers.clearbunyang.domain.consultation.service.MyConsultationService;
 import subscribers.clearbunyang.global.model.PagedDto;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
@@ -24,7 +24,7 @@ public class MyConsultationController {
 
     @Operation(summary = "대기중인 상태")
     @GetMapping("/pending")
-    public PagedDto<ConsultationPagedResponse> getMyPendingConsultationsList(
+    public PagedDto<ConsultationResponse> getMyPendingConsultationsList(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam(required = false) String search,
             @RequestParam(required = false, value = "page", defaultValue = "0") int page,
@@ -35,7 +35,7 @@ public class MyConsultationController {
 
     @Operation(summary = "상담 완료 상태")
     @GetMapping("/completed")
-    public ConsultationPagedResponse getMyCompletedConsultationsList(
+    public PagedDto<ConsultationResponse> getMyCompletedConsultationsList(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam(required = false) String search,
             @RequestParam(required = false, value = "page", defaultValue = "0") int page,
