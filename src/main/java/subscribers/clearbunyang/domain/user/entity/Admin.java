@@ -51,9 +51,6 @@ public class Admin extends BaseEntity {
     @Column(nullable = false)
     private String business;
 
-    @Column(nullable = true)
-    private Long registrationNumber;
-
     @Setter
     @Enumerated(EnumType.STRING)
     private AdminState status;

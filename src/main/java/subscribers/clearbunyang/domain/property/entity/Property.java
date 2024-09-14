@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
 import subscribers.clearbunyang.domain.file.entity.File;
 import subscribers.clearbunyang.domain.likes.entity.Likes;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
@@ -120,6 +121,10 @@ public class Property extends BaseEntity {
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Keyword> keywords;
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<MemberConsultation> memberConsultations;
 
     public void setAdminId(Admin adminId) {
         this.admin = adminId;

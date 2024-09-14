@@ -18,9 +18,9 @@ import subscribers.clearbunyang.domain.property.repository.KeywordRepository;
 import subscribers.clearbunyang.domain.property.testfixtures.PropertyRequestDTOFixture;
 
 @SpringBootTest
-@DisplayName("KeywordService-통합 테스트")
+@DisplayName("PropertyService-통합 테스트")
 @Transactional
-public class KeywordServiceIntegrationTest {
+public class PropertyServiceIntegrationTest {
 
     @Autowired private PropertyService propertyService;
 

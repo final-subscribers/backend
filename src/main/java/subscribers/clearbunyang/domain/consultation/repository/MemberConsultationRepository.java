@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
+import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
@@ -61,4 +62,17 @@ public interface MemberConsultationRepository extends JpaRepository<MemberConsul
     default boolean checkExtraConsultation(String medium) {
         return !"LMS".equals(medium);
     }
+
+    Integer countByPropertyIdAndStatus(Long propertyId, Status status);
+
+    /**
+     * propertyId별로 memberCounsultation의 status에 해당하는 개수 리턴
+     *
+     * @param propertyIds
+     * @param status
+     * @return
+     */
+    @Query(
+            "SELECT mc.property.id, COUNT(mc) FROM MemberConsultation mc WHERE mc.property.id IN :propertyIds AND mc.status = :status GROUP BY mc.property.id")
+    List<Object[]> countPendingByPropertyIds(List<Long> propertyIds, Status status);
 }
