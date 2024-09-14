@@ -7,12 +7,4 @@ public enum FileType { // 파일 타입
     REGISTRATION, // 사업자 등록 파일
     HOUSING // ??
 ;
-
-    //    @JsonCreator
-    //    public static FileType fromString(String value) {
-    //        return Stream.of(FileType.values())
-    //                .filter(status -> status.toString().equals(value.toUpperCase()))
-    //                .findAny()
-    //                .orElse(null);
-    //    }
 }
