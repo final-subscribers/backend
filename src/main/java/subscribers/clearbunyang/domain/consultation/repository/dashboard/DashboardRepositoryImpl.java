@@ -3,8 +3,10 @@ package subscribers.clearbunyang.domain.consultation.repository.dashboard;
 import static subscribers.clearbunyang.domain.consultation.entity.QMemberConsultation.*;
 import static subscribers.clearbunyang.domain.consultation.entity.enums.Medium.*;
 import static subscribers.clearbunyang.domain.consultation.entity.enums.Status.*;
+import static subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.GraphInterval.*;
 import static subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.Phase.*;
 import static subscribers.clearbunyang.domain.property.entity.QProperty.*;
+import static subscribers.clearbunyang.global.exception.errorCode.ErrorCode.*;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -14,7 +16,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,12 +29,15 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
+import subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.GraphInterval;
 import subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.Phase;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.ConsultationDateStatsDTO;
-import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertiesInquiryStatsDTO;
+import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyGraphRequirementsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryDetailsDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertyInquiryStatusDTO;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.PropertySelectDTO;
+import subscribers.clearbunyang.global.entity.YearMonth;
+import subscribers.clearbunyang.global.entity.YearMonthDay;
 import subscribers.clearbunyang.global.entity.YearWeek;
 
 @Repository
@@ -132,8 +136,7 @@ public class DashboardRepositoryImpl implements DashboardRepository {
         for (YearWeek week : lastFiveWeeks) {
             result.add(
                     statsMap.getOrDefault(
-                            week,
-                            new ConsultationDateStatsDTO(week.getYear(), week.getWeek(), 0, 0)));
+                            week, new ConsultationDateStatsDTO(week.year(), week.week(), 0, 0)));
         }
 
         return result;
@@ -154,13 +157,13 @@ public class DashboardRepositoryImpl implements DashboardRepository {
                 .fetch();
     }
 
-    public Page<PropertiesInquiryStatsDTO> findPropertiesInquiryStats(
+    public Page<PropertyInquiryStatusDTO> findPropertiesInquiryStats(
             Long adminId, Pageable pageable) {
 
-        List<PropertiesInquiryStatsDTO> list =
+        List<PropertyInquiryStatusDTO> list =
                 query.select(
                                 Projections.constructor(
-                                        PropertiesInquiryStatsDTO.class,
+                                        PropertyInquiryStatusDTO.class,
                                         memberConsultation.property.id,
                                         memberConsultation.property.name,
                                         pendingCount,
@@ -183,44 +186,202 @@ public class DashboardRepositoryImpl implements DashboardRepository {
     }
 
     @Override
-    public PropertyInquiryDetailsDTO findPropertyInquiryDetails(
-            Long propertyId, LocalDate start, LocalDate end) {
+    public Optional<PropertyInquiryDetailsDTO> findPropertyInquiryDetails(
+            Long propertyId, LocalDate date, GraphInterval graphInterval) {
+        LocalDate start = getStartDate(date, graphInterval);
+        LocalDate end = getEndDate(date, graphInterval);
 
         NumberExpression<Integer> phoneCount = mediumSumExpression(PHONE);
         NumberExpression<Integer> channelCount = mediumSumExpression(CHANNEL);
         NumberExpression<Integer> lmsCount = mediumSumExpression(LMS);
 
-        Optional<PropertyInquiryDetailsDTO> result =
-                Optional.ofNullable(
-                        query.select(
-                                        Projections.constructor(
-                                                PropertyInquiryDetailsDTO.class,
-                                                memberConsultation.property.name,
-                                                pendingCount,
-                                                completedCount,
-                                                phoneCount,
-                                                channelCount,
-                                                lmsCount))
-                                .from(memberConsultation)
-                                .where(
-                                        memberConsultation.property.id.eq(propertyId),
-                                        memberConsultation.createdAt.goe(start.atStartOfDay()),
-                                        memberConsultation.createdAt.lt(
-                                                end.plusDays(1L).atStartOfDay()))
-                                .groupBy(memberConsultation.property.id)
-                                .fetchOne());
-
-        JPAQuery<LocalDateTime> stampsQuery =
-                query.select(memberConsultation.createdAt)
+        return Optional.ofNullable(
+                query.select(
+                                Projections.constructor(
+                                        PropertyInquiryDetailsDTO.class,
+                                        pendingCount,
+                                        completedCount,
+                                        phoneCount,
+                                        channelCount,
+                                        lmsCount))
                         .from(memberConsultation)
                         .where(
                                 memberConsultation.property.id.eq(propertyId),
-                                memberConsultation.createdAt.goe(start.atStartOfDay()),
-                                memberConsultation.createdAt.lt(end.plusDays(1L).atStartOfDay()));
+                                memberConsultation.createdAt.between(
+                                        start.atStartOfDay(),
+                                        end.plusDays(1).atStartOfDay().minusNanos(1)))
+                        .groupBy(memberConsultation.property.id)
+                        .fetchOne());
+    }
 
-        result.ifPresent(detailsDTO -> detailsDTO.setTimeStamps(stampsQuery.fetch()));
+    @Override
+    public List<PropertyGraphRequirementsDTO> findPropertyGraphDaily(
+            Long propertyId, LocalDate date) {
+        LocalDate start = getStartDate(date, DAILY);
+        LocalDate end = getEndDate(date, DAILY);
+        List<Integer> searchKey = new ArrayList<>();
+        IntStream.range(0, 12).forEach(searchKey::add);
 
-        return result.orElse(new PropertyInquiryDetailsDTO(0));
+        List<PropertyGraphRequirementsDTO> stats =
+                query.select(
+                                Projections.constructor(
+                                        PropertyGraphRequirementsDTO.class,
+                                        memberConsultation
+                                                .createdAt
+                                                .hour()
+                                                .divide(2)
+                                                .castToNum(Integer.class),
+                                        pendingCount,
+                                        completedCount))
+                        .from(memberConsultation)
+                        .where(
+                                memberConsultation.property.id.eq(propertyId),
+                                memberConsultation.createdAt.between(
+                                        start.atStartOfDay(),
+                                        end.plusDays(1).atStartOfDay().minusNanos(1)))
+                        .groupBy(
+                                memberConsultation.createdAt,
+                                memberConsultation
+                                        .createdAt
+                                        .hour()
+                                        .divide(2)
+                                        .castToNum(Integer.class))
+                        .fetch();
+
+        Map<Integer, PropertyGraphRequirementsDTO> statsMap =
+                stats.stream()
+                        .collect(
+                                Collectors.toMap(
+                                        PropertyGraphRequirementsDTO::getInterval, // 올바른 Getter 사용
+                                        Function.identity()));
+
+        List<PropertyGraphRequirementsDTO> result = new ArrayList<>();
+
+        for (Integer item : searchKey) {
+            result.add(statsMap.getOrDefault(item, new PropertyGraphRequirementsDTO(0, 0)));
+        }
+
+        return result;
+    }
+
+    @Override
+    public List<PropertyGraphRequirementsDTO> findPropertyGraphWeekly(
+            Long propertyId, LocalDate date) {
+        LocalDate start = getStartDate(date, WEEKLY);
+        LocalDate end = getEndDate(date, WEEKLY);
+        List<YearMonthDay> searchKey =
+                IntStream.range(0, 7)
+                        .mapToObj(i -> YearMonthDay.from(end.minusDays(i)))
+                        .sorted()
+                        .toList();
+
+        List<PropertyGraphRequirementsDTO> stats =
+                query.select(
+                                Projections.constructor(
+                                        PropertyGraphRequirementsDTO.class,
+                                        memberConsultation.createdAt.year(),
+                                        memberConsultation.createdAt.month(),
+                                        memberConsultation.createdAt.dayOfMonth(),
+                                        pendingCount,
+                                        completedCount))
+                        .from(memberConsultation)
+                        .where(
+                                memberConsultation.property.id.eq(propertyId),
+                                memberConsultation.createdAt.between(
+                                        start.atStartOfDay(),
+                                        end.plusDays(1).atStartOfDay().minusNanos(1)))
+                        .groupBy(
+                                memberConsultation.createdAt.year(),
+                                memberConsultation.createdAt.month(),
+                                memberConsultation.createdAt.dayOfMonth())
+                        .fetch();
+
+        Map<YearMonthDay, PropertyGraphRequirementsDTO> statsMap =
+                stats.stream()
+                        .collect(
+                                Collectors.toMap(
+                                        stat ->
+                                                YearMonthDay.of(
+                                                        stat.getYear(),
+                                                        stat.getMonth(),
+                                                        stat.getDay()),
+                                        Function.identity()));
+
+        List<PropertyGraphRequirementsDTO> result = new ArrayList<>();
+
+        for (YearMonthDay item : searchKey) {
+            result.add(statsMap.getOrDefault(item, new PropertyGraphRequirementsDTO(0, 0)));
+        }
+
+        return result;
+    }
+
+    @Override
+    public List<PropertyGraphRequirementsDTO> findPropertyGraphMonthly(
+            Long propertyId, LocalDate date) {
+        LocalDate start = getStartDate(date, MONTHLY);
+        LocalDate end = getEndDate(date, MONTHLY);
+        List<YearMonth> searchKey =
+                IntStream.range(0, 6)
+                        .mapToObj(i -> YearMonth.from(date.minusMonths(i)))
+                        .sorted()
+                        .toList();
+
+        List<PropertyGraphRequirementsDTO> stats =
+                query.select(
+                                Projections.constructor(
+                                        PropertyGraphRequirementsDTO.class,
+                                        memberConsultation.createdAt.year(),
+                                        memberConsultation.createdAt.month(),
+                                        pendingCount,
+                                        completedCount))
+                        .from(memberConsultation)
+                        .where(
+                                memberConsultation.property.id.eq(propertyId),
+                                memberConsultation.createdAt.between(
+                                        start.atStartOfDay(),
+                                        end.plusDays(1).atStartOfDay().minusNanos(1)))
+                        .groupBy(
+                                memberConsultation.createdAt.year(),
+                                memberConsultation.createdAt.month())
+                        .fetch();
+
+        Map<YearMonth, PropertyGraphRequirementsDTO> statsMap =
+                stats.stream()
+                        .collect(
+                                Collectors.toMap(
+                                        stat -> YearMonth.of(stat.getYear(), stat.getMonth()),
+                                        Function.identity()));
+
+        List<PropertyGraphRequirementsDTO> result = new ArrayList<>();
+
+        for (YearMonth item : searchKey) {
+            result.add(statsMap.getOrDefault(item, new PropertyGraphRequirementsDTO(0, 0)));
+        }
+
+        return result;
+    }
+
+    private LocalDate getStartDate(LocalDate date, GraphInterval graphInterval) {
+        if (graphInterval == DAILY) {
+            return date;
+        } else if (graphInterval == WEEKLY) {
+            return date.minusDays(6);
+        } else if (graphInterval == MONTHLY) {
+            return date.minusMonths(5).withDayOfMonth(1);
+        }
+        throw new IllegalArgumentException(INVALID_INPUT_VALUE.getMessage());
+    }
+
+    private LocalDate getEndDate(LocalDate date, GraphInterval graphInterval) {
+        if (graphInterval == DAILY) {
+            return date;
+        } else if (graphInterval == WEEKLY) {
+            return date;
+        } else if (graphInterval == MONTHLY) {
+            return date.plusMonths(1).withDayOfMonth(1).minusDays(1);
+        }
+        throw new IllegalArgumentException(INVALID_INPUT_VALUE.getMessage());
     }
 
     private BooleanExpression phaseEq(Phase phase) {
@@ -230,7 +391,7 @@ public class DashboardRepositoryImpl implements DashboardRepository {
         } else if (phase == CLOSED) {
             return property.endDate.lt(now).or(property.startDate.gt(now));
         }
-        return null;
+        throw new IllegalArgumentException(INVALID_INPUT_VALUE.getMessage());
     }
 
     private NumberExpression<Integer> statusSumExpression(Status status) {

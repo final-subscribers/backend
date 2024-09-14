@@ -1,7 +1,21 @@
-/*
 package subscribers.clearbunyang.domain.consultation.service;
 
 
+import java.util.List;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
+import subscribers.clearbunyang.domain.consultation.model.myConsultations.ConsultationResponse;
+import subscribers.clearbunyang.domain.consultation.model.myConsultations.MyConsultationsResponse;
+import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
+import subscribers.clearbunyang.domain.user.entity.Member;
+import subscribers.clearbunyang.domain.user.repository.MemberRepository;
+import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
+import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
+import subscribers.clearbunyang.global.model.PagedDto;
 
 @Slf4j
 @Service
@@ -12,69 +26,56 @@ public class MyConsultationService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public ConsultationPagedResponse getMyPendingConsultationsList(
+    public PagedDto<ConsultationResponse> getMyPendingConsultationsList(
             Long userId, String search, int page, int size) {
         validateUserId(userId);
 
         String searchParam = (search == null || search.trim().isEmpty()) ? "" : search.trim();
+
         List<MemberConsultation> consultations =
                 memberConsultationRepository.findPendingConsultationsByUserIdAndSearch(
                         userId, searchParam);
 
         int totalCount = memberConsultationRepository.countConsultationsByUserId(userId);
 
-        List<MyPendingConsultationsResponse> responses =
+        List<MyConsultationsResponse> consultationsResponses =
                 consultations.stream()
-                        .map(MyPendingConsultationsResponse::toDto)
+                        .map(MyConsultationsResponse::toDto)
                         .collect(Collectors.toList());
+        log.info(consultationsResponses.toString());
+
+        ConsultationResponse response =
+                ConsultationResponse.toDto(totalCount, consultationsResponses);
 
         int totalPages = (totalCount + size - 1) / size;
 
-        PagedDto<List<MyPendingConsultationsResponse>> pagedDto =
-                PagedDto.<List<MyPendingConsultationsResponse>>builder()
-                        .totalPages(totalPages)
-                        .pageSize(size)
-                        .currentPage(page)
-                        .content(responses)
-                        .build();
-
-        return ConsultationPagedResponse.builder()
-                .totalCount(totalCount)
-                .pagedData(pagedDto)
-                .build();
+        return PagedDto.toDTO(page, size, totalPages, List.of(response));
     }
 
     @Transactional
-    public ConsultationPagedResponse getMyCompletedConsultationsList(
+    public PagedDto<ConsultationResponse> getMyCompletedConsultationsList(
             Long userId, String search, int page, int size) {
         validateUserId(userId);
 
         String searchParam = (search == null || search.trim().isEmpty()) ? "" : search.trim();
+
         List<MemberConsultation> consultations =
                 memberConsultationRepository.findCompletedConsultationsByUserIdAndSearch(
                         userId, searchParam);
 
         int totalCount = memberConsultationRepository.countConsultationsByUserId(userId);
 
-        List<MyPendingConsultationsResponse> responses =
+        List<MyConsultationsResponse> consultationsResponses =
                 consultations.stream()
-                        .map(MyPendingConsultationsResponse::toDto)
+                        .map(MyConsultationsResponse::toDto)
                         .collect(Collectors.toList());
+
+        ConsultationResponse response =
+                ConsultationResponse.toDto(totalCount, consultationsResponses);
 
         int totalPages = (totalCount + size - 1) / size;
 
-        PagedDto<List<MyPendingConsultationsResponse>> pagedDto =
-                PagedDto.<List<MyPendingConsultationsResponse>>builder()
-                        .totalPages(totalPages)
-                        .pageSize(size)
-                        .currentPage(page)
-                        .content(responses)
-                        .build();
-
-        return ConsultationPagedResponse.builder()
-                .totalCount(totalCount)
-                .pagedData(pagedDto)
-                .build();
+        return PagedDto.toDTO(page, size, totalPages, List.of(response));
     }
 
     private Member validateUserId(Long userId) {
@@ -83,4 +84,3 @@ public class MyConsultationService {
                 .orElseThrow(() -> new InvalidValueException(ErrorCode.USER_NOT_FOUND));
     }
 }
-*/
