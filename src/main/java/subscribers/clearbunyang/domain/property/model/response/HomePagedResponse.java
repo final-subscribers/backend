@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import subscribers.clearbunyang.global.model.PagedDto;
 
 @Getter
 @NoArgsConstructor
@@ -17,5 +16,18 @@ public class HomePagedResponse {
     private String image1;
     private String image2;
     private String image3;
-    private PagedDto<List<HomePropertiesResponse>> content;
+    private List<HomePropertiesResponse> homeProperties;
+
+    public static HomePagedResponse toDto(
+            String image1,
+            String image2,
+            String image3,
+            List<HomePropertiesResponse> homeProperties) {
+        return HomePagedResponse.builder()
+                .image1(image1)
+                .image2(image2)
+                .image3(image3)
+                .homeProperties(homeProperties)
+                .build();
+    }
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import subscribers.clearbunyang.domain.property.model.response.HomePagedResponse;
 import subscribers.clearbunyang.domain.property.service.HomeService;
+import subscribers.clearbunyang.global.model.PagedDto;
 
 @RequiredArgsConstructor
 @RestController
@@ -20,7 +21,7 @@ public class HomeController {
 
     @Operation(summary = "메인 화면 호출 시 좋아요 많은 순으로 매물 출력")
     @GetMapping
-    public HomePagedResponse getHome(
+    public PagedDto<HomePagedResponse> getHome(
             @RequestParam(required = false, value = "page", defaultValue = "0") int page) {
         return homeService.getHome(page);
     }
