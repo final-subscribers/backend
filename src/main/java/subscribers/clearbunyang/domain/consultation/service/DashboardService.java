@@ -3,7 +3,6 @@ package subscribers.clearbunyang.domain.consultation.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -69,26 +68,25 @@ public class DashboardService {
         return PagedDto.toDTO(propertiesInquiryStats);
     }
 
-    // TODO: 직관적이고 이해하기 쉽게 같은 동작 안에서 변경
     public PropertyInquiryDetailsResponse getPropertyInquiryDetails(
             Long propertyId, LocalDate date, GraphInterval graphInterval) {
-        Optional<PropertyInquiryDetailsDTO> detailsOptional =
-                dashboardRepository.findPropertyInquiryDetails(propertyId, date, graphInterval);
-        List<GraphRequirementsResponse> graphRequirementsResponses = null;
-        PropertyInquiryDetailsResponse details;
-        if (detailsOptional.isPresent()) {
-            graphRequirementsResponses =
-                    getPropertyGraphRequirements(propertyId, date, graphInterval).stream()
-                            .map(GraphRequirementsResponse::of)
-                            .toList();
-            details =
-                    PropertyInquiryDetailsResponse.of(
-                            detailsOptional.get(), graphRequirementsResponses);
-            return details;
-        }
 
-        return PropertyInquiryDetailsResponse.of(
-                new PropertyInquiryDetailsDTO(0, 0, 0, 0, 0), null);
+        return dashboardRepository
+                .findPropertyInquiryDetails(propertyId, date, graphInterval)
+                .map(
+                        detailsDTO -> {
+                            List<GraphRequirementsResponse> graphRequirementsResponses =
+                                    getPropertyGraphRequirements(propertyId, date, graphInterval)
+                                            .stream()
+                                            .map(GraphRequirementsResponse::of)
+                                            .toList();
+                            return PropertyInquiryDetailsResponse.of(
+                                    detailsDTO, graphRequirementsResponses);
+                        })
+                .orElseGet(
+                        () ->
+                                PropertyInquiryDetailsResponse.of(
+                                        new PropertyInquiryDetailsDTO(0, 0, 0, 0, 0), null));
     }
 
     private List<Integer> getTotalNumberByWeek(List<ConsultationDateStatsDTO> totalStatsByWeek) {
