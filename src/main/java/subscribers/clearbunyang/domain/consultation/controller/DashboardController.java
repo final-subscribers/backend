@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import subscribers.clearbunyang.domain.consultation.entity.enums.dashboard.GraphInterval;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.response.CardComponentResponse;
+import subscribers.clearbunyang.domain.consultation.model.dashboard.response.DropdownSelectsResponse;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.response.PropertyInquiryDetailsResponse;
 import subscribers.clearbunyang.domain.consultation.model.dashboard.response.PropertyInquiryStatusResponse;
 import subscribers.clearbunyang.domain.consultation.service.DashboardService;
@@ -25,6 +26,12 @@ import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 public class DashboardController {
 
     private final DashboardService dashboardService;
+
+    @GetMapping("dashboard/dropdown-selects")
+    public DropdownSelectsResponse getDropdownSelects(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return dashboardService.getDropdownSelects(customUserDetails.getUserId());
+    }
 
     @GetMapping("dashboard/cards")
     public CardComponentResponse getCards(
@@ -39,7 +46,7 @@ public class DashboardController {
         return dashboardService.getPropertiesInquiryStats(customUserDetails.getUserId(), pageable);
     }
 
-    @GetMapping("/properties/{property_id}")
+    @GetMapping("/dashboard/properties/{property_id}")
     public PropertyInquiryDetailsResponse getDashboardProperty(
             @PathVariable(name = "property_id") String propertyId,
             @RequestParam(name = "end") LocalDate end,
