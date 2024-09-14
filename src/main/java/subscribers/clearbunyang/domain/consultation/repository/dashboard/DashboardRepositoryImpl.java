@@ -240,6 +240,7 @@ public class DashboardRepositoryImpl implements DashboardRepository {
                                         start.atStartOfDay(),
                                         end.plusDays(1).atStartOfDay().minusNanos(1)))
                         .groupBy(
+                                memberConsultation.createdAt,
                                 memberConsultation
                                         .createdAt
                                         .hour()
