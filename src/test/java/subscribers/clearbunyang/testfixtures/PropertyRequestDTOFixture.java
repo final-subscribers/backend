@@ -19,8 +19,10 @@ public class PropertyRequestDTOFixture {
 
     public static PropertyRequestDTO createDefault() {
         List<AreaRequestDTO> areas = new ArrayList<>();
-        areas.add(new AreaRequestDTO(60, 50000, 45000, 10));
-        areas.add(new AreaRequestDTO(80, 60000, 55000, 8));
+        //        areas.add(new AreaRequestDTO(60, 50000, 45000, 10));
+        //        areas.add(new AreaRequestDTO(80, 60000, 55000, 8));
+        areas.add(new AreaRequestDTO(60, 50000, null, null));
+        areas.add(new AreaRequestDTO(80, 60000, null, null));
 
         List<FileRequestDTO> files = new ArrayList<>();
         files.add(
