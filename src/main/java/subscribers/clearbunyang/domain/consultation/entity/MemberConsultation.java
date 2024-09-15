@@ -81,20 +81,10 @@ public class MemberConsultation extends BaseEntity {
     }
 
     public static MemberConsultation toEntity(
-            ConsultationRequestDTO requestDTO, Property property) {
-        return MemberConsultation.builder()
-                .memberName(requestDTO.getName())
-                .phoneNumber(requestDTO.getPhoneNumber())
-                .preferredAt(requestDTO.getPreferredAt())
-                .memberMessage(requestDTO.getCounselingMessage())
-                .medium(Medium.LMS)
-                .status(Status.PENDING)
-                .property(property)
-                .build();
-    }
-
-    public static MemberConsultation toEntity(
-            ConsultationRequestDTO requestDTO, Property property, Member member) {
+            ConsultationRequestDTO requestDTO,
+            Property property,
+            Member member,
+            AdminConsultation adminConsultation) {
         return MemberConsultation.builder()
                 .memberName(requestDTO.getName())
                 .phoneNumber(requestDTO.getPhoneNumber())
@@ -104,6 +94,7 @@ public class MemberConsultation extends BaseEntity {
                 .status(Status.PENDING)
                 .property(property)
                 .member(member)
+                .adminConsultation(adminConsultation)
                 .build();
     }
 

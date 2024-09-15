@@ -9,8 +9,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.consultation.entity.AdminConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
+import subscribers.clearbunyang.domain.consultation.repository.AdminConsultationRepository;
 import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
 import subscribers.clearbunyang.domain.file.entity.enums.FileType;
 import subscribers.clearbunyang.domain.file.model.FileRequestDTO;
@@ -45,6 +47,7 @@ public class PropertyService {
     private final FileService fileService;
     private final KeywordService keywordService;
     private final AreaService areaService;
+    private final AdminConsultationRepository adminConsultationRepository;
 
     /**
      * 물건을 저장하는 메소드
@@ -90,13 +93,18 @@ public class PropertyService {
      * @param memberId
      */
     @Transactional
-    public void saveConsultation(
+    // todo 리팩토링 하기
+    public MemberConsultation saveConsultation(
             Long propertyId, ConsultationRequestDTO requestDTO, Long memberId) {
         Property property = propertyRepository.findPropertyById(propertyId);
         Member member = (memberId != null) ? memberRepository.findMemberById(memberId) : null;
+        AdminConsultation adminConsultation = AdminConsultation.builder().build();
+        AdminConsultation savedAdminConsultation =
+                adminConsultationRepository.save(adminConsultation);
+
         MemberConsultation memberConsultation =
-                MemberConsultation.toEntity(requestDTO, property, member);
-        memberConsultationRepository.save(memberConsultation);
+                MemberConsultation.toEntity(requestDTO, property, member, savedAdminConsultation);
+        return memberConsultationRepository.save(memberConsultation);
     }
 
     /**
