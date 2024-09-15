@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,6 +20,7 @@ import subscribers.clearbunyang.global.config.SecurityConfig;
 import subscribers.clearbunyang.global.token.JwtTokenProcessor;
 import subscribers.clearbunyang.security.annotation.WithMockCustomAdmin;
 import subscribers.clearbunyang.security.annotation.WithMockCustomMember;
+import subscribers.clearbunyang.testfixtures.ConsultationRequestDTOFixture;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -38,7 +38,7 @@ public class CommonPropertyControllerIntegrationTest {
     @DisplayName("상담 등록 테스트: 로그인 안한 사용자")
     @Test
     public void addConsultation1() throws Exception {
-        ConsultationRequestDTO requestDTO = createTestConsultationRequestDTO();
+        ConsultationRequestDTO requestDTO = ConsultationRequestDTOFixture.createDefault();
 
         mockMvc.perform(
                         post("/api/common/properties/{propertyId}/consultation", 2L)
@@ -52,10 +52,10 @@ public class CommonPropertyControllerIntegrationTest {
     @Test
     @WithMockCustomMember
     public void addConsultation2() throws Exception {
-        ConsultationRequestDTO requestDTO = createTestConsultationRequestDTO();
+        ConsultationRequestDTO requestDTO = ConsultationRequestDTOFixture.createDefault();
 
         mockMvc.perform(
-                        post("/api/common/properties/{propertyId}/consultation", 2L)
+                        post("/api/common/properties/{propertyId}/consultation", 48L)
                                 .contentType("application/json")
                                 .content(objectMapper.writeValueAsString(requestDTO))
                                 .with(csrf()))
@@ -66,7 +66,7 @@ public class CommonPropertyControllerIntegrationTest {
     @Test
     @WithMockCustomAdmin
     public void addConsultation3() throws Exception {
-        ConsultationRequestDTO requestDTO = createTestConsultationRequestDTO();
+        ConsultationRequestDTO requestDTO = ConsultationRequestDTOFixture.createDefault();
 
         mockMvc.perform(
                         post("/api/common/properties/{propertyId}/consultation", 2L)
@@ -80,17 +80,12 @@ public class CommonPropertyControllerIntegrationTest {
     @Test
     @WithMockCustomAdmin
     public void getProperty() throws Exception {
-        ConsultationRequestDTO requestDTO = createTestConsultationRequestDTO();
+        ConsultationRequestDTO requestDTO = ConsultationRequestDTOFixture.createDefault();
 
         mockMvc.perform(
-                        get("/api/common/properties/{propertyId}", 28L)
+                        get("/api/common/properties/{propertyId}", 2L)
                                 .contentType("application/json")
                                 .with(csrf()))
                 .andDo(System.out::println);
-    }
-
-    private ConsultationRequestDTO createTestConsultationRequestDTO() {
-        return new ConsultationRequestDTO(
-                "bom", "01012345678", LocalDate.now(), "Sample consultation message");
     }
 }

@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.property.testfixtures;
+package subscribers.clearbunyang.testfixtures;
 
 
 import java.time.LocalDate;
@@ -37,6 +37,8 @@ public class PropertyRequestDTOFixture {
         List<KeywordRequestDTO> keywords = new ArrayList<>();
         keywords.add(
                 new KeywordRequestDTO(KeywordName.CASH_PAYMENT, KeywordType.BENEFIT, true, 100));
+        keywords.add(
+                new KeywordRequestDTO(KeywordName.DISCOUNT_SALE, KeywordType.BENEFIT, true, null));
         keywords.add(
                 new KeywordRequestDTO(
                         KeywordName.GUARANTEED_PAYMENT, KeywordType.BENEFIT, false, 13));

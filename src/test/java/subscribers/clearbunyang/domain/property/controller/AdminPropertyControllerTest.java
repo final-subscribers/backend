@@ -19,11 +19,11 @@ import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.model.request.AreaRequestDTO;
 import subscribers.clearbunyang.domain.property.model.request.PropertyRequestDTO;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
-import subscribers.clearbunyang.domain.property.testfixtures.PropertyRequestDTOFixture;
 import subscribers.clearbunyang.global.config.SecurityConfig;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.token.JwtTokenProcessor;
 import subscribers.clearbunyang.security.annotation.WithMockCustomAdmin;
+import subscribers.clearbunyang.testfixtures.PropertyRequestDTOFixture;
 
 @WebMvcTest(AdminPropertyController.class)
 @Import(SecurityConfig.class)
