@@ -9,7 +9,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.consultation.entity.AdminConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
+import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
+import subscribers.clearbunyang.domain.consultation.repository.AdminConsultationRepository;
 import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
 import subscribers.clearbunyang.domain.file.entity.enums.FileType;
 import subscribers.clearbunyang.domain.file.model.FileRequestDTO;
@@ -22,6 +25,7 @@ import subscribers.clearbunyang.domain.property.model.request.ConsultationReques
 import subscribers.clearbunyang.domain.property.model.request.PropertyRequestDTO;
 import subscribers.clearbunyang.domain.property.model.response.KeywordResponseDTO;
 import subscribers.clearbunyang.domain.property.model.response.MyPropertyCardResponseDTO;
+import subscribers.clearbunyang.domain.property.model.response.MyPropertyTableResponseDTO;
 import subscribers.clearbunyang.domain.property.model.response.PropertyDetailsResponseDTO;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.domain.user.entity.Admin;
@@ -43,6 +47,7 @@ public class PropertyService {
     private final FileService fileService;
     private final KeywordService keywordService;
     private final AreaService areaService;
+    private final AdminConsultationRepository adminConsultationRepository;
 
     /**
      * 물건을 저장하는 메소드
@@ -88,13 +93,18 @@ public class PropertyService {
      * @param memberId
      */
     @Transactional
-    public void saveConsultation(
+    // todo 리팩토링 하기
+    public MemberConsultation saveConsultation(
             Long propertyId, ConsultationRequestDTO requestDTO, Long memberId) {
         Property property = propertyRepository.findPropertyById(propertyId);
         Member member = (memberId != null) ? memberRepository.findMemberById(memberId) : null;
+        AdminConsultation adminConsultation = AdminConsultation.builder().build();
+        AdminConsultation savedAdminConsultation =
+                adminConsultationRepository.save(adminConsultation);
+
         MemberConsultation memberConsultation =
-                MemberConsultation.toEntity(requestDTO, property, member);
-        memberConsultationRepository.save(memberConsultation);
+                MemberConsultation.toEntity(requestDTO, property, member, savedAdminConsultation);
+        return memberConsultationRepository.save(memberConsultation);
     }
 
     /**
@@ -130,14 +140,49 @@ public class PropertyService {
     @Transactional(readOnly = true)
     public PagedDto<MyPropertyCardResponseDTO> getCards(int page, int size, Long adminId) {
         PageRequest pageRequest =
-                PageRequest.of(
-                        page,
-                        size,
-                        Sort.by(Sort.Direction.DESC, "endDate", "createdAt")); // todo 정렬 기준 다시 세우기
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "endDate", "createdAt"));
         Page<Property> pages = propertyRepository.findByAdmin_Id(adminId, pageRequest);
         List<MyPropertyCardResponseDTO> cardResponseDTO =
                 pages.getContent().stream()
                         .map(it -> MyPropertyCardResponseDTO.toDTO(it))
+                        .collect(Collectors.toList());
+        return PagedDto.toDTO(page, size, pages.getTotalPages(), cardResponseDTO);
+    }
+
+    /**
+     * 내가 등록한 매물의 두번째 페이지네이션을 리턴하는 메소드
+     *
+     * @param page 현재 페이지(0부터 시작)
+     * @param size 한 페이지당 보일 객체의 수
+     * @param adminId
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public PagedDto<MyPropertyTableResponseDTO> getTables(int page, int size, Long adminId) {
+        PageRequest pageRequest =
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "endDate", "createdAt"));
+        Page<Property> pages = propertyRepository.findByAdmin_Id(adminId, pageRequest);
+        List<Long> propertyIds =
+                pages.getContent().stream().map(Property::getId).collect(Collectors.toList());
+        List<Object[]> objects =
+                memberConsultationRepository.countPendingByPropertyIds(propertyIds, Status.PENDING);
+
+        Map<Long, Long> pendingCountsMap =
+                objects.stream()
+                        .collect(
+                                Collectors.toMap(
+                                        obj -> (Long) obj[0], // Property ID
+                                        obj -> (Long) obj[1] // Pending count
+                                        ));
+
+        List<MyPropertyTableResponseDTO> cardResponseDTO =
+                pages.getContent().stream()
+                        .map(
+                                property -> {
+                                    Long pendingCount =
+                                            pendingCountsMap.getOrDefault(property.getId(), 0L);
+                                    return MyPropertyTableResponseDTO.toDTO(property, pendingCount);
+                                })
                         .collect(Collectors.toList());
         return PagedDto.toDTO(page, size, pages.getTotalPages(), cardResponseDTO);
     }

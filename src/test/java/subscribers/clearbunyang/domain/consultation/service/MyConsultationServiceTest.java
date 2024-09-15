@@ -161,8 +161,8 @@ public class MyConsultationServiceTest {
         assertEquals(1, response.getPagedData().getTotalPages());
         assertEquals(5, response.getPagedData().getPageSize());
         assertEquals(0, response.getPagedData().getCurrentPage());
-        assertFalse(response.getPagedData().getContent().isEmpty());
-        assertEquals(2, response.getPagedData().getContent().size());
+        assertFalse(response.getPagedData().getContents().isEmpty());
+        assertEquals(2, response.getPagedData().getContents().size());
 
         verify(memberRepository, times(1)).findById(userId);
         verify(memberConsultationRepository, times(1))
@@ -190,8 +190,8 @@ public class MyConsultationServiceTest {
         assertEquals(1, response.getPagedData().getTotalPages());
         assertEquals(5, response.getPagedData().getPageSize());
         assertEquals(0, response.getPagedData().getCurrentPage());
-        assertFalse(response.getPagedData().getContent().isEmpty());
-        assertEquals(1, response.getPagedData().getContent().size());
+        assertFalse(response.getPagedData().getContents().isEmpty());
+        assertEquals(1, response.getPagedData().getContents().size());
 
         verify(memberRepository, times(1)).findById(userId);
         verify(memberConsultationRepository, times(1))
@@ -243,8 +243,8 @@ public class MyConsultationServiceTest {
         assertEquals(1, response.getPagedData().getTotalPages());
         assertEquals(5, response.getPagedData().getPageSize());
         assertEquals(0, response.getPagedData().getCurrentPage());
-        assertFalse(response.getPagedData().getContent().isEmpty());
-        assertEquals(2, response.getPagedData().getContent().size());
+        assertFalse(response.getPagedData().getContents().isEmpty());
+        assertEquals(2, response.getPagedData().getContents().size());
 
         verify(memberRepository, times(1)).findById(userId);
         verify(memberConsultationRepository, times(1))
@@ -273,8 +273,8 @@ public class MyConsultationServiceTest {
         assertEquals(1, response.getPagedData().getTotalPages());
         assertEquals(5, response.getPagedData().getPageSize());
         assertEquals(0, response.getPagedData().getCurrentPage());
-        assertFalse(response.getPagedData().getContent().isEmpty());
-        assertEquals(1, response.getPagedData().getContent().size());
+        assertFalse(response.getPagedData().getContents().isEmpty());
+        assertEquals(1, response.getPagedData().getContents().size());
 
         verify(memberRepository, times(1)).findById(userId);
         verify(memberConsultationRepository, times(1))

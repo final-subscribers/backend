@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.property.testfixtures;
+package subscribers.clearbunyang.testfixtures;
 
 
 import java.time.LocalDate;
@@ -19,8 +19,10 @@ public class PropertyRequestDTOFixture {
 
     public static PropertyRequestDTO createDefault() {
         List<AreaRequestDTO> areas = new ArrayList<>();
-        areas.add(new AreaRequestDTO(60, 50000, 45000, 10));
-        areas.add(new AreaRequestDTO(80, 60000, 55000, 8));
+        //        areas.add(new AreaRequestDTO(60, 50000, 45000, 10));
+        //        areas.add(new AreaRequestDTO(80, 60000, 55000, 8));
+        areas.add(new AreaRequestDTO(60, 50000, null, null));
+        areas.add(new AreaRequestDTO(80, 60000, null, null));
 
         List<FileRequestDTO> files = new ArrayList<>();
         files.add(
@@ -37,6 +39,8 @@ public class PropertyRequestDTOFixture {
         List<KeywordRequestDTO> keywords = new ArrayList<>();
         keywords.add(
                 new KeywordRequestDTO(KeywordName.CASH_PAYMENT, KeywordType.BENEFIT, true, 100));
+        keywords.add(
+                new KeywordRequestDTO(KeywordName.DISCOUNT_SALE, KeywordType.BENEFIT, true, null));
         keywords.add(
                 new KeywordRequestDTO(
                         KeywordName.GUARANTEED_PAYMENT, KeywordType.BENEFIT, false, 13));
