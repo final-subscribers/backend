@@ -29,10 +29,17 @@ public class EmailController {
         return ResponseEntity.ok("인증코드가 이메일로 전송되었습니다.");
     }
 
-    @Operation(summary = "이메일 인증받기")
-    @PostMapping("/verify-email")
+    @Operation(summary = "어드민 이메일 인증")
+    @PostMapping("/verify-admin-email")
     public ResponseEntity<String> verifyCode(@RequestBody EmailVerificationCodeRequest request) {
         authEmailService.verifyCode(request.getEmail(), request.getVerificationCode());
+        return ResponseEntity.ok("이메일 인증 성공");
+    }
+
+    @Operation(summary = "일반유저 이메일 중복확인")
+    @PostMapping("/verify-member-email")
+    public ResponseEntity<String> verifyEmail(@RequestBody EmailVerificationRequest request) {
+        authEmailService.verifyEmail(request.getEmail());
         return ResponseEntity.ok("이메일 인증 성공");
     }
 }
