@@ -33,6 +33,7 @@ public class AreaRequestDTO {
 
     @AssertTrue(message = "price>=discountPrice")
     public boolean isPriceValid() {
-        return price >= discountPrice;
+        if (discountPrice != null) return price >= discountPrice;
+        return true;
     }
 }
