@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import subscribers.clearbunyang.domain.user.entity.Admin;
 import subscribers.clearbunyang.domain.user.entity.Member;
+import subscribers.clearbunyang.domain.user.model.response.UserInfoResponse;
 
 @Getter
 @ToString
@@ -23,6 +24,15 @@ public class CustomUserDetails implements UserDetails {
             throw new IllegalArgumentException("User 값이 null이 될 수 없습니다.");
         }
         this.user = user;
+    }
+
+    public UserInfoResponse getUserInfo() {
+        if (user instanceof Member member) {
+            return new UserInfoResponse(member.getName(), member.getRole().name());
+        } else if (user instanceof Admin admin) {
+            return new UserInfoResponse(admin.getName(), admin.getRole().name());
+        }
+        return null;
     }
 
     public Long getUserId() {
