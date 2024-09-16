@@ -22,10 +22,14 @@ import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 @Builder
 public class PropertyDetailsResponseDTO {
 
+    private String name;
     private SalesType salesType; // 분양 형태
     private PropertyType propertyType; // 분양 타입
     private String buildingName; // 건물 이름
     private List<AreaResponseDTO> areas; // 면적
+    private String addrDo; // 도/시
+    private String addrGu; // 구
+    private String addrDong; // 동
     private String areaAddr; // 대지 위치
     private int totalNumber; // 세대수
     private String modelhouseAddr; // 모델하우스 위치
@@ -72,8 +76,7 @@ public class PropertyDetailsResponseDTO {
                 fileResponseDTOS.stream()
                         .filter(file -> FileType.MARKETING == file.getType())
                         .findFirst()
-                        .orElseThrow(
-                                () -> new InvalidValueException(ErrorCode.FILE_TYPE_NOT_FOUND));
+                        .orElse(null);
 
         List<KeywordResponseDTO> infra =
                 categorizedKeywords.getOrDefault(KeywordType.INFRA, new ArrayList<>());
@@ -81,8 +84,12 @@ public class PropertyDetailsResponseDTO {
                 categorizedKeywords.getOrDefault(KeywordType.BENEFIT, new ArrayList<>());
 
         return PropertyDetailsResponseDTO.builder()
+                .name(property.getName())
                 .salesType(property.getSalesType())
                 .propertyType(property.getPropertyType())
+                .addrDo(property.getAddrDo())
+                .addrGu(property.getAddrGu())
+                .addrDong(property.getAddrDong())
                 .buildingName(property.getBuildingName())
                 .areas(areaResponseDTOS)
                 .areaAddr(property.getAreaAddr())

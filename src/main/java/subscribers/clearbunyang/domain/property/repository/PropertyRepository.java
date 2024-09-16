@@ -89,7 +89,9 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     Long findIdByIdAndAdmin_Id(Long propertyId, Long adminId);
 
     default boolean existsByIdAndAdmin_id(Long propertyId, Long adminId) {
-        return findIdByIdAndAdmin_Id(propertyId, adminId) != null;
+        if (findIdByIdAndAdmin_Id(propertyId, adminId) == null)
+            throw new EntityNotFoundException(ErrorCode.NOT_FOUND);
+        return true;
     }
 
     @Modifying

@@ -1,6 +1,5 @@
 package subscribers.clearbunyang.domain.property.controller;
 
-import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -18,7 +17,7 @@ import subscribers.clearbunyang.global.config.SecurityConfig;
 import subscribers.clearbunyang.security.AuthenticationFilterMocking;
 import subscribers.clearbunyang.security.annotation.WithMockCustomAdmin;
 import subscribers.clearbunyang.security.annotation.WithMockCustomMember;
-import subscribers.clearbunyang.testfixtures.PropertyRequestDTOFixture;
+import subscribers.clearbunyang.testfixtures.PropertySaveRequestDTOFixture;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -39,7 +38,7 @@ public class AdminPropertyControllerIntegrationTest extends AuthenticationFilter
                                 .contentType("application/json")
                                 .content(
                                         objectMapper.writeValueAsString(
-                                                PropertyRequestDTOFixture.createDefault()))
+                                                PropertySaveRequestDTOFixture.createDefault()))
                                 .with(csrf()))
                 .andExpect(status().isOk());
     }
@@ -53,7 +52,7 @@ public class AdminPropertyControllerIntegrationTest extends AuthenticationFilter
                                 .contentType("application/json")
                                 .content(
                                         objectMapper.writeValueAsString(
-                                                PropertyRequestDTOFixture.createDefault()))
+                                                PropertySaveRequestDTOFixture.createDefault()))
                                 .with(csrf()))
                 .andExpect(status().is4xxClientError());
     }
