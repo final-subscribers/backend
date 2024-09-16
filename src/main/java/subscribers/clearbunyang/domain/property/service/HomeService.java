@@ -6,10 +6,11 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import subscribers.clearbunyang.domain.consultation.model.myConsultations.MyPendingConsultationsResponse;
+import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.domain.property.model.response.HomePagedResponse;
 import subscribers.clearbunyang.domain.property.model.response.HomePropertiesResponse;
+import subscribers.clearbunyang.domain.property.model.response.HomeResponse;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.global.model.PagedDto;
 
@@ -19,22 +20,34 @@ import subscribers.clearbunyang.global.model.PagedDto;
 public class HomeService {
 
     private final PropertyRepository propertyRepository;
+    private final LikesRepository likesRepository;
+    private final PropertyService propertyService;
 
-    public HomePagedResponse getHome(int page) {
+    final int size = 5;
+    final int totalSize = 4;
+
+    @Transactional(readOnly = true)
+    public PagedDto<HomeResponse> getHome(Long memberId, int page) {
 
         List<Property> top20Properties = propertyRepository.findTop20ByOrderByLikeCountDesc();
 
         List<HomePropertiesResponse> propertiesResponse =
                 top20Properties.stream()
-                        .map(HomePropertiesResponse::toDto)
+                        .map(
+                                property -> {
+                                    boolean likesExisted = false;
+                                    if (memberId != null) {
+                                        likesExisted =
+                                                likesRepository.existsByMemberIdAndPropertyId(
+                                                        memberId, property.getId());
+                                    }
+
+                                    return HomePropertiesResponse.toDto(property, likesExisted);
+                                })
                         .collect(Collectors.toList());
 
-        PagedDto<List<HomePropertiesResponse>> pagedDto =
-                PagedDto.<List<MyPendingConsultationsResponse>>builder()
-                        .totalPages(4)
-                        .pageSize(5)
-                        .currentPage(page)
-                        .content(propertiesResponse)
-                        .build();
+        HomeResponse homeResponse = HomeResponse.toDto(propertiesResponse);
+
+        return PagedDto.toDTO(page, size, totalSize, List.of(homeResponse));
     }
 }

@@ -2,14 +2,18 @@ package subscribers.clearbunyang.domain.property.model.response;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import subscribers.clearbunyang.domain.file.entity.enums.FileType;
 import subscribers.clearbunyang.domain.file.model.FileResponseDTO;
 import subscribers.clearbunyang.domain.property.entity.Keyword;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
+import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
+import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 
 @Getter
 @NoArgsConstructor
@@ -24,20 +28,34 @@ public class HomePropertiesResponse {
     private int totalNumber;
     private List<Keyword> keywords;
     private int price;
-    private int discountPrice;
+    private Integer discountPrice;
     private boolean like;
 
-    public static HomePropertiesResponse toDto(Property property) {
+    public static HomePropertiesResponse toDto(Property property, boolean likeExisted) {
+
+        List<FileResponseDTO> fileResponseDTOS =
+                property.getFiles().stream()
+                        .map(FileResponseDTO::toDTO)
+                        .collect(Collectors.toList());
+
+        FileResponseDTO propertyImage =
+                fileResponseDTOS.stream()
+                        .filter(file -> FileType.PROPERTY_IMAGE == file.getType())
+                        .findFirst()
+                        .orElseThrow(
+                                () -> new InvalidValueException(ErrorCode.FILE_TYPE_NOT_FOUND));
+
         return HomePropertiesResponse.builder()
                 .id(property.getId())
-                //            .imageUrl 이미지 가져오는 처리 필요
+                .imageUrl(propertyImage)
                 .propertyName(property.getName())
                 .areaAddr(property.getAreaAddr())
                 .salesType(property.getSalesType())
                 .totalNumber(property.getTotalNumber())
                 .keywords(property.getKeywords())
-                .price(property.getAreas().get(0).getPrice())
-                .discountPrice(property.getAreas().get(0).getDiscountPrice())
+                .price(property.getPrice())
+                .discountPrice(property.getDiscountPrice())
+                .like(likeExisted)
                 .build();
     }
 }

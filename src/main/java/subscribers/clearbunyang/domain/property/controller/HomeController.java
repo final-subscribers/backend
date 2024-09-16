@@ -4,13 +4,15 @@ package subscribers.clearbunyang.domain.property.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import subscribers.clearbunyang.domain.property.model.response.HomePagedResponse;
+import subscribers.clearbunyang.domain.property.model.response.HomeResponse;
 import subscribers.clearbunyang.domain.property.service.HomeService;
 import subscribers.clearbunyang.global.model.PagedDto;
+import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,8 +23,10 @@ public class HomeController {
 
     @Operation(summary = "메인 화면 호출 시 좋아요 많은 순으로 매물 출력")
     @GetMapping
-    public PagedDto<HomePagedResponse> getHome(
-            @RequestParam(required = false, value = "page", defaultValue = "0") int page) {
-        return homeService.getHome(page);
+    public PagedDto<HomeResponse> getHome(
+            @RequestParam(required = false, value = "page", defaultValue = "0") int page,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Long memberId = customUserDetails.getUserId();
+        return homeService.getHome(memberId, page);
     }
 }
