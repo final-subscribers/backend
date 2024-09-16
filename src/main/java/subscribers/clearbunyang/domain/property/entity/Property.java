@@ -16,7 +16,8 @@ import subscribers.clearbunyang.domain.file.entity.File;
 import subscribers.clearbunyang.domain.likes.entity.Likes;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
-import subscribers.clearbunyang.domain.property.model.request.PropertyRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.PropertySaveRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.PropertyUpdateRequestDTO;
 import subscribers.clearbunyang.domain.user.entity.Admin;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
@@ -114,7 +115,7 @@ public class Property extends BaseEntity {
     @JsonManagedReference
     private List<File> files;
 
-    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Area> areas;
 
@@ -130,7 +131,7 @@ public class Property extends BaseEntity {
         this.admin = adminId;
     }
 
-    public static Property toEntity(PropertyRequestDTO propertyDTO, Admin admin) {
+    public static Property toEntity(PropertySaveRequestDTO propertyDTO, Admin admin) {
         return Property.builder()
                 .name(propertyDTO.getName())
                 .constructor(propertyDTO.getConstructor())
@@ -167,5 +168,25 @@ public class Property extends BaseEntity {
         this.setPrice(price);
         this.setDiscountPercent(discountPercent);
         this.setDiscountPrice(discountPrice);
+    }
+
+    public void update(PropertyUpdateRequestDTO requestDTO) {
+        this.name = requestDTO.getName();
+        this.constructor = requestDTO.getConstructor();
+        this.areaAddr = requestDTO.getAreaAddr();
+        this.modelHouseAddr = requestDTO.getModelhouseAddr();
+        this.phoneNumber = requestDTO.getPhoneNumber();
+        this.contactChannel = requestDTO.getContactChannel();
+        this.homePage = requestDTO.getHomepage();
+        this.startDate = requestDTO.getStartDate();
+        this.endDate = requestDTO.getEndDate();
+        this.propertyType = requestDTO.getPropertyType();
+        this.salesType = requestDTO.getSalesType();
+        this.totalNumber = requestDTO.getTotalNumber();
+        this.companyName = requestDTO.getCompanyName();
+        this.addrDo = requestDTO.getAddrDo();
+        this.addrGu = requestDTO.getAddrGu();
+        this.addrDong = requestDTO.getAddrDong();
+        this.buildingName = requestDTO.getBuildingName();
     }
 }

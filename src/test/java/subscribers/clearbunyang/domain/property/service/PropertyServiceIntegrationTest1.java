@@ -21,6 +21,7 @@ import subscribers.clearbunyang.domain.property.entity.Area;
 import subscribers.clearbunyang.domain.property.entity.Keyword;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.model.request.KeywordRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.PropertyUpdateRequestDTO;
 import subscribers.clearbunyang.domain.property.repository.AreaRepository;
 import subscribers.clearbunyang.domain.property.repository.KeywordRepository;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
@@ -29,10 +30,7 @@ import subscribers.clearbunyang.domain.user.entity.Member;
 import subscribers.clearbunyang.domain.user.repository.AdminRepository;
 import subscribers.clearbunyang.domain.user.repository.MemberRepository;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
-import subscribers.clearbunyang.testfixtures.AdminRegisterFixture;
-import subscribers.clearbunyang.testfixtures.ConsultationRequestDTOFixture;
-import subscribers.clearbunyang.testfixtures.MemberRegisterFixture;
-import subscribers.clearbunyang.testfixtures.PropertyRequestDTOFixture;
+import subscribers.clearbunyang.testfixtures.*;
 
 @SpringBootTest
 @DisplayName("PropertyService-통합 테스트1")
@@ -60,7 +58,9 @@ public class PropertyServiceIntegrationTest1 {
 
         this.savedProperty =
                 propertyService.saveProperty(
-                        PropertyRequestDTOFixture.createDefault(), savedAdmin.getId());
+                        PropertySaveRequestDTOFixture.createDefault(), savedAdmin.getId());
+        entityManager.flush();
+        entityManager.clear();
     }
 
     @Test
@@ -69,7 +69,7 @@ public class PropertyServiceIntegrationTest1 {
         List<Keyword> keywords = keywordRepository.findByPropertyId(savedProperty.getId());
         List<Area> areas = areaRepository.findByPropertyId(savedProperty.getId());
         List<KeywordRequestDTO> searchEnabledKeywords =
-                PropertyRequestDTOFixture.createDefault().getKeywords().stream()
+                PropertySaveRequestDTOFixture.createDefault().getKeywords().stream()
                         .filter(keyword -> keyword.getSearchEnabled())
                         .toList();
 
@@ -79,9 +79,9 @@ public class PropertyServiceIntegrationTest1 {
         }
         assertThat(keywords.get(searchEnabledKeywords.size()).getName()).isNull();
         assertThat(keywords.get(searchEnabledKeywords.size()).getType()).isNull();
-        assertThat(areas).hasSize(PropertyRequestDTOFixture.createDefault().getAreas().size());
+        assertThat(areas).hasSize(PropertySaveRequestDTOFixture.createDefault().getAreas().size());
         String imageUrl =
-                PropertyRequestDTOFixture.createDefault().getFiles().stream()
+                PropertySaveRequestDTOFixture.createDefault().getFiles().stream()
                         .filter(file -> file.getType() == FileType.PROPERTY_IMAGE)
                         .findFirst()
                         .get()
@@ -94,12 +94,14 @@ public class PropertyServiceIntegrationTest1 {
     void saveConsultation1() {
         MemberConsultation memberConsultation =
                 propertyService.saveConsultation(
-                        savedProperty.getId(), ConsultationRequestDTOFixture.createDefault(), null);
+                        savedProperty.getId(),
+                        MemberConsultationRequestDTOFixture.createDefault(),
+                        null);
 
         assertThat(memberConsultation.getAdminConsultation()).isNotNull();
         assertThat(memberConsultation.getMember()).isNull();
         assertThat(memberConsultation.getPreferredAt())
-                .isEqualTo(ConsultationRequestDTOFixture.createDefault().getPreferredAt());
+                .isEqualTo(MemberConsultationRequestDTOFixture.createDefault().getPreferredAt());
         assertThat(memberConsultation.getAdminConsultation()).isNotNull();
     }
 
@@ -110,13 +112,13 @@ public class PropertyServiceIntegrationTest1 {
         MemberConsultation memberConsultation =
                 propertyService.saveConsultation(
                         savedProperty.getId(),
-                        ConsultationRequestDTOFixture.createDefault(),
+                        MemberConsultationRequestDTOFixture.createDefault(),
                         savedMember.getId());
 
         assertThat(memberConsultation.getAdminConsultation()).isNotNull();
         assertThat(memberConsultation.getMember()).isNotNull();
         assertThat(memberConsultation.getPreferredAt())
-                .isEqualTo(ConsultationRequestDTOFixture.createDefault().getPreferredAt());
+                .isEqualTo(MemberConsultationRequestDTOFixture.createDefault().getPreferredAt());
         assertThat(memberConsultation.getAdminConsultation()).isNotNull();
     }
 
@@ -152,5 +154,19 @@ public class PropertyServiceIntegrationTest1 {
                 () -> {
                     propertyService.deleteProperty(100000L, 100000L);
                 });
+    }
+
+    @Test
+    @DisplayName("매물 수정 테스트")
+    void updateProperty() {
+        PropertyUpdateRequestDTO updateRequestDTO =
+                PropertyUpdateRequestDTOFixture.createDefault2();
+        propertyService.updateProperty(savedProperty.getId(), updateRequestDTO, savedAdmin.getId());
+        entityManager.flush();
+        entityManager.clear();
+
+        Property property = propertyRepository.findPropertyById(savedProperty.getId());
+        assertThat(property.getImageUrl()).isEqualTo(updateRequestDTO.getPropertyImage().getUrl());
+        assertThat(property.getAddrDo()).isEqualTo(updateRequestDTO.getAddrDo());
     }
 }
