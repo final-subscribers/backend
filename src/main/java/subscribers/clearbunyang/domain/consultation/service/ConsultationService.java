@@ -44,7 +44,7 @@ public class ConsultationService {
         return ConsultCompletedResponse.toDto(adminConsultation);
     }
 
-    @Transactional(readOnly = true) // admin으로 받으면 쿼리가 너무 길어짐 (admin에서 member 찾아서 extra 체크히고..)
+    @Transactional(readOnly = true)
     public ConsultPendingResponse getConsultPendingResponse(Long memberConsultationId) {
         MemberConsultation memberConsultation = getMemberConsultation(memberConsultationId);
 
@@ -92,10 +92,7 @@ public class ConsultationService {
             throw new ConsultantException(ErrorCode.UNABLE_TO_CHANGE_CONSULTANT);
         }
 
-        adminConsultation.setConsultant(
-                consultant); // 이ㅓㄹ면 정합성 문제 발생 확률 문제 - 하나의 트랜잭션 안에 3가지의 작업, adminConsultationId 찾기,
-        // set 저장 : 정합성 문제
-        // where adminconsultaion id update 를 바로 할 수 있어야 정합성 문제가 일어나지 않음
+        adminConsultation.setConsultant(consultant);
 
         return ConsultantResponse.toDto(consultant);
     }
