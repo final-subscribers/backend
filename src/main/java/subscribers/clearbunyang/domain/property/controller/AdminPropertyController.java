@@ -72,4 +72,19 @@ public class AdminPropertyController {
         Long adminId = customUserDetails.getUserId();
         return propertyService.getTables(page, size, adminId);
     }
+
+    /**
+     * 매물을 삭제하는 메소드
+     *
+     * @param propertyId
+     * @param customUserDetails
+     */
+    @Operation(summary = "매물삭제")
+    @GetMapping("/properties/{propertyId}")
+    public void deleteProperty(
+            @PathVariable Long propertyId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Long adminId = customUserDetails.getUserId();
+        propertyService.deleteProperty(propertyId, adminId);
+    }
 }

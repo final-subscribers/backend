@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.property.entity.Keyword;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
@@ -29,6 +30,7 @@ public class KeywordService {
      * @param keywordRequestDTOS
      * @param property
      */
+    @Transactional
     public void saveKeywords(List<KeywordRequestDTO> keywordRequestDTOS, Property property) {
         List<Keyword> searchableKeywords = new ArrayList<>();
         List<KeywordRequestDTO> nonSearchableKeywords = new ArrayList<>();
@@ -56,7 +58,8 @@ public class KeywordService {
      * @param nonSearchableKeywords 검색 키워드에 해당되지 않은 키워드들을 모아놓은 리스트
      * @param property
      */
-    private void saveNonSearchableKeywordsAsJson(
+    @Transactional
+    public void saveNonSearchableKeywordsAsJson(
             List<KeywordRequestDTO> nonSearchableKeywords, Property property) {
         Keyword keyword = Keyword.toEntity(objectToJson(nonSearchableKeywords), property);
         keywordRepository.save(keyword);
@@ -83,6 +86,7 @@ public class KeywordService {
      * @param propertyId
      * @return
      */
+    @Transactional(readOnly = true)
     public Map<KeywordType, List<KeywordResponseDTO>> categorizedKeywords(Long propertyId) {
         List<Keyword> keywords = keywordRepository.findByPropertyId(propertyId);
         try {

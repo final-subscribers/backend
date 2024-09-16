@@ -13,6 +13,7 @@ import subscribers.clearbunyang.domain.property.entity.Property;
 public class MyPropertyCardResponseDTO {
     private Long id; // 매물 id
     private String imageUrl; // 대표 사진 url
+    private boolean isPending; // pending상태인지
     private String name; // 매물명
     private String addrDo; // 주소-도/시
     private String addrGu; // 주소-구
@@ -22,7 +23,8 @@ public class MyPropertyCardResponseDTO {
     public static MyPropertyCardResponseDTO toDTO(Property property) {
         return MyPropertyCardResponseDTO.builder()
                 .id(property.getId())
-                .imageUrl(null)
+                .imageUrl(property.getImageUrl())
+                .isPending(!LocalDate.now().isAfter(property.getEndDate()))
                 .name(property.getName())
                 .addrDo(property.getAddrDo())
                 .addrGu(property.getAddrGu())
