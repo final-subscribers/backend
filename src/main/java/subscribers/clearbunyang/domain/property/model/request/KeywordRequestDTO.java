@@ -16,5 +16,5 @@ public class KeywordRequestDTO {
 
     @NotNull private Boolean searchEnabled;
 
-    @NotNull private Object input;
+    private Object input;
 }
