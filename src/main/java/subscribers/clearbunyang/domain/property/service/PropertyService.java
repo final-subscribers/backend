@@ -21,9 +21,7 @@ import subscribers.clearbunyang.domain.file.service.FileService;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
-import subscribers.clearbunyang.domain.property.model.request.AreaRequestDTO;
-import subscribers.clearbunyang.domain.property.model.request.ConsultationRequestDTO;
-import subscribers.clearbunyang.domain.property.model.request.PropertyRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.*;
 import subscribers.clearbunyang.domain.property.model.response.KeywordResponseDTO;
 import subscribers.clearbunyang.domain.property.model.response.MyPropertyCardResponseDTO;
 import subscribers.clearbunyang.domain.property.model.response.MyPropertyTableResponseDTO;
@@ -37,7 +35,6 @@ import subscribers.clearbunyang.domain.user.repository.AdminRepository;
 import subscribers.clearbunyang.domain.user.repository.MemberRepository;
 import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
-import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 import subscribers.clearbunyang.global.model.PagedDto;
 
 @RequiredArgsConstructor
@@ -64,7 +61,7 @@ public class PropertyService {
      * @return
      */
     @Transactional
-    public Property saveProperty(PropertyRequestDTO propertyDTO, Long adminId) {
+    public Property saveProperty(PropertySaveRequestDTO propertyDTO, Long adminId) {
         Admin admin = adminRepository.findAdminById(adminId);
         String imageUrl =
                 propertyDTO.getFiles().stream()
@@ -102,7 +99,7 @@ public class PropertyService {
     @Transactional
     // todo 리팩토링 하기
     public MemberConsultation saveConsultation(
-            Long propertyId, ConsultationRequestDTO requestDTO, Long memberId) {
+            Long propertyId, MemberConsultationRequestDTO requestDTO, Long memberId) {
         Property property = propertyRepository.findPropertyById(propertyId);
         Member member = (memberId != null) ? memberRepository.findMemberById(memberId) : null;
         AdminConsultation adminConsultation = AdminConsultation.builder().build();
@@ -202,12 +199,59 @@ public class PropertyService {
      */
     @Transactional
     public void deleteProperty(Long propertyId, Long adminId) {
-        if (!propertyRepository.existsByIdAndAdmin_id(propertyId, adminId))
-            throw new EntityNotFoundException(ErrorCode.NOT_FOUND);
+        propertyRepository.existsByIdAndAdmin_id(propertyId, adminId);
+
         keywordRepository.deleteByPropertyId(propertyId);
         areaRepository.deleteByPropertyId(propertyId);
         fileRepository.deleteByPropertyId(propertyId);
         likesRepository.deleteByPropertyId(propertyId);
         propertyRepository.deletePropertyById(propertyId);
+    }
+
+    @Transactional
+    // TODO 리팩토링하기
+    public Property updateProperty(
+            Long propertyId, PropertyUpdateRequestDTO requestDTO, Long adminId) {
+        /**
+         * propertySaveResponseDTO 필드를 propertyUpdateRequestDTO 필드로 바꾸기(API 명세서도)
+         *
+         * <p>1. adminId와 propertyId를 가진 property가 있는지 확인. 없으면 예외 던지기 2. property에서
+         * keywords,areas,files delete 쿼리로 모두 삭제하기 3. property에서 keywords,areas,files addAll 쿼리로 모두
+         * 저장하기 4. property 필드 setter해서 save하기
+         */
+        propertyRepository.existsByIdAndAdmin_id(propertyId, adminId);
+
+        Property property = propertyRepository.findPropertyById(propertyId);
+        keywordRepository.deleteByPropertyId(propertyId);
+        areaRepository.deleteByPropertyId(propertyId);
+        fileRepository.deleteByPropertyId(propertyId);
+
+        List<FileRequestDTO> files = new ArrayList<>();
+        files.add(requestDTO.getPropertyImage());
+        files.add(requestDTO.getSupplyInformation());
+        if (requestDTO.getMarketing() != null) files.add(requestDTO.getMarketing());
+
+        List<KeywordRequestDTO> keywords = new ArrayList<>();
+        keywords.addAll(requestDTO.getBenefit());
+        keywords.addAll(requestDTO.getInfra());
+
+        areaService.saveAreas(requestDTO.getAreas(), property);
+        fileService.saveFiles(files, property);
+        keywordService.saveKeywords(keywords, property);
+
+        property.update(requestDTO);
+
+        String imageUrl = requestDTO.getPropertyImage().getUrl();
+        AreaRequestDTO smallestArea =
+                requestDTO.getAreas().stream()
+                        .min(Comparator.comparing(AreaRequestDTO::getSquareMeter))
+                        .orElseThrow(() -> new InvalidValueException(ErrorCode.AREA_NOT_FOUND));
+        property.setDenormalizationFields(
+                imageUrl,
+                smallestArea.getPrice(),
+                smallestArea.getDiscountPrice(),
+                smallestArea.getDiscountPercent());
+
+        return propertyRepository.save(property);
     }
 }

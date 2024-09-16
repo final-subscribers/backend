@@ -7,7 +7,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import subscribers.clearbunyang.domain.property.model.request.PropertyRequestDTO;
+import subscribers.clearbunyang.domain.property.entity.Property;
+import subscribers.clearbunyang.domain.property.model.request.PropertySaveRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.PropertyUpdateRequestDTO;
 import subscribers.clearbunyang.domain.property.model.response.MyPropertyCardResponseDTO;
 import subscribers.clearbunyang.domain.property.model.response.MyPropertyTableResponseDTO;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
@@ -32,7 +34,7 @@ public class AdminPropertyController {
     @Operation(summary = "매물등록")
     @PostMapping("/properties")
     public void addProperty(
-            @Valid @RequestBody PropertyRequestDTO requestDTO,
+            @Valid @RequestBody PropertySaveRequestDTO requestDTO,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         propertyService.saveProperty(requestDTO, customUserDetails.getUserId());
     }
@@ -86,5 +88,15 @@ public class AdminPropertyController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Long adminId = customUserDetails.getUserId();
         propertyService.deleteProperty(propertyId, adminId);
+    }
+
+    @PatchMapping("/properties/{propertyId}")
+    public void updateProperty(
+            @PathVariable Long propertyId,
+            @Valid @RequestBody PropertyUpdateRequestDTO requestDTO,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Long adminId = customUserDetails.getUserId();
+        Property updatedProperty = propertyService.updateProperty(propertyId, requestDTO, adminId);
+        System.out.println("성공");
     }
 }

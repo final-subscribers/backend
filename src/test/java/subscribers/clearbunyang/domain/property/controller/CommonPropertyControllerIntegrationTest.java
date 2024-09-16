@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.domain.property.model.request.ConsultationRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.MemberConsultationRequestDTO;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.domain.user.entity.Admin;
 import subscribers.clearbunyang.domain.user.repository.AdminRepository;
@@ -24,8 +24,8 @@ import subscribers.clearbunyang.security.AuthenticationFilterMocking;
 import subscribers.clearbunyang.security.annotation.WithMockCustomAdmin;
 import subscribers.clearbunyang.security.annotation.WithMockCustomMember;
 import subscribers.clearbunyang.testfixtures.AdminRegisterFixture;
-import subscribers.clearbunyang.testfixtures.ConsultationRequestDTOFixture;
-import subscribers.clearbunyang.testfixtures.PropertyRequestDTOFixture;
+import subscribers.clearbunyang.testfixtures.MemberConsultationRequestDTOFixture;
+import subscribers.clearbunyang.testfixtures.PropertySaveRequestDTOFixture;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -49,13 +49,14 @@ public class CommonPropertyControllerIntegrationTest extends AuthenticationFilte
         savedAdmin = adminRepository.save(AdminRegisterFixture.createDefault());
         savedProperty =
                 propertyService.saveProperty(
-                        PropertyRequestDTOFixture.createDefault(), savedAdmin.getId());
+                        PropertySaveRequestDTOFixture.createDefault(), savedAdmin.getId());
     }
 
     @DisplayName("상담 등록 테스트: 로그인 안한 사용자")
     @Test
     public void addConsultation1() throws Exception {
-        ConsultationRequestDTO requestDTO = ConsultationRequestDTOFixture.createDefault();
+        MemberConsultationRequestDTO requestDTO =
+                MemberConsultationRequestDTOFixture.createDefault();
 
         mockMvc.perform(
                         post(
@@ -71,7 +72,8 @@ public class CommonPropertyControllerIntegrationTest extends AuthenticationFilte
     @Test
     @WithMockCustomMember
     public void addConsultation2() throws Exception {
-        ConsultationRequestDTO requestDTO = ConsultationRequestDTOFixture.createDefault();
+        MemberConsultationRequestDTO requestDTO =
+                MemberConsultationRequestDTOFixture.createDefault();
 
         mockMvc.perform(
                         post(
@@ -87,7 +89,8 @@ public class CommonPropertyControllerIntegrationTest extends AuthenticationFilte
     @Test
     @WithMockCustomAdmin
     public void addConsultation3() throws Exception {
-        ConsultationRequestDTO requestDTO = ConsultationRequestDTOFixture.createDefault();
+        MemberConsultationRequestDTO requestDTO =
+                MemberConsultationRequestDTOFixture.createDefault();
 
         mockMvc.perform(
                         post(
@@ -102,7 +105,8 @@ public class CommonPropertyControllerIntegrationTest extends AuthenticationFilte
     @DisplayName("매물 읽어오기")
     @Test
     public void getProperty() throws Exception {
-        ConsultationRequestDTO requestDTO = ConsultationRequestDTOFixture.createDefault();
+        MemberConsultationRequestDTO requestDTO =
+                MemberConsultationRequestDTOFixture.createDefault();
         entityManager.flush();
         entityManager.clear();
 

@@ -3,8 +3,7 @@ package subscribers.clearbunyang.domain.property.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -21,7 +20,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.model.request.AreaRequestDTO;
-import subscribers.clearbunyang.domain.property.model.request.PropertyRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.PropertySaveRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.PropertyUpdateRequestDTO;
 import subscribers.clearbunyang.domain.property.model.response.MyPropertyCardResponseDTO;
 import subscribers.clearbunyang.domain.property.model.response.MyPropertyTableResponseDTO;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
@@ -31,7 +31,8 @@ import subscribers.clearbunyang.global.model.PagedDto;
 import subscribers.clearbunyang.security.AuthenticationFilterMocking;
 import subscribers.clearbunyang.security.annotation.WithMockCustomAdmin;
 import subscribers.clearbunyang.security.annotation.WithMockCustomMember;
-import subscribers.clearbunyang.testfixtures.PropertyRequestDTOFixture;
+import subscribers.clearbunyang.testfixtures.PropertySaveRequestDTOFixture;
+import subscribers.clearbunyang.testfixtures.PropertyUpdateRequestDTOFixture;
 
 @WebMvcTest(AdminPropertyController.class)
 @Import({SecurityConfig.class})
@@ -46,9 +47,9 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
     @Test
     @WithMockCustomAdmin
     public void addProperty1() throws Exception {
-        PropertyRequestDTO requestDTO = PropertyRequestDTOFixture.createDefault();
+        PropertySaveRequestDTO requestDTO = PropertySaveRequestDTOFixture.createDefault();
         Property mockProperty = new Property();
-        when(propertyService.saveProperty(any(PropertyRequestDTO.class), any(Long.class)))
+        when(propertyService.saveProperty(any(PropertySaveRequestDTO.class), any(Long.class)))
                 .thenReturn(mockProperty);
 
         mockMvc.perform(
@@ -63,9 +64,9 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
     @Test
     @WithMockCustomMember
     public void addProperty3() throws Exception {
-        PropertyRequestDTO requestDTO = PropertyRequestDTOFixture.createDefault();
+        PropertySaveRequestDTO requestDTO = PropertySaveRequestDTOFixture.createDefault();
         Property mockProperty = new Property();
-        when(propertyService.saveProperty(any(PropertyRequestDTO.class), any(Long.class)))
+        when(propertyService.saveProperty(any(PropertySaveRequestDTO.class), any(Long.class)))
                 .thenReturn(mockProperty);
 
         mockMvc.perform(
@@ -80,11 +81,11 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
     @Test
     @WithMockCustomAdmin
     public void addProperty2() throws Exception {
-        PropertyRequestDTO requestDTO = PropertyRequestDTOFixture.createDefault();
+        PropertySaveRequestDTO requestDTO = PropertySaveRequestDTOFixture.createDefault();
         requestDTO.getAreas().add(new AreaRequestDTO(60, 50000, 60000, 10));
         Property mockProperty = new Property();
 
-        when(propertyService.saveProperty(any(PropertyRequestDTO.class), any(Long.class)))
+        when(propertyService.saveProperty(any(PropertySaveRequestDTO.class), any(Long.class)))
                 .thenReturn(mockProperty);
 
         mockMvc.perform(
@@ -169,5 +170,41 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
                 .andExpect(jsonPath("$.contents[0].name").value("Test Property"))
                 .andExpect(jsonPath("$.contents[0].totalCount").value(100))
                 .andExpect(jsonPath("$.contents[0].consultationPendingCount").value(5));
+    }
+
+    @Test
+    @DisplayName("매물 수정 테스트")
+    @WithMockCustomAdmin
+    public void updateProperty1() throws Exception {
+        when(propertyService.updateProperty(
+                        anyLong(), any(PropertyUpdateRequestDTO.class), anyLong()))
+                .thenReturn(new Property());
+        PropertyUpdateRequestDTO requestDTO = PropertyUpdateRequestDTOFixture.createDefault();
+
+        mockMvc.perform(
+                        patch("/api/admin/properties/{propertyId}", anyLong())
+                                .contentType("application/json")
+                                .content(objectMapper.writeValueAsString(requestDTO))
+                                .with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("매물 수정 테스트- validation 발생")
+    @WithMockCustomAdmin
+    public void updateProperty2() throws Exception {
+        when(propertyService.updateProperty(
+                        anyLong(), any(PropertyUpdateRequestDTO.class), anyLong()))
+                .thenReturn(new Property());
+        PropertyUpdateRequestDTO requestDTO = PropertyUpdateRequestDTOFixture.createDefault();
+        requestDTO.setInfra(null);
+        requestDTO.setBenefit(null);
+
+        mockMvc.perform(
+                        patch("/api/admin/properties/{propertyId}", anyLong())
+                                .contentType("application/json")
+                                .content(objectMapper.writeValueAsString(requestDTO))
+                                .with(csrf()))
+                .andExpect(status().isBadRequest());
     }
 }
