@@ -25,11 +25,10 @@ public class NewCustomerAdditionRequest {
 
     @NotBlank
     @NumericValidation
-    @Size(min = 12, max = 12)
+    @Size(min = 11, max = 11)
     private String phoneNumber; // 고객 폰 번호
 
-    // @NotBlank 테스트를 위해 주석
-    private String consultant; // 상담사
+    @NotBlank private String consultant; // 상담사
 
     @NotNull @FutureOrPresent private LocalDate preferredAt;
 

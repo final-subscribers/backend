@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.like.controller;
+package subscribers.clearbunyang.domain.likes.controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
