@@ -35,6 +35,10 @@ public class AuthEmailService {
             throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
         }
 
+        if (memberRepository.existsByEmail(email)) {
+            throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
+        }
+
         String verificationCode = generateVerificationCode();
         redisTemplate
                 .opsForValue()
@@ -46,10 +50,6 @@ public class AuthEmailService {
     public void verifyCode(String email, String code) {
         String key = EMAIL_VERIFICATION_PREFIX + email;
         String storedCode = (String) redisTemplate.opsForValue().get(key);
-
-        if (adminRepository.existsByEmail(email)) {
-            throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
-        }
 
         if (storedCode == null || !storedCode.equals(code)) {
             throw new InvalidValueException(ErrorCode.INVALID_VERIFICATION_CODE);
@@ -63,6 +63,10 @@ public class AuthEmailService {
     public void verifyEmail(String email) {
 
         if (memberRepository.existsByEmail(email)) {
+            throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
+        }
+
+        if (adminRepository.existsByEmail(email)) {
             throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
         }
 

@@ -108,18 +108,17 @@ public class AuthServiceTest {
   @Test
   void testAdminSignup_Success() {
     //어드민 회원가입 성공
-    AdminSignUpRequest request = new AdminSignUpRequest(
-        "Admin Name",
-        "admin@example.com",
-        "password",
-        "1234567890",
-        "Company Name",
-        123456789L,
-        "Address",
-        "Business",
-        new AdminSignUpRequest.FileInfo("housingFile", "url", "HOUSING"),
-        new AdminSignUpRequest.FileInfo("registrationFile", "url", "REGISTRATION")
-    );
+    AdminSignUpRequest request = AdminSignUpRequest.builder()
+        .name("Admin Name")
+        .email("admin@example.com")
+        .password("password")
+        .phoneNumber("1234567890")
+        .companyName("Company Name")
+        .address("Address")
+        .business("Business")
+        .housingFile(new AdminSignUpRequest.FileInfo("housingFile", "url", "HOUSING"))
+        .registrationFile(new AdminSignUpRequest.FileInfo("registrationFile", "url", "REGISTRATION"))
+        .build();
 
     when(adminRepository.existsByEmail(request.getEmail())).thenReturn(false);
     doNothing().when(authEmailService).isVerified(request);
@@ -201,7 +200,7 @@ public class AuthServiceTest {
     when(adminRepository.existsByEmail(request.getEmail())).thenReturn(true);
     when(adminRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(admin));
     when(passwordEncoder.matches(request.getPassword(), admin.getPassword())).thenReturn(true);
-    when(jwtTokenProvider.createToken(any(), any(), any())).thenReturn("token");
+    when(jwtTokenProvider.createToken(any(), any(), any(), any())).thenReturn("token");
     doNothing().when(jwtTokenService).saveRefreshToken(any(), any());
 
     LoginResponse response = authService.login(request);
@@ -227,7 +226,7 @@ public class AuthServiceTest {
     when(memberRepository.existsByEmail(request.getEmail())).thenReturn(true);
     when(memberRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(member));
     when(passwordEncoder.matches(request.getPassword(), member.getPassword())).thenReturn(true);
-    when(jwtTokenProvider.createToken(any(), any(), any())).thenReturn("token");
+    when(jwtTokenProvider.createToken(any(), any(), any(), any())).thenReturn("token");
     doNothing().when(jwtTokenService).saveRefreshToken(any(), any());
 
     LoginResponse response = authService.login(request);
