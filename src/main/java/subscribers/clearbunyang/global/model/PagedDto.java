@@ -14,8 +14,6 @@ import org.springframework.data.domain.Page;
 @Builder
 public class PagedDto<T> {
 
-    private long favorateNumber; // 총 좋아요 개수
-
     private int totalPages; // 전체 페이지 수
 
     private int pageSize; // 한 페이지에 포함된 데이터 수
@@ -36,16 +34,6 @@ public class PagedDto<T> {
 
     public static <T> PagedDto<T> toDTO(Page<T> page) {
         return PagedDto.<T>builder()
-                .totalPages(page.getTotalPages())
-                .pageSize(page.getSize())
-                .currentPage(page.getNumber())
-                .contents(page.getContent())
-                .build();
-    }
-
-    public static <T> PagedDto<T> toFavoriteDTO(Page<T> page) {
-        return PagedDto.<T>builder()
-                .favorateNumber(page.getTotalElements())
                 .totalPages(page.getTotalPages())
                 .pageSize(page.getSize())
                 .currentPage(page.getNumber())

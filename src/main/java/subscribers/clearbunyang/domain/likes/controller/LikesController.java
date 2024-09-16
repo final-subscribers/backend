@@ -4,6 +4,7 @@ package subscribers.clearbunyang.domain.likes.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,9 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import subscribers.clearbunyang.domain.likes.model.response.LikesPageResponse;
 import subscribers.clearbunyang.domain.likes.model.response.LikesPropertyResponse;
 import subscribers.clearbunyang.domain.likes.service.LikesService;
-import subscribers.clearbunyang.global.model.PagedDto;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
 @RestController
@@ -36,16 +37,18 @@ public class LikesController {
 
     @Operation(summary = "좋아요 목록조회")
     @GetMapping("my-favorites")
-    public ResponseEntity<PagedDto<LikesPropertyResponse>> getMyFavorites(
+    public ResponseEntity<LikesPageResponse> getMyFavorites(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestParam("status") String status,
             @RequestParam("page") int page,
             @RequestParam("size") int size) {
 
-        PagedDto<LikesPropertyResponse> pagedDto =
+        Page<LikesPropertyResponse> propertyPage =
                 likesService.getMyFavoriteProperties(
                         customUserDetails.getUserId(), status, page, size);
 
-        return ResponseEntity.ok(pagedDto);
+        LikesPageResponse response = LikesPageResponse.fromPage(propertyPage, size, page);
+
+        return ResponseEntity.ok(response);
     }
 }
