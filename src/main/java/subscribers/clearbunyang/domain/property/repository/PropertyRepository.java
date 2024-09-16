@@ -83,6 +83,8 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
 
     Page<Property> findByAdmin_Id(Long adminId, Pageable pageable);
 
+    List<Property> findTop20ByOrderByLikeCountDesc();
+
     @Query("SELECT p.id FROM Property p WHERE p.id = :propertyId AND p.admin.id = :adminId")
     Long findIdByIdAndAdmin_Id(Long propertyId, Long adminId);
 
