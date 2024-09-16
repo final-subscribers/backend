@@ -21,11 +21,11 @@ import subscribers.clearbunyang.global.entity.BaseEntity;
 public class File extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_id", nullable = false)
+    @JoinColumn(name = "admin_id", nullable = true)
     private Admin admin;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "property_id")
+    @JoinColumn(name = "property_id", nullable = true)
     private Property property;
 
     @Column(nullable = false)
@@ -38,10 +38,10 @@ public class File extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private FileType type;
 
-    public static File toEntity(FileRequestDTO fileRequestDTO, Property property, Admin admin) {
+    public static File toEntity(FileRequestDTO fileRequestDTO, Property property) {
         return File.builder()
                 .property(property)
-                .admin(admin)
+                .admin(null)
                 .name(fileRequestDTO.getName())
                 .link(fileRequestDTO.getUrl())
                 .type(fileRequestDTO.getType())

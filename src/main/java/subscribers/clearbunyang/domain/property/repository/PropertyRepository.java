@@ -9,7 +9,9 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.model.PropertyDateDto;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
@@ -80,4 +82,16 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     }
 
     Page<Property> findByAdmin_Id(Long adminId, Pageable pageable);
+
+    @Query("SELECT p.id FROM Property p WHERE p.id = :propertyId AND p.admin.id = :adminId")
+    Long findIdByIdAndAdmin_Id(Long propertyId, Long adminId);
+
+    default boolean existsByIdAndAdmin_id(Long propertyId, Long adminId) {
+        return findIdByIdAndAdmin_Id(propertyId, adminId) != null;
+    }
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Property p where p.id=:propertyId")
+    int deletePropertyById(Long propertyId);
 }

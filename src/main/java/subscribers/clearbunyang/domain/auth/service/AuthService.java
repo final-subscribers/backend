@@ -148,6 +148,8 @@ public class AuthService {
             throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
         }
 
+        authEmailService.isEmailVerified(request);
+
         authSmsService.isVerified(request);
 
         Member member =

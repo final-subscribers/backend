@@ -13,7 +13,7 @@ import subscribers.clearbunyang.domain.file.model.FileResponseDTO;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MyPendingConsultationsResponse {
+public class MyConsultationsResponse {
 
     private FileResponseDTO imageUrl;
     private Long id;
@@ -24,8 +24,8 @@ public class MyPendingConsultationsResponse {
     private String phoneNumber;
     private LocalDate preferredAt;
 
-    public static MyPendingConsultationsResponse toDto(MemberConsultation memberConsultation) {
-        return MyPendingConsultationsResponse.builder()
+    public static MyConsultationsResponse toDto(MemberConsultation memberConsultation) {
+        return MyConsultationsResponse.builder()
                 //            .imageUrl()  이미지 가져오는 처리 필요
                 .id(memberConsultation.getProperty().getId())
                 .name(memberConsultation.getMemberName())
