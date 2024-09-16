@@ -24,7 +24,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
-        servers = {@Server(url = "https://entj.site", description = "Default Server URL")},
+        servers = {
+            @Server(url = "https://entj.site/", description = "Default Server URL"),
+            @Server(url = "http://localhost:8080/", description = "LocalHost Server URL")
+        },
         info = @Info(title = "청약자들 명세서", description = "청약자들", version = "v1"))
 @Configuration
 public class SwaggerConfig {
