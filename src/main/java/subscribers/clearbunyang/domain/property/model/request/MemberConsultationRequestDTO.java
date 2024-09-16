@@ -14,7 +14,7 @@ import subscribers.clearbunyang.global.validation.NumericValidation;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConsultationRequestDTO {
+public class MemberConsultationRequestDTO {
     @NotBlank
     @Size(min = 1, max = 20)
     private String name;

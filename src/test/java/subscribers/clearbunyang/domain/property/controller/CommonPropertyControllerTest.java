@@ -12,13 +12,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
-import subscribers.clearbunyang.domain.property.model.request.ConsultationRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.MemberConsultationRequestDTO;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.global.config.SecurityConfig;
 import subscribers.clearbunyang.security.AuthenticationFilterMocking;
 import subscribers.clearbunyang.security.annotation.WithMockCustomAdmin;
 import subscribers.clearbunyang.security.annotation.WithMockCustomMember;
-import subscribers.clearbunyang.testfixtures.ConsultationRequestDTOFixture;
+import subscribers.clearbunyang.testfixtures.MemberConsultationRequestDTOFixture;
 
 @WebMvcTest(CommonPropertyController.class)
 @Import(SecurityConfig.class)
@@ -27,12 +27,12 @@ public class CommonPropertyControllerTest extends AuthenticationFilterMocking {
     @Autowired MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
     @MockBean private PropertyService propertyService;
-    private ConsultationRequestDTO requestDTO;
+    private MemberConsultationRequestDTO requestDTO;
 
     @BeforeEach
     @Order(Integer.MAX_VALUE)
     void save() {
-        requestDTO = ConsultationRequestDTOFixture.createDefault();
+        requestDTO = MemberConsultationRequestDTOFixture.createDefault();
     }
 
     @DisplayName("상담 등록 테스트: 로그인 안한 사용자")
