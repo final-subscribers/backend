@@ -6,34 +6,51 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.model.request.ConsultationRequestDTO;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
+import subscribers.clearbunyang.domain.user.entity.Admin;
+import subscribers.clearbunyang.domain.user.repository.AdminRepository;
 import subscribers.clearbunyang.global.config.SecurityConfig;
-import subscribers.clearbunyang.global.token.JwtTokenProcessor;
+import subscribers.clearbunyang.security.AuthenticationFilterMocking;
 import subscribers.clearbunyang.security.annotation.WithMockCustomAdmin;
 import subscribers.clearbunyang.security.annotation.WithMockCustomMember;
+import subscribers.clearbunyang.testfixtures.AdminRegisterFixture;
 import subscribers.clearbunyang.testfixtures.ConsultationRequestDTOFixture;
+import subscribers.clearbunyang.testfixtures.PropertyRequestDTOFixture;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(SecurityConfig.class)
-@DisplayName("통합 테스트")
+@DisplayName("CommonPropertyController-통합 테스트")
 @Transactional
-public class CommonPropertyControllerIntegrationTest {
+public class CommonPropertyControllerIntegrationTest extends AuthenticationFilterMocking {
     @Autowired private MockMvc mockMvc;
 
     @Autowired private PropertyService propertyService;
+    @Autowired private AdminRepository adminRepository;
     @Autowired private ObjectMapper objectMapper;
+    @Autowired private EntityManager entityManager;
 
-    @MockBean private JwtTokenProcessor jwtTokenProcessor;
+    private Admin savedAdmin;
+    private Property savedProperty;
+
+    @BeforeEach
+    @Order(Integer.MAX_VALUE)
+    void save() {
+        savedAdmin = adminRepository.save(AdminRegisterFixture.createDefault());
+        savedProperty =
+                propertyService.saveProperty(
+                        PropertyRequestDTOFixture.createDefault(), savedAdmin.getId());
+    }
 
     @DisplayName("상담 등록 테스트: 로그인 안한 사용자")
     @Test
@@ -41,7 +58,9 @@ public class CommonPropertyControllerIntegrationTest {
         ConsultationRequestDTO requestDTO = ConsultationRequestDTOFixture.createDefault();
 
         mockMvc.perform(
-                        post("/api/common/properties/{propertyId}/consultation", 2L)
+                        post(
+                                        "/api/common/properties/{propertyId}/consultation",
+                                        savedProperty.getId())
                                 .contentType("application/json")
                                 .content(objectMapper.writeValueAsString(requestDTO))
                                 .with(csrf()))
@@ -55,7 +74,9 @@ public class CommonPropertyControllerIntegrationTest {
         ConsultationRequestDTO requestDTO = ConsultationRequestDTOFixture.createDefault();
 
         mockMvc.perform(
-                        post("/api/common/properties/{propertyId}/consultation", 48L)
+                        post(
+                                        "/api/common/properties/{propertyId}/consultation",
+                                        savedProperty.getId())
                                 .contentType("application/json")
                                 .content(objectMapper.writeValueAsString(requestDTO))
                                 .with(csrf()))
@@ -69,7 +90,9 @@ public class CommonPropertyControllerIntegrationTest {
         ConsultationRequestDTO requestDTO = ConsultationRequestDTOFixture.createDefault();
 
         mockMvc.perform(
-                        post("/api/common/properties/{propertyId}/consultation", 2L)
+                        post(
+                                        "/api/common/properties/{propertyId}/consultation",
+                                        savedProperty.getId())
                                 .contentType("application/json")
                                 .content(objectMapper.writeValueAsString(requestDTO))
                                 .with(csrf()))
@@ -78,12 +101,13 @@ public class CommonPropertyControllerIntegrationTest {
 
     @DisplayName("매물 읽어오기")
     @Test
-    @WithMockCustomAdmin
     public void getProperty() throws Exception {
         ConsultationRequestDTO requestDTO = ConsultationRequestDTOFixture.createDefault();
+        entityManager.flush();
+        entityManager.clear();
 
         mockMvc.perform(
-                        get("/api/common/properties/{propertyId}", 2L)
+                        get("/api/common/properties/{propertyId}", savedProperty.getId())
                                 .contentType("application/json")
                                 .with(csrf()))
                 .andDo(System.out::println);

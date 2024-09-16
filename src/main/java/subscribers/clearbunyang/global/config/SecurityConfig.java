@@ -92,9 +92,7 @@ public class SecurityConfig {
                                         .access(this::hasIpAddress)
                                         .anyRequest()
                                         .authenticated())
-                .addFilterBefore(
-                        new AuthenticationFilter(jwtTokenProcessor),
-                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(
                         exception ->
                                 exception.authenticationEntryPoint(
@@ -107,6 +105,11 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthenticationFilter authenticationFilter() {
+        return new AuthenticationFilter(jwtTokenProcessor);
     }
 
     @Bean
