@@ -16,6 +16,7 @@ import subscribers.clearbunyang.domain.consultation.repository.AdminConsultation
 import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
 import subscribers.clearbunyang.domain.file.entity.enums.FileType;
 import subscribers.clearbunyang.domain.file.model.FileRequestDTO;
+import subscribers.clearbunyang.domain.file.repository.FileRepository;
 import subscribers.clearbunyang.domain.file.service.FileService;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
@@ -27,6 +28,8 @@ import subscribers.clearbunyang.domain.property.model.response.KeywordResponseDT
 import subscribers.clearbunyang.domain.property.model.response.MyPropertyCardResponseDTO;
 import subscribers.clearbunyang.domain.property.model.response.MyPropertyTableResponseDTO;
 import subscribers.clearbunyang.domain.property.model.response.PropertyDetailsResponseDTO;
+import subscribers.clearbunyang.domain.property.repository.AreaRepository;
+import subscribers.clearbunyang.domain.property.repository.KeywordRepository;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.domain.user.entity.Admin;
 import subscribers.clearbunyang.domain.user.entity.Member;
@@ -34,6 +37,7 @@ import subscribers.clearbunyang.domain.user.repository.AdminRepository;
 import subscribers.clearbunyang.domain.user.repository.MemberRepository;
 import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
+import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 import subscribers.clearbunyang.global.model.PagedDto;
 
 @RequiredArgsConstructor
@@ -48,6 +52,9 @@ public class PropertyService {
     private final KeywordService keywordService;
     private final AreaService areaService;
     private final AdminConsultationRepository adminConsultationRepository;
+    private final KeywordRepository keywordRepository;
+    private final AreaRepository areaRepository;
+    private final FileRepository fileRepository;
 
     /**
      * 물건을 저장하는 메소드
@@ -80,7 +87,7 @@ public class PropertyService {
         Property savedProperty = propertyRepository.save(property);
 
         areaService.saveAreas(propertyDTO.getAreas(), savedProperty);
-        fileService.saveFiles(propertyDTO.getFiles(), savedProperty, admin);
+        fileService.saveFiles(propertyDTO.getFiles(), savedProperty);
         keywordService.saveKeywords(propertyDTO.getKeywords(), property);
         return savedProperty;
     }
@@ -185,5 +192,22 @@ public class PropertyService {
                                 })
                         .collect(Collectors.toList());
         return PagedDto.toDTO(page, size, pages.getTotalPages(), cardResponseDTO);
+    }
+
+    /**
+     * 매물을 삭제하는 메소드
+     *
+     * @param propertyId
+     * @param adminId
+     */
+    @Transactional
+    public void deleteProperty(Long propertyId, Long adminId) {
+        if (!propertyRepository.existsByIdAndAdmin_id(propertyId, adminId))
+            throw new EntityNotFoundException(ErrorCode.NOT_FOUND);
+        keywordRepository.deleteByPropertyId(propertyId);
+        areaRepository.deleteByPropertyId(propertyId);
+        fileRepository.deleteByPropertyId(propertyId);
+        likesRepository.deleteByPropertyId(propertyId);
+        propertyRepository.deletePropertyById(propertyId);
     }
 }
