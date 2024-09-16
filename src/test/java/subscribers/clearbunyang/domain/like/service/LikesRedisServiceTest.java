@@ -17,9 +17,10 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-import subscribers.clearbunyang.domain.like.entity.Likes;
-import subscribers.clearbunyang.domain.like.model.response.LikesPropertyResponse;
-import subscribers.clearbunyang.domain.like.repository.LikesRepository;
+import subscribers.clearbunyang.domain.likes.entity.Likes;
+import subscribers.clearbunyang.domain.likes.model.response.LikesPropertyResponse;
+import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
+import subscribers.clearbunyang.domain.likes.service.LikesService;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
@@ -96,7 +97,6 @@ class LikesRedisServiceTest {
                         .password("password123!")
                         .companyName("testCompany")
                         .phoneNumber("01000000000")
-                        .registrationNumber(0L)
                         .address("Sample Address")
                         .business("Test Business")
                         .status(AdminState.ACCEPTED)
