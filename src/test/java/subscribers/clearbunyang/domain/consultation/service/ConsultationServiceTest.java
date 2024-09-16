@@ -1,6 +1,7 @@
 package subscribers.clearbunyang.domain.consultation.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -22,6 +23,7 @@ import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
+import subscribers.clearbunyang.domain.consultation.exception.ConsultantException;
 import subscribers.clearbunyang.domain.consultation.model.request.ConsultRequest;
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultCompletedResponse;
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultPendingResponse;
@@ -30,7 +32,7 @@ import subscribers.clearbunyang.domain.consultation.model.response.ConsultantRes
 import subscribers.clearbunyang.domain.consultation.repository.AdminConsultationRepository;
 import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
 import subscribers.clearbunyang.domain.file.entity.File;
-import subscribers.clearbunyang.domain.like.entity.Likes;
+import subscribers.clearbunyang.domain.likes.entity.Likes;
 import subscribers.clearbunyang.domain.property.entity.Area;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
@@ -182,20 +184,62 @@ class ConsultationServiceTest {
 
     @Test
     void 상담사변경_정상작동() {
+        MemberConsultation memberConsultation1 = createMemberConsultationLMS(property);
+        AdminConsultation adminConsultation1 =
+                createAdminConsultationConsultantNullAndLMS(memberConsultation1);
+        AdminConsultation adminConsultation2 = createAdminConsultation(memberConsultation1);
+        adminConsultation2.setConsultant("a-10");
+
         lenient()
                 .when(adminConsultationRepository.getById(anyLong()))
-                .thenReturn(adminConsultation);
+                .thenReturn(adminConsultation1);
 
         lenient()
                 .when(adminConsultationRepository.findByPropertyId(any()))
-                .thenReturn(List.of(adminConsultation));
+                .thenReturn(List.of(adminConsultation2));
 
         ConsultantResponse response =
-                consultationService.registerConsultant(1L, adminConsultation.getConsultant());
+                consultationService.registerConsultant(1L, adminConsultation2.getConsultant());
 
         assertNotNull(response);
 
         verify(adminConsultationRepository).findByPropertyId(any());
+    }
+
+    @Test
+    void 상담사등록_상담사를_변경할수없습니다() {
+        when(adminConsultationRepository.getById(anyLong())).thenReturn(adminConsultation);
+
+        when(adminConsultationRepository.findByPropertyId(any()))
+                .thenReturn(List.of(adminConsultation));
+        ConsultantException exception =
+                assertThrows(
+                        ConsultantException.class,
+                        () ->
+                                consultationService.registerConsultant(
+                                        1L, adminConsultation.getConsultant()));
+
+        assertEquals(ErrorCode.UNABLE_TO_CHANGE_CONSULTANT.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    void 상담사등록_BAD_REQUEST() {
+        AdminConsultation adminConsultation1 = createAdminConsultationConsultantNull();
+
+        when(adminConsultationRepository.getById(anyLong())).thenReturn(adminConsultation1);
+
+        lenient()
+                .when(adminConsultationRepository.findByPropertyId(any()))
+                .thenReturn(List.of(adminConsultation1));
+
+        InvalidValueException exception =
+                assertThrows(
+                        InvalidValueException.class,
+                        () ->
+                                consultationService.registerConsultant(
+                                        1L, adminConsultation1.getConsultant()));
+
+        assertEquals(ErrorCode.BAD_REQUEST.getMessage(), exception.getMessage());
     }
 
     @Test
@@ -386,12 +430,62 @@ class ConsultationServiceTest {
 
     private AdminConsultation createAdminConsultation(MemberConsultation memberConsultation1) {
         return AdminConsultation.builder()
-                .id(2L)
+                .id(1L)
                 .tier(Tier.A)
                 .consultMessage("consultMessage")
                 .createdAt(LocalDateTime.now())
                 .consultant("consultant")
                 .memberConsultation(memberConsultation1)
+                .build();
+    }
+
+    private AdminConsultation createAdminConsultation() {
+        return AdminConsultation.builder()
+                .id(2L)
+                .tier(Tier.A)
+                .consultMessage("consultMessage")
+                .createdAt(LocalDateTime.now())
+                .consultant("a-10")
+                .memberConsultation(new MemberConsultation())
+                .build();
+    }
+
+    private AdminConsultation createAdminConsultationConsultantNull() {
+        return AdminConsultation.builder()
+                .id(1L)
+                .tier(Tier.A)
+                .consultMessage("consultMessage")
+                .createdAt(LocalDateTime.now())
+                .consultant(null)
+                .memberConsultation(new MemberConsultation())
+                .build();
+    }
+
+    private AdminConsultation createAdminConsultationConsultantNullAndLMS(
+            MemberConsultation memberConsultation) {
+        return AdminConsultation.builder()
+                .id(1L)
+                .tier(Tier.A)
+                .consultMessage("consultMessage")
+                .createdAt(LocalDateTime.now())
+                .consultant(null)
+                .memberConsultation(memberConsultation)
+                .build();
+    }
+
+    private MemberConsultation createMemberConsultationLMS(Property property) {
+        return MemberConsultation.builder()
+                .id(1L)
+                .status(Status.PENDING)
+                .memberMessage("memberMessage")
+                .createdAt(LocalDateTime.now())
+                .preferredAt(LocalDate.now().plusDays(1))
+                .modifiedAt(LocalDateTime.now())
+                .memberName("memberName")
+                .phoneNumber("011-1234-1234")
+                .medium(Medium.LMS)
+                .property(property)
+                .adminConsultation(new AdminConsultation())
                 .build();
     }
 
@@ -405,7 +499,7 @@ class ConsultationServiceTest {
                 .modifiedAt(LocalDateTime.now())
                 .memberName("memberName")
                 .phoneNumber("011-1234-1234")
-                .medium(Medium.LMS)
+                .medium(Medium.PHONE)
                 .property(new Property())
                 .adminConsultation(new AdminConsultation())
                 .build();
