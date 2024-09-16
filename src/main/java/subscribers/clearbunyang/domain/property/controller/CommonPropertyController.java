@@ -59,7 +59,10 @@ public class CommonPropertyController {
     public PropertyDetailsResponseDTO getProperty(
             @PathVariable Long propertyId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        Long memberId = customUserDetails != null ? customUserDetails.getUserId() : null;
+        Long memberId =
+                (customUserDetails == null || customUserDetails.isInstanceOfAdmin())
+                        ? null
+                        : customUserDetails.getUserId();
         return propertyService.getPropertyDetails(propertyId, memberId);
     }
 }

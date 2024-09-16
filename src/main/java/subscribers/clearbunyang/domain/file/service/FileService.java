@@ -18,7 +18,6 @@ import subscribers.clearbunyang.domain.file.entity.File;
 import subscribers.clearbunyang.domain.file.model.FileRequestDTO;
 import subscribers.clearbunyang.domain.file.repository.FileRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.domain.user.entity.Admin;
 
 @Service
 @RequiredArgsConstructor
@@ -37,10 +36,10 @@ public class FileService {
      * @param property
      * @param admin
      */
-    public void saveFiles(List<FileRequestDTO> fileRequestDTOS, Property property, Admin admin) {
+    public void saveFiles(List<FileRequestDTO> fileRequestDTOS, Property property) {
         List<File> files =
                 fileRequestDTOS.stream()
-                        .map(fileDTO -> File.toEntity(fileDTO, property, admin))
+                        .map(fileDTO -> File.toEntity(fileDTO, property))
                         .collect(Collectors.toList());
 
         fileRepository.saveAll(files);

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.property.entity.Area;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.model.request.AreaRequestDTO;
@@ -21,6 +22,7 @@ public class AreaService {
      * @param areaRequestDTOS
      * @param property
      */
+    @Transactional
     public void saveAreas(List<AreaRequestDTO> areaRequestDTOS, Property property) {
         List<Area> areas =
                 areaRequestDTOS.stream()
