@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import subscribers.clearbunyang.domain.file.entity.enums.FileType;
 import subscribers.clearbunyang.domain.file.model.FileResponseDTO;
-import subscribers.clearbunyang.domain.property.entity.Keyword;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
 import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
@@ -21,38 +20,45 @@ import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 @Builder
 public class HomePropertiesResponse {
     private Long id;
-    private FileResponseDTO imageUrl;
+    private String imageUrl;
     private String propertyName;
     private String areaAddr;
     private SalesType salesType;
     private int totalNumber;
-    private List<Keyword> keywords;
+    private List<String> infra;
+    private List<String> benefit;
     private int price;
     private Integer discountPrice;
     private boolean like;
 
-    public static HomePropertiesResponse toDto(Property property, boolean likeExisted) {
+    public static HomePropertiesResponse toDto(
+            Property property,
+            List<String> infraKeywords,
+            List<String> benefitKeywords,
+            boolean likeExisted) {
 
         List<FileResponseDTO> fileResponseDTOS =
                 property.getFiles().stream()
                         .map(FileResponseDTO::toDTO)
                         .collect(Collectors.toList());
 
-        FileResponseDTO propertyImage =
+        String propertyImageUrl =
                 fileResponseDTOS.stream()
                         .filter(file -> FileType.PROPERTY_IMAGE == file.getType())
+                        .map(FileResponseDTO::getUrl) // url만 추출
                         .findFirst()
                         .orElseThrow(
                                 () -> new InvalidValueException(ErrorCode.FILE_TYPE_NOT_FOUND));
 
         return HomePropertiesResponse.builder()
                 .id(property.getId())
-                .imageUrl(propertyImage)
+                .imageUrl(propertyImageUrl)
                 .propertyName(property.getName())
                 .areaAddr(property.getAreaAddr())
                 .salesType(property.getSalesType())
                 .totalNumber(property.getTotalNumber())
-                .keywords(property.getKeywords())
+                .infra(infraKeywords)
+                .benefit(benefitKeywords)
                 .price(property.getPrice())
                 .discountPrice(property.getDiscountPrice())
                 .like(likeExisted)

@@ -26,7 +26,7 @@ public class HomeController {
     public PagedDto<HomeResponse> getHome(
             @RequestParam(required = false, value = "page", defaultValue = "0") int page,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        Long memberId = customUserDetails.getUserId();
+        Long memberId = (customUserDetails != null) ? customUserDetails.getUserId() : null;
         return homeService.getHome(memberId, page);
     }
 }

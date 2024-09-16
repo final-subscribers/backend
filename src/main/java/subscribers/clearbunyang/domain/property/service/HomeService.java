@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
 import subscribers.clearbunyang.domain.property.model.response.HomePropertiesResponse;
 import subscribers.clearbunyang.domain.property.model.response.HomeResponse;
+import subscribers.clearbunyang.domain.property.repository.KeywordRepository;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.global.model.PagedDto;
 
@@ -21,18 +23,22 @@ public class HomeService {
 
     private final PropertyRepository propertyRepository;
     private final LikesRepository likesRepository;
-    private final PropertyService propertyService;
+    private final KeywordRepository keywordRepository;
 
     final int size = 5;
-    final int totalSize = 4;
+    final int totalItems = 20;
 
     @Transactional(readOnly = true)
     public PagedDto<HomeResponse> getHome(Long memberId, int page) {
 
         List<Property> top20Properties = propertyRepository.findTop20ByOrderByLikeCountDesc();
 
+        int start = page * size;
+        int end = Math.min(start + size, totalItems);
+        List<Property> pagedProperties = top20Properties.subList(start, end);
+
         List<HomePropertiesResponse> propertiesResponse =
-                top20Properties.stream()
+                pagedProperties.stream()
                         .map(
                                 property -> {
                                     boolean likesExisted = false;
@@ -42,12 +48,29 @@ public class HomeService {
                                                         memberId, property.getId());
                                     }
 
-                                    return HomePropertiesResponse.toDto(property, likesExisted);
+                                    List<String> infraKeywords =
+                                            keywordRepository
+                                                    .findByPropertyIdAndTypeAndIsSearchableTrue(
+                                                            property.getId(), KeywordType.INFRA)
+                                                    .stream()
+                                                    .map(keyword -> keyword.getName().name())
+                                                    .collect(Collectors.toList());
+
+                                    List<String> benefitKeywords =
+                                            keywordRepository
+                                                    .findByPropertyIdAndTypeAndIsSearchableTrue(
+                                                            property.getId(), KeywordType.BENEFIT)
+                                                    .stream()
+                                                    .map(keyword -> keyword.getName().name())
+                                                    .collect(Collectors.toList());
+
+                                    return HomePropertiesResponse.toDto(
+                                            property, infraKeywords, benefitKeywords, likesExisted);
                                 })
                         .collect(Collectors.toList());
 
         HomeResponse homeResponse = HomeResponse.toDto(propertiesResponse);
 
-        return PagedDto.toDTO(page, size, totalSize, List.of(homeResponse));
+        return PagedDto.toDTO(page, size, totalItems / size, List.of(homeResponse));
     }
 }
