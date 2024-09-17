@@ -23,16 +23,17 @@ public class AreaRequestDTO {
     @Max(5000000)
     private Integer price; // 가격
 
-    @NotNull @Min(1)
+    @Min(1)
     @Max(5000000)
     private Integer discountPrice; // 할인 가격
 
-    @NotNull @Min(1)
+    @Min(1)
     @Max(100)
     private Integer discountPercent; // 할인 분양가(퍼센트)
 
     @AssertTrue(message = "price>=discountPrice")
     public boolean isPriceValid() {
-        return price >= discountPrice;
+        if (discountPrice != null) return price >= discountPrice;
+        return true;
     }
 }

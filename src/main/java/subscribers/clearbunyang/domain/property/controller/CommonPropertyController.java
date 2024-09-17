@@ -1,12 +1,14 @@
 package subscribers.clearbunyang.domain.property.controller;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import subscribers.clearbunyang.domain.property.model.request.ConsultationRequestDTO;
+import subscribers.clearbunyang.domain.property.model.request.MemberConsultationRequestDTO;
 import subscribers.clearbunyang.domain.property.model.response.PropertyDetailsResponseDTO;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
@@ -14,6 +16,7 @@ import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/common/properties")
+@Tag(name = "매물 상세페이지", description = "매물 상세페이지 조회/유저의 상담 등록")
 public class CommonPropertyController {
 
     private final PropertyService propertyService;
@@ -25,10 +28,11 @@ public class CommonPropertyController {
      * @param requestDTO
      * @param customUserDetails 로그인한 사용자
      */
+    @Operation(summary = "유저의 상담 등록")
     @PostMapping("{propertyId}/consultation")
     public void addConsultation(
             @PathVariable Long propertyId,
-            @Valid @RequestBody ConsultationRequestDTO requestDTO,
+            @Valid @RequestBody MemberConsultationRequestDTO requestDTO,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Long memberId;
         if (customUserDetails != null) {
@@ -50,11 +54,15 @@ public class CommonPropertyController {
      * @param customUserDetails
      * @return
      */
+    @Operation(summary = "매물 상세 조회")
     @GetMapping("{propertyId}")
     public PropertyDetailsResponseDTO getProperty(
             @PathVariable Long propertyId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        Long memberId = customUserDetails != null ? customUserDetails.getUserId() : null;
+        Long memberId =
+                (customUserDetails == null || customUserDetails.isInstanceOfAdmin())
+                        ? null
+                        : customUserDetails.getUserId();
         return propertyService.getPropertyDetails(propertyId, memberId);
     }
 }

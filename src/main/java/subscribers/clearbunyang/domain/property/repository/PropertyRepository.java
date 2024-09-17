@@ -9,7 +9,9 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.model.PropertyDateDto;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
@@ -70,6 +72,7 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
      * @param propertyId
      * @return
      */
+    // todo default_batch_fetch_size가 있어도 property와 1:n 관계인 엔티티들을 호출할떄마다 sql 쿼리문이 실행됨. 이거 맞아?
     @Query("SELECT p FROM Property p " + "JOIN FETCH p.areas " + "WHERE p.id = :propertyId")
     Optional<Property> findByPropertyIdUsingFetchJoin(Long propertyId);
 
@@ -77,4 +80,22 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
         return findByPropertyIdUsingFetchJoin(propertyId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
     }
+
+    Page<Property> findByAdmin_Id(Long adminId, Pageable pageable);
+
+    List<Property> findTop20ByOrderByLikeCountDesc();
+
+    @Query("SELECT p.id FROM Property p WHERE p.id = :propertyId AND p.admin.id = :adminId")
+    Long findIdByIdAndAdmin_Id(Long propertyId, Long adminId);
+
+    default boolean existsByIdAndAdmin_id(Long propertyId, Long adminId) {
+        if (findIdByIdAndAdmin_Id(propertyId, adminId) == null)
+            throw new EntityNotFoundException(ErrorCode.NOT_FOUND);
+        return true;
+    }
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Property p where p.id=:propertyId")
+    int deletePropertyById(Long propertyId);
 }

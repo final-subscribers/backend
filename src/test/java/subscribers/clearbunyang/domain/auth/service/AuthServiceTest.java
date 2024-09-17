@@ -102,17 +102,27 @@ public class AuthServiceTest {
     void testAdminSignup_Success() {
         // 어드민 회원가입 성공
         AdminSignUpRequest request =
-                new AdminSignUpRequest(
-                        "Admin Name",
-                        "admin@example.com",
-                        "password",
-                        "1234567890",
-                        "Company Name",
-                        123456789L,
-                        "Address",
-                        "Business",
-                        new AdminSignUpRequest.FileInfo("housingFile", "url", "HOUSING"),
-                        new AdminSignUpRequest.FileInfo("registrationFile", "url", "REGISTRATION"));
+                AdminSignUpRequest.builder()
+                        .name("Admin Name")
+                        .email("admin@example.com")
+                        .password("password")
+                        .phoneNumber("1234567890")
+                        .companyName("Company Name")
+                        .address("Address")
+                        .business("Business")
+                        .housingFile(
+                                AdminSignUpRequest.FileInfo.builder()
+                                        .name("housingFile")
+                                        .url("url")
+                                        .type("HOUSING")
+                                        .build())
+                        .registrationFile(
+                                AdminSignUpRequest.FileInfo.builder()
+                                        .name("registrationFile")
+                                        .url("url")
+                                        .type("REGISTRATION")
+                                        .build())
+                        .build();
 
         when(adminRepository.existsByEmail(request.getEmail())).thenReturn(false);
         doNothing().when(authEmailService).isVerified(request);

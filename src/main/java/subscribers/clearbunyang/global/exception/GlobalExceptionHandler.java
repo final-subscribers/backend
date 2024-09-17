@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 정의한 enum 이와의 값을 입력했을때 발생하는 예외
+     * 정의한 enum 이외의 값을 입력했을때 발생하는 예외
      *
      * @param exception
      * @return

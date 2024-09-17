@@ -92,9 +92,7 @@ public class SecurityConfig {
                                         .access(this::hasIpAddress)
                                         .anyRequest()
                                         .authenticated())
-                .addFilterBefore(
-                        new AuthenticationFilter(jwtTokenProcessor),
-                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(
                         exception ->
                                 exception.authenticationEntryPoint(
@@ -107,6 +105,11 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthenticationFilter authenticationFilter() {
+        return new AuthenticationFilter(jwtTokenProcessor);
     }
 
     @Bean
@@ -130,7 +133,7 @@ public class SecurityConfig {
         List<String> allowed =
                 Arrays.asList(
                         "http://localhost:5173",
-                        "http://entj.site",
+                        "https://entj.site",
                         "https://final-project-l15zu1wpp-yeojins-projects-a26b6f35.vercel.app",
                         "https://final-project-eta-silk.vercel.app");
         configuration.setAllowedOrigins(allowed);
