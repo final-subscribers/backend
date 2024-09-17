@@ -4,6 +4,7 @@ package subscribers.clearbunyang.domain.property.service;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -61,6 +62,7 @@ public class PropertyService {
      * @return
      */
     @Transactional
+    @CacheEvict(value = "sidebarList", allEntries = true)
     public Property saveProperty(PropertySaveRequestDTO propertyDTO, Long adminId) {
         Admin admin = adminRepository.findAdminById(adminId);
         String imageUrl =
@@ -97,6 +99,9 @@ public class PropertyService {
      * @param memberId
      */
     @Transactional
+    @CacheEvict(
+            value = {"ConsultPendingList", "ConsultCompletedList"},
+            key = "#propertyId")
     // todo 리팩토링 하기
     public MemberConsultation saveConsultation(
             Long propertyId, MemberConsultationRequestDTO requestDTO, Long memberId) {

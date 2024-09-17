@@ -1,6 +1,7 @@
 package subscribers.clearbunyang.domain.property.model.request;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
@@ -87,6 +88,7 @@ public class PropertyUpdateRequestDTO {
     @Valid private List<KeywordRequestDTO> infra;
     @Valid private List<KeywordRequestDTO> benefit;
 
+    @Schema(hidden = true) // Swagger에서 숨김 처리
     @AssertTrue(message = "infra와 benefit 둘다 모두 null 이면 안됨")
     public boolean isKeywordsValid() {
         if (infra == null && benefit == null) return false;

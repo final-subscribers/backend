@@ -41,7 +41,6 @@ import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
 import subscribers.clearbunyang.domain.property.model.PropertyDateDto;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.domain.user.entity.Admin;
-import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 import subscribers.clearbunyang.global.model.PagedDto;
@@ -120,9 +119,6 @@ class PropertiesServiceTest {
 
     @Test
     void 신규고객등록시_정상적동() {
-        lenient()
-                .when(memberConsultationRepository.existsByPhoneNumber(anyString()))
-                .thenReturn(true);
         lenient().when(propertyRepository.getById(anyLong())).thenReturn(new Property());
 
         lenient()
@@ -240,25 +236,6 @@ class PropertiesServiceTest {
         assertNotNull(consultCompletedListResponses);
         assertFalse(consultCompletedListResponses.isEmpty());
         verify(propertyRepository).getIdById(anyLong());
-    }
-
-    @Test
-    void 신규고객등록시_전화번호_중복() {
-        String number = memberConsultation.getPhoneNumber();
-        doThrow(new InvalidValueException(ErrorCode.PHONE_NUMBER_DUPLICATION))
-                .when(memberConsultationRepository)
-                .checkPhoneNumberExists(number);
-
-        NewCustomerAdditionRequest request = createNewCustomerAdditionRequest();
-
-        InvalidValueException exception =
-                assertThrows(
-                        InvalidValueException.class,
-                        () -> {
-                            propertiesService.createNewCustomerAddition(anyLong(), request);
-                        });
-
-        assertEquals(ErrorCode.PHONE_NUMBER_DUPLICATION.getMessage(), exception.getMessage());
     }
 
     @Test

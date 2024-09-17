@@ -97,6 +97,26 @@ public class RedisConfig {
         };
     }
 
+    // null 허용
+    @Bean
+    public KeyGenerator customKeyGenerator() {
+        return (target, method, params) -> {
+            StringBuilder sb = new StringBuilder();
+            sb.append(target.getClass().getSimpleName());
+            sb.append(".").append(method.getName());
+
+            if (params != null) {
+                for (Object param : params) {
+                    sb.append(".").append(param != null ? param.toString() : "null");
+                }
+            } else {
+                sb.append(".null"); // params가 null인 경우를 처리
+            }
+
+            return sb.toString();
+        };
+    }
+
     private ObjectMapper createObjectMapper() {
         PolymorphicTypeValidator typeValidator =
                 BasicPolymorphicTypeValidator.builder().allowIfSubType(Object.class).build();
