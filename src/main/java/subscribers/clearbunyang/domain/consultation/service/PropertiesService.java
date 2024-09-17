@@ -44,7 +44,6 @@ public class PropertiesService {
 
     @Transactional
     public void createNewCustomerAddition(Long propertyId, NewCustomerAdditionRequest request) {
-        checkPhoneNumberExists(request.getPhoneNumber());
         Property property = getProperty(propertyId);
 
         AdminConsultation consultant = createAdminConsultation(request);
@@ -138,10 +137,6 @@ public class PropertiesService {
 
     private Long getPropertyId(Long id) {
         return propertyRepository.getIdById(id);
-    }
-
-    private void checkPhoneNumberExists(String phoneNumber) {
-        memberConsultationRepository.checkPhoneNumberExists(phoneNumber);
     }
 
     // search 키워드가 ["name 010123412354"] 일 때 분리

@@ -16,7 +16,7 @@ import subscribers.clearbunyang.global.validation.NumericValidation;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PropertyRequestDTO {
+public class PropertySaveRequestDTO {
     @NotBlank
     @Size(min = 1, max = 20)
     private String name; // 매물명
@@ -81,4 +81,10 @@ public class PropertyRequestDTO {
     @NotNull @Valid private List<FileRequestDTO> files; // 파일 정보 리스트
 
     @NotNull @Valid private List<KeywordRequestDTO> keywords; // 키워드 정보 리스트
+
+    @AssertTrue(message = "키워드는 세개 이상이어야함")
+    public boolean isKeywordsValid() {
+        if (keywords.size() < 3) return false;
+        return true;
+    }
 }

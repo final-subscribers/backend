@@ -19,7 +19,6 @@ import subscribers.clearbunyang.domain.consultation.model.response.ConsultantLis
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultantResponse;
 import subscribers.clearbunyang.domain.consultation.repository.AdminConsultationRepository;
 import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
-import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.global.annotation.DistributedLock;
 import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
@@ -44,7 +43,7 @@ public class ConsultationService {
         return ConsultCompletedResponse.toDto(adminConsultation);
     }
 
-    @Transactional(readOnly = true) // admin으로 받으면 쿼리가 너무 길어짐 (admin에서 member 찾아서 extra 체크히고..)
+    @Transactional(readOnly = true)
     public ConsultPendingResponse getConsultPendingResponse(Long memberConsultationId) {
         MemberConsultation memberConsultation = getMemberConsultation(memberConsultationId);
 
@@ -83,19 +82,12 @@ public class ConsultationService {
             throw new InvalidValueException(ErrorCode.BAD_REQUEST);
         }
 
-        Property property = adminConsultation.getMemberConsultation().getProperty();
-
-        validateConsultantExists(property.getId(), consultant);
-
         String existingConsultant = adminConsultation.getConsultant();
         if (existingConsultant != null && !existingConsultant.isEmpty()) {
             throw new ConsultantException(ErrorCode.UNABLE_TO_CHANGE_CONSULTANT);
         }
 
-        adminConsultation.setConsultant(
-                consultant); // 이ㅓㄹ면 정합성 문제 발생 확률 문제 - 하나의 트랜잭션 안에 3가지의 작업, adminConsultationId 찾기,
-        // set 저장 : 정합성 문제
-        // where adminconsultaion id update 를 바로 할 수 있어야 정합성 문제가 일어나지 않음
+        adminConsultation.setConsultant(consultant);
 
         return ConsultantResponse.toDto(consultant);
     }

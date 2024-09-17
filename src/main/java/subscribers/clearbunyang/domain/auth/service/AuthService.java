@@ -70,6 +70,10 @@ public class AuthService {
             throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
         }
 
+        if (memberRepository.existsByEmail(request.getEmail())) {
+            throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
+        }
+
         authEmailService.isVerified(request);
 
         Admin admin =
@@ -145,6 +149,10 @@ public class AuthService {
         log.info("사용자 회원가입 시도: 이메일={}, 이름={}", request.getEmail(), request.getName());
 
         if (memberRepository.existsByEmail(request.getEmail())) {
+            throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
+        }
+
+        if (adminRepository.existsByEmail(request.getEmail())) {
             throw new InvalidValueException(ErrorCode.EMAIL_DUPLICATION);
         }
 
