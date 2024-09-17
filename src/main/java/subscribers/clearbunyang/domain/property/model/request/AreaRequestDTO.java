@@ -1,6 +1,7 @@
 package subscribers.clearbunyang.domain.property.model.request;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -31,6 +32,7 @@ public class AreaRequestDTO {
     @Max(100)
     private Integer discountPercent; // 할인 분양가(퍼센트)
 
+    @Schema(hidden = true) // Swagger에서 숨김 처리
     @AssertTrue(message = "price>=discountPrice")
     public boolean isPriceValid() {
         if (discountPrice != null) return price >= discountPrice;
