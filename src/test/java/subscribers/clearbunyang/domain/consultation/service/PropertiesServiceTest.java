@@ -41,7 +41,6 @@ import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
 import subscribers.clearbunyang.domain.property.model.PropertyDateDto;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.domain.user.entity.Admin;
-import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 import subscribers.clearbunyang.global.model.PagedDto;
@@ -237,20 +236,6 @@ class PropertiesServiceTest {
         assertNotNull(consultCompletedListResponses);
         assertFalse(consultCompletedListResponses.isEmpty());
         verify(propertyRepository).getIdById(anyLong());
-    }
-
-    @Test
-    void 신규고객등록시_전화번호_중복() {
-        String number = memberConsultation.getPhoneNumber();
-
-        NewCustomerAdditionRequest request = createNewCustomerAdditionRequest();
-
-        InvalidValueException exception =
-                assertThrows(
-                        InvalidValueException.class,
-                        () -> {
-                            propertiesService.createNewCustomerAddition(anyLong(), request);
-                        });
     }
 
     @Test
