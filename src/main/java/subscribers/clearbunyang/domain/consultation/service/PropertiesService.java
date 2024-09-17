@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,6 +44,9 @@ public class PropertiesService {
     private final PropertyRepository propertyRepository;
 
     @Transactional
+    @CacheEvict(
+            value = {"ConsultPendingList", "ConsultCompletedList"},
+            key = "#propertyId")
     public void createNewCustomerAddition(Long propertyId, NewCustomerAdditionRequest request) {
         Property property = getProperty(propertyId);
 
