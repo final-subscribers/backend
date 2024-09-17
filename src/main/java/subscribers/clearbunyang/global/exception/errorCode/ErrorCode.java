@@ -32,7 +32,6 @@ public enum ErrorCode {
     INVALID_VERIFICATION_SMS(400, "M011", "인증되지 않은 번호입니다."),
 
     // Consultation
-    PHONE_NUMBER_DUPLICATION(400, "A001", "이미 등록된 휴대폰 번호입니다"),
     TIER_CANNOT_BE_SPECIFIED(400, "A002", "등급을 입력 할 수 없습니다"),
     UNABLE_TO_CHANGE_CONSULTANT(HttpStatus.BAD_REQUEST.value(), "A003", "상담사를 변경할 수 없습니다"),
     LOCK_AQUISITION_FAILED(HttpStatus.CONFLICT.value(), "A004", "락 획득에 실패했습니다"),

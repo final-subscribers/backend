@@ -44,7 +44,8 @@ public interface AdminConsultationRepository extends JpaRepository<AdminConsulta
                             + "    (mc.memberName LIKE %:phoneNumber% AND mc.phoneNumber LIKE %:name%)) "
                             + "AND (:tier IS NULL OR ac.tier = :tier) "
                             + "AND (:consultant IS NULL OR ac.consultant LIKE %:consultant%) "
-                            + "AND (:preferredAt IS NULL OR mc.preferredAt = :preferredAt) ")
+                            + "AND (:preferredAt IS NULL OR mc.preferredAt = :preferredAt) "
+                            + "ORDER BY ac.id DESC")
     Page<AdminConsultation> findByPropertyIdAndCompletedAndFilters(
             @Param("propertyId") Long propertyId,
             @Param("status") Status status,
@@ -65,7 +66,8 @@ public interface AdminConsultationRepository extends JpaRepository<AdminConsulta
                             + "    (mc.memberName LIKE %:name% AND mc.phoneNumber LIKE %:phoneNumber%) OR "
                             + "    (mc.memberName LIKE %:phoneNumber% AND mc.phoneNumber LIKE %:name%)) "
                             + "AND (:consultant IS NULL OR ac.consultant LIKE %:consultant%) "
-                            + "AND (:preferredAt IS NULL OR mc.preferredAt = :preferredAt) ")
+                            + "AND (:preferredAt IS NULL OR mc.preferredAt = :preferredAt) "
+                            + "ORDER BY ac.id DESC")
     Page<AdminConsultation> findByPropertyIdAndPendingAndFilters(
             @Param("propertyId") Long propertyId,
             @Param("status") Status status,
