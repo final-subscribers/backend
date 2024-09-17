@@ -56,7 +56,7 @@ public class LikesPropertyResponse {
                 .id(property.getId())
                 .keyword(
                         property.getKeywords().stream()
-                                .limit(3)
+                                .filter(keyword -> keyword.isSearchable())
                                 .map(k -> new String[] {k.getName(), k.getType()})
                                 .collect(Collectors.toList()))
                 .imageUrl(imageUrl)
