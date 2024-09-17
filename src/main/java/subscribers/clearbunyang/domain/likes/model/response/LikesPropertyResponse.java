@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.domain.likes.model.response;
+package subscribers.clearbunyang.domain.like.model.response;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -56,7 +56,7 @@ public class LikesPropertyResponse {
                 .id(property.getId())
                 .keyword(
                         property.getKeywords().stream()
-                                .limit(3)
+                                .filter(keyword -> keyword.isSearchable())
                                 .map(
                                         k ->
                                                 new String[] {
