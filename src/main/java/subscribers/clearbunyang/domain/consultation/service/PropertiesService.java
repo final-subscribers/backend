@@ -73,7 +73,7 @@ public class PropertiesService {
                 sideBarPendingResponse, completedSummaryResponse, sideBarSelectedPropertyResponse);
     }
 
-    @Cacheable(value = "ConsultPendingList", key = "#propertyId")
+    @Cacheable(value = "ConsultPendingList", keyGenerator = "customKeyGenerator")
     @Transactional(readOnly = true)
     public PagedDto<ConsultPendingListResponse> getConsultPendingListResponse(
             Long propertyId,
@@ -100,7 +100,7 @@ public class PropertiesService {
                 List.of(consultPendingListResponse));
     }
 
-    @Cacheable(value = "ConsultCompletedList", key = "#propertyId")
+    @Cacheable(value = "ConsultCompletedList", keyGenerator = "customKeyGenerator")
     @Transactional(readOnly = true)
     public PagedDto<ConsultCompletedListResponse> getConsultCompletedListResponse(
             Long propertyId,
