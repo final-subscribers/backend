@@ -19,7 +19,6 @@ import subscribers.clearbunyang.domain.consultation.model.response.ConsultantLis
 import subscribers.clearbunyang.domain.consultation.model.response.ConsultantResponse;
 import subscribers.clearbunyang.domain.consultation.repository.AdminConsultationRepository;
 import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
-import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.global.annotation.DistributedLock;
 import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
@@ -82,10 +81,6 @@ public class ConsultationService {
         if (adminConsultation.getMemberConsultation().getMedium() != Medium.LMS) {
             throw new InvalidValueException(ErrorCode.BAD_REQUEST);
         }
-
-        Property property = adminConsultation.getMemberConsultation().getProperty();
-
-        validateConsultantExists(property.getId(), consultant);
 
         String existingConsultant = adminConsultation.getConsultant();
         if (existingConsultant != null && !existingConsultant.isEmpty()) {
