@@ -1,6 +1,7 @@
 package subscribers.clearbunyang.domain.property.model.request;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
@@ -82,6 +83,7 @@ public class PropertySaveRequestDTO {
 
     @NotNull @Valid private List<KeywordRequestDTO> keywords; // 키워드 정보 리스트
 
+    @Schema(hidden = true) // Swagger에서 숨김 처리
     @AssertTrue(message = "키워드는 세개 이상이어야함")
     public boolean isKeywordsValid() {
         if (keywords.size() < 3) return false;

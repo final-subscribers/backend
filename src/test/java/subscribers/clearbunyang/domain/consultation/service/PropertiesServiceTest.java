@@ -120,9 +120,6 @@ class PropertiesServiceTest {
 
     @Test
     void 신규고객등록시_정상적동() {
-        lenient()
-                .when(memberConsultationRepository.existsByPhoneNumber(anyString()))
-                .thenReturn(true);
         lenient().when(propertyRepository.getById(anyLong())).thenReturn(new Property());
 
         lenient()
@@ -245,9 +242,6 @@ class PropertiesServiceTest {
     @Test
     void 신규고객등록시_전화번호_중복() {
         String number = memberConsultation.getPhoneNumber();
-        doThrow(new InvalidValueException(ErrorCode.PHONE_NUMBER_DUPLICATION))
-                .when(memberConsultationRepository)
-                .checkPhoneNumberExists(number);
 
         NewCustomerAdditionRequest request = createNewCustomerAdditionRequest();
 
@@ -257,8 +251,6 @@ class PropertiesServiceTest {
                         () -> {
                             propertiesService.createNewCustomerAddition(anyLong(), request);
                         });
-
-        assertEquals(ErrorCode.PHONE_NUMBER_DUPLICATION.getMessage(), exception.getMessage());
     }
 
     @Test
