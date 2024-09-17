@@ -111,17 +111,10 @@ public class AuthServiceTest {
                         .address("Address")
                         .business("Business")
                         .housingFile(
-                                AdminSignUpRequest.FileInfo.builder()
-                                        .name("housingFile")
-                                        .url("url")
-                                        .type("HOUSING")
-                                        .build())
+                                new AdminSignUpRequest.FileInfo("housingFile", "url", "HOUSING"))
                         .registrationFile(
-                                AdminSignUpRequest.FileInfo.builder()
-                                        .name("registrationFile")
-                                        .url("url")
-                                        .type("REGISTRATION")
-                                        .build())
+                                new AdminSignUpRequest.FileInfo(
+                                        "registrationFile", "url", "REGISTRATION"))
                         .build();
 
         when(adminRepository.existsByEmail(request.getEmail())).thenReturn(false);

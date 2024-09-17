@@ -55,7 +55,7 @@ public class CookieUtil {
 
         return Arrays.stream(cookies)
                 .map(Cookie::getName)
-                .filter(name -> name.equals("accessToken") || name.equals("kakaoAccessToken"))
+                .filter(name -> name.equals("accessToken"))
                 .findFirst()
                 .orElse(null);
     }

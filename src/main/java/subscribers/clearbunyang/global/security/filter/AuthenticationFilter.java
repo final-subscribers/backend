@@ -30,6 +30,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             jwtTokenProcessor.processToken(request, response);
         } else {
             log.warn("No processor found for cookie name: {}", cookieName);
+            response.sendError(
+                    HttpServletResponse.SC_FORBIDDEN, "Unauthorized: No valid cookie found");
+            return;
         }
 
         filterChain.doFilter(request, response);
