@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
-import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 
@@ -48,14 +47,6 @@ public interface MemberConsultationRepository extends JpaRepository<MemberConsul
     default MemberConsultation getById(@Param("id") Long id) {
         return findByIdWithFetchJoin(id)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
-    }
-
-    boolean existsByPhoneNumber(String phoneNumber);
-
-    default void checkPhoneNumberExists(String phoneNumber) {
-        if (existsByPhoneNumber(phoneNumber)) {
-            throw new InvalidValueException(ErrorCode.PHONE_NUMBER_DUPLICATION);
-        }
     }
 
     // lms 라면 false, 추가 상담 필요 X

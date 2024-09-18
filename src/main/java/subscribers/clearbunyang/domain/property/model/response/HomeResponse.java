@@ -14,9 +14,9 @@ import lombok.NoArgsConstructor;
 public class HomeResponse {
 
     private List<String> homeImagesUrl;
-    private List<HomePropertiesResponse> properties;
+    private List<PropertySummaryResponse> properties;
 
-    public static HomeResponse toDto(List<HomePropertiesResponse> homeProperties) {
+    public static HomeResponse toDto(List<PropertySummaryResponse> homeProperties) {
         return HomeResponse.builder()
                 .homeImagesUrl(
                         List.of(

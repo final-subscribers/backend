@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,8 +44,10 @@ public class PropertiesService {
     private final PropertyRepository propertyRepository;
 
     @Transactional
+    @CacheEvict(
+            value = {"ConsultPendingList", "ConsultCompletedList"},
+            key = "#propertyId")
     public void createNewCustomerAddition(Long propertyId, NewCustomerAdditionRequest request) {
-        checkPhoneNumberExists(request.getPhoneNumber());
         Property property = getProperty(propertyId);
 
         AdminConsultation consultant = createAdminConsultation(request);
@@ -74,7 +77,7 @@ public class PropertiesService {
                 sideBarPendingResponse, completedSummaryResponse, sideBarSelectedPropertyResponse);
     }
 
-    @Cacheable(value = "ConsultPendingList", key = "#propertyId")
+    @Cacheable(value = "ConsultPendingList", keyGenerator = "customKeyGenerator")
     @Transactional(readOnly = true)
     public PagedDto<ConsultPendingListResponse> getConsultPendingListResponse(
             Long propertyId,
@@ -101,7 +104,7 @@ public class PropertiesService {
                 List.of(consultPendingListResponse));
     }
 
-    @Cacheable(value = "ConsultCompletedList", key = "#propertyId")
+    @Cacheable(value = "ConsultCompletedList", keyGenerator = "customKeyGenerator")
     @Transactional(readOnly = true)
     public PagedDto<ConsultCompletedListResponse> getConsultCompletedListResponse(
             Long propertyId,
@@ -138,10 +141,6 @@ public class PropertiesService {
 
     private Long getPropertyId(Long id) {
         return propertyRepository.getIdById(id);
-    }
-
-    private void checkPhoneNumberExists(String phoneNumber) {
-        memberConsultationRepository.checkPhoneNumberExists(phoneNumber);
     }
 
     // search 키워드가 ["name 010123412354"] 일 때 분리
