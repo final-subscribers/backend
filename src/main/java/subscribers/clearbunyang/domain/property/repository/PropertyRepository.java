@@ -13,6 +13,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.property.entity.Property;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
+import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
+import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
 import subscribers.clearbunyang.domain.property.model.PropertyDateDto;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
@@ -98,4 +101,36 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     @Transactional
     @Query("DELETE FROM Property p where p.id=:propertyId")
     int deletePropertyById(Long propertyId);
+
+    @Query(
+            "SELECT DISTINCT p FROM Property p "
+                    + "LEFT JOIN p.areas a "
+                    + "LEFT JOIN p.keywords k "
+                    + "WHERE "
+                    + "(:search IS NULL OR LOWER(p.buildingName) LIKE LOWER(CONCAT('%', :search, '%')) "
+                    + "OR LOWER(p.addrDo) LIKE LOWER(CONCAT('%', :search, '%')) "
+                    + "OR LOWER(p.addrGu) LIKE LOWER(CONCAT('%', :search, '%')) "
+                    + "OR LOWER(p.addrDong) LIKE LOWER(CONCAT('%', :search, '%'))) "
+                    + "AND (:area IS NULL OR LOWER(p.addrDo) IN :area) "
+                    + "AND (:propertyType IS NULL OR p.propertyType = :propertyType) "
+                    + "AND (:salesType IS NULL OR p.salesType = :salesType) "
+                    + "AND (:keyword IS NULL OR EXISTS (SELECT 1 FROM p.keywords k WHERE LOWER(k.name) = LOWER(:keyword))) "
+                    + "AND (:priceMin IS NULL OR EXISTS (SELECT 1 FROM p.areas a WHERE a.price >= :priceMin OR a.discountPrice >= :priceMin)) "
+                    + "AND (:priceMax IS NULL OR EXISTS (SELECT 1 FROM p.areas a WHERE a.price <= :priceMax OR a.discountPrice <= :priceMax)) "
+                    + "AND (:areaMin IS NULL OR EXISTS (SELECT 1 FROM p.areas a WHERE a.squareMeter >= :areaMin)) "
+                    + "AND (:areaMax IS NULL OR EXISTS (SELECT 1 FROM p.areas a WHERE a.squareMeter <= :areaMax)) "
+                    + "AND (:totalMin IS NULL OR p.totalNumber >= :totalMin) "
+                    + "AND (:totalMax IS NULL OR p.totalNumber <= :totalMax)")
+    List<Property> findProperties(
+            @Param("search") String search,
+            @Param("area") List<String> area,
+            @Param("propertyType") PropertyType propertyType,
+            @Param("salesType") SalesType salesType,
+            @Param("keyword") KeywordType keyword,
+            @Param("priceMin") Integer priceMin,
+            @Param("priceMax") Integer priceMax,
+            @Param("areaMin") Integer areaMin,
+            @Param("areaMax") Integer areaMax,
+            @Param("totalMin") Integer totalMin,
+            @Param("totalMax") Integer totalMax);
 }
