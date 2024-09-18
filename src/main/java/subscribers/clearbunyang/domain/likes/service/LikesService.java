@@ -22,7 +22,6 @@ import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class LikesService {
 
@@ -67,7 +66,7 @@ public class LikesService {
         }
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Page<LikesPropertyResponse> getMyFavoriteProperties(
             Long memberId, String status, int page, int size) {
         Member member =
@@ -76,16 +75,19 @@ public class LikesService {
                         .orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
 
         LocalDate currentDate = LocalDate.now();
-        PageRequest pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
-        Page<Property> properties;
+        Page<Property> properties =
+                propertyRepository.findByDateRange(currentDate, pageRequest, true);
 
-        // 상태 open인지 closed인지에 따라 날짜에 해당하는 페이징된 물건값 싹 다 받아와서 필터 통과시키기
-        if (status.equalsIgnoreCase("open")) {
-            properties = propertyRepository.findByDateRange(currentDate, pageRequest, true);
-        } else {
-            properties = propertyRepository.findByDateRange(currentDate, pageRequest, false);
-        }
+        /*
+                // 상태 open인지 closed인지에 따라 날짜에 해당하는 페이징된 물건값 싹 다 받아와서 필터 통과시키기
+                if (status.equalsIgnoreCase("open")) {
+                    properties = propertyRepository.findByDateRange(currentDate, pageRequest, true);
+                } else {
+                    properties = propertyRepository.findByDateRange(currentDate, pageRequest, false);
+                }
+        */
 
         List<Property> filteredProperties =
                 properties.stream()

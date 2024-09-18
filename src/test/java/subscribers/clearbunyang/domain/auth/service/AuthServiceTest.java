@@ -152,7 +152,7 @@ public class AuthServiceTest {
                         .email("jane@example.com")
                         .password("password")
                         .phoneNumber("0987654321")
-                        .address("456 Avenue")
+                        //                        .address("456 Avenue")
                         .build();
 
         when(memberRepository.existsByEmail(request.getEmail())).thenReturn(false);

@@ -81,7 +81,7 @@ class LikesRedisServiceTest {
 
         Member member =
                 Member.builder()
-                        .address("Gwacheon Byeolyang")
+                        //                        .address("Gwacheon Byeolyang")
                         .email("epoint0101@gmail.com")
                         .name("Test")
                         .password("password123!")
