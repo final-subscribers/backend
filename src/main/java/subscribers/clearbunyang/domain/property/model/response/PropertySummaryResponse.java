@@ -18,7 +18,7 @@ import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class HomePropertiesResponse {
+public class PropertySummaryResponse {
     private Long id;
     private String imageUrl;
     private String propertyName;
@@ -31,7 +31,7 @@ public class HomePropertiesResponse {
     private Integer discountPrice;
     private boolean like;
 
-    public static HomePropertiesResponse toDto(
+    public static PropertySummaryResponse toDto(
             Property property,
             List<String> infraKeywords,
             List<String> benefitKeywords,
@@ -50,7 +50,7 @@ public class HomePropertiesResponse {
                         .orElseThrow(
                                 () -> new InvalidValueException(ErrorCode.FILE_TYPE_NOT_FOUND));
 
-        return HomePropertiesResponse.builder()
+        return PropertySummaryResponse.builder()
                 .id(property.getId())
                 .imageUrl(propertyImageUrl)
                 .propertyName(property.getName())

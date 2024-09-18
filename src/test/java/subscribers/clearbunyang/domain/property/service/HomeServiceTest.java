@@ -19,8 +19,8 @@ import subscribers.clearbunyang.domain.property.entity.enums.KeywordName;
 import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
-import subscribers.clearbunyang.domain.property.model.response.HomePropertiesResponse;
 import subscribers.clearbunyang.domain.property.model.response.HomeResponse;
+import subscribers.clearbunyang.domain.property.model.response.PropertySummaryResponse;
 import subscribers.clearbunyang.domain.property.repository.KeywordRepository;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.domain.user.entity.Admin;
@@ -126,7 +126,7 @@ public class HomeServiceTest {
         assertThat(response.getContents()).hasSize(1);
 
         HomeResponse homeResponse = response.getContents().get(0);
-        List<HomePropertiesResponse> properties = homeResponse.getProperties();
+        List<PropertySummaryResponse> properties = homeResponse.getProperties();
 
         assertThat(properties).hasSize(size);
         assertThat(properties.get(0).getPropertyName()).startsWith("Property");
@@ -146,7 +146,7 @@ public class HomeServiceTest {
         assertThat(response.getContents()).hasSize(1);
 
         HomeResponse homeResponse = response.getContents().get(0);
-        List<HomePropertiesResponse> properties = homeResponse.getProperties();
+        List<PropertySummaryResponse> properties = homeResponse.getProperties();
 
         assertThat(properties).hasSize(size);
         assertThat(properties.get(0).getPropertyName()).startsWith("Property");
