@@ -62,9 +62,9 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
                     + "(:isOpen = true AND p.startDate <= :currentDate AND p.endDate >= :currentDate) "
                     + "OR (:isOpen = false AND p.endDate < :currentDate)")
     Page<Property> findByDateRange(
-            @org.springframework.data.repository.query.Param("currentDate") LocalDate currentDate,
-            @org.springframework.data.repository.query.Param("pageable") Pageable pageable,
-            @org.springframework.data.repository.query.Param("isOpen") boolean isOpen);
+            @Param("currentDate") LocalDate currentDate,
+            @Param("pageable") Pageable pageable,
+            @Param("isOpen") boolean isOpen);
 
     /**
      * 데이터가 가장 많은 엔티티를 fetch join을 통해서 가져오고 나머지 엔티티에 대해서는 batch_fetch_size를 통해서 in 쿼리로 성능 챙기기

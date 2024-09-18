@@ -22,6 +22,4 @@ public class MemberSignUpRequest {
     @PasswordValidation private String password;
 
     @Setter private String phoneNumber;
-
-    private String address;
 }

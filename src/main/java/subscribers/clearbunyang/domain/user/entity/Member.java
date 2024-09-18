@@ -38,9 +38,6 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String phoneNumber;
 
-    @Column(nullable = false)
-    private String address;
-
     @Setter
     @Enumerated(EnumType.STRING)
     private UserRole role = UserRole.MEMBER;

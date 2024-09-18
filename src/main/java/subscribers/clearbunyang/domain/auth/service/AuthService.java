@@ -166,7 +166,6 @@ public class AuthService {
                         .email(request.getEmail())
                         .password(passwordEncoder.encode(request.getPassword()))
                         .phoneNumber(request.getPhoneNumber())
-                        .address(request.getAddress())
                         .role(UserRole.MEMBER)
                         .build();
 
