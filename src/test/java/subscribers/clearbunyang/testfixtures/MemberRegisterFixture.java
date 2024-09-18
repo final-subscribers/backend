@@ -11,7 +11,6 @@ public class MemberRegisterFixture {
                 .email("default@member.com")
                 .password("password123")
                 .phoneNumber("01012345678")
-                .address("123 Default Address")
                 .role(UserRole.MEMBER)
                 .build();
     }
