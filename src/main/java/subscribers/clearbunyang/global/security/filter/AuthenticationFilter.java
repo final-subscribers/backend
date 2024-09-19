@@ -6,11 +6,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.OncePerRequestFilter;
-import subscribers.clearbunyang.global.token.JwtTokenProcessor;
-import subscribers.clearbunyang.global.util.CookieUtil;
+import subscribers.clearbunyang.global.security.token.JwtTokenProcessor;
+import subscribers.clearbunyang.global.security.util.CookieUtil;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -41,6 +43,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        return path.startsWith("/api/auth/") || path.startsWith("/actuator");
+        List<String> excludedPaths =
+                Arrays.asList(
+                        "/actuator", "/api/auth/", "/api/common/", "/swagger-ui/", "/v3/api-docs");
+
+        return excludedPaths.stream().anyMatch(path::startsWith);
     }
 }

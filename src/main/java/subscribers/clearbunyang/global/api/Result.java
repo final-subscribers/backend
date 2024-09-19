@@ -6,7 +6,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -14,10 +13,6 @@ import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 public class Result {
     private Integer resultCode;
     private String resultMessage;
-
-    public static Result OK() {
-        return Result.builder().resultCode(HttpStatus.OK.value()).resultMessage("성공").build();
-    }
 
     private static String concatErrorCodeAndMessage(ErrorCode errorCode) {
         return errorCode.getMessage();

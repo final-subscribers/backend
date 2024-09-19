@@ -5,8 +5,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
-import subscribers.clearbunyang.domain.user.entity.Member;
-import subscribers.clearbunyang.domain.user.entity.enums.UserRole;
+import subscribers.clearbunyang.domain.auth.entity.Member;
+import subscribers.clearbunyang.domain.auth.entity.enums.UserRole;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 import subscribers.clearbunyang.security.annotation.WithMockCustomMember;
 

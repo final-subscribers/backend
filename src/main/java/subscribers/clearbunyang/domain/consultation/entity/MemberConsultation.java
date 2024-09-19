@@ -17,12 +17,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import subscribers.clearbunyang.domain.auth.entity.Member;
+import subscribers.clearbunyang.domain.consultation.dto.adminPropertyConsultation.request.NewCustomerAdditionRequest;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
-import subscribers.clearbunyang.domain.consultation.model.request.NewCustomerAdditionRequest;
+import subscribers.clearbunyang.domain.property.dto.request.MemberConsultationRequest;
 import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.domain.property.model.request.MemberConsultationRequestDTO;
-import subscribers.clearbunyang.domain.user.entity.Member;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
 @Entity
@@ -81,7 +81,7 @@ public class MemberConsultation extends BaseEntity {
     }
 
     public static MemberConsultation toEntity(
-            MemberConsultationRequestDTO requestDTO,
+            MemberConsultationRequest requestDTO,
             Property property,
             Member member,
             AdminConsultation adminConsultation) {

@@ -11,8 +11,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockedStatic;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import subscribers.clearbunyang.global.token.JwtTokenProcessor;
-import subscribers.clearbunyang.global.util.CookieUtil;
+import subscribers.clearbunyang.global.security.token.JwtTokenProcessor;
+import subscribers.clearbunyang.global.security.util.CookieUtil;
 
 /** AuthenticationFilter를 모킹해서 항상 정상적으로 통과하도록 해주는 클래스 */
 public class AuthenticationFilterMocking {

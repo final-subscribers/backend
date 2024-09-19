@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import subscribers.clearbunyang.domain.consultation.dto.adminPropertyConsultation.request.NewCustomerAdditionRequest;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
-import subscribers.clearbunyang.domain.consultation.model.request.NewCustomerAdditionRequest;
-import subscribers.clearbunyang.domain.consultation.service.PropertiesService;
+import subscribers.clearbunyang.domain.consultation.service.AdminPropertyConsultationService;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 
@@ -20,7 +20,7 @@ import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 public class AdminConsultationInsert {
 
     @Autowired private PropertyRepository propertyRepository;
-    @Autowired private PropertiesService propertiesService;
+    @Autowired private AdminPropertyConsultationService adminPropertyConsultationService;
 
     /** admin이 신규 상담 추가하는 테스트 데이터 삽입 */
     @Test
@@ -53,7 +53,7 @@ public class AdminConsultationInsert {
                                 .medium(Medium.PHONE)
                                 .build();
             }
-            propertiesService.createNewCustomerAddition(855L, requestDTO);
+            adminPropertyConsultationService.createNewCustomerAddition(855L, requestDTO);
         }
     }
 

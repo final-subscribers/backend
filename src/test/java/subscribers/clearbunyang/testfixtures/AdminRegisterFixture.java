@@ -3,11 +3,11 @@ package subscribers.clearbunyang.testfixtures;
 
 import java.util.ArrayList;
 import java.util.List;
-import subscribers.clearbunyang.domain.file.entity.File;
-import subscribers.clearbunyang.domain.file.entity.enums.FileType;
-import subscribers.clearbunyang.domain.user.entity.Admin;
-import subscribers.clearbunyang.domain.user.entity.enums.AdminState;
-import subscribers.clearbunyang.domain.user.entity.enums.UserRole;
+import subscribers.clearbunyang.domain.auth.entity.Admin;
+import subscribers.clearbunyang.domain.auth.entity.enums.AdminState;
+import subscribers.clearbunyang.domain.auth.entity.enums.UserRole;
+import subscribers.clearbunyang.global.file.entity.File;
+import subscribers.clearbunyang.global.file.entity.enums.FileType;
 
 public class AdminRegisterFixture {
 

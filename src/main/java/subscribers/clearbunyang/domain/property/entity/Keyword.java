@@ -7,9 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import subscribers.clearbunyang.domain.property.dto.request.KeywordRequest;
 import subscribers.clearbunyang.domain.property.entity.enums.KeywordName;
 import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
-import subscribers.clearbunyang.domain.property.model.request.KeywordRequestDTO;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
 @Entity
@@ -38,12 +38,12 @@ public class Keyword extends BaseEntity {
     private Property property;
 
     public static Keyword toEntity(
-            KeywordRequestDTO keywordRequestDTO, String jsonValue, Property property) {
+            KeywordRequest keywordRequest, String jsonValue, Property property) {
         return Keyword.builder()
-                .name(keywordRequestDTO.getName())
-                .type(keywordRequestDTO.getName().getType())
+                .name(keywordRequest.getName())
+                .type(keywordRequest.getName().getType())
                 .jsonValue(jsonValue)
-                .isSearchable(keywordRequestDTO.getSearchEnabled())
+                .isSearchable(keywordRequest.getSearchEnabled())
                 .property(property)
                 .build();
     }

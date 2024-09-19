@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.property.dto.request.AreaRequest;
 import subscribers.clearbunyang.domain.property.entity.Area;
 import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.domain.property.model.request.AreaRequestDTO;
 import subscribers.clearbunyang.domain.property.repository.AreaRepository;
 
 @RequiredArgsConstructor
@@ -19,13 +19,13 @@ public class AreaService {
     /**
      * 세대 면적을 저장하는 메소드
      *
-     * @param areaRequestDTOS
+     * @param areaRequests
      * @param property
      */
     @Transactional
-    public void saveAreas(List<AreaRequestDTO> areaRequestDTOS, Property property) {
+    public void saveAreas(List<AreaRequest> areaRequests, Property property) {
         List<Area> areas =
-                areaRequestDTOS.stream()
+                areaRequests.stream()
                         .map(areaDTO -> Area.toEntity(areaDTO, property))
                         .collect(Collectors.toList());
 

@@ -9,9 +9,9 @@ import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import subscribers.clearbunyang.domain.user.entity.Admin;
-import subscribers.clearbunyang.domain.user.entity.Member;
-import subscribers.clearbunyang.domain.user.model.response.UserInfoResponse;
+import subscribers.clearbunyang.domain.auth.dto.response.UserInfoResponse;
+import subscribers.clearbunyang.domain.auth.entity.Admin;
+import subscribers.clearbunyang.domain.auth.entity.Member;
 
 @Getter
 @ToString

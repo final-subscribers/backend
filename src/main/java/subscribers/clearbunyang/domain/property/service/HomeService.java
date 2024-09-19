@@ -7,13 +7,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
+import subscribers.clearbunyang.domain.property.dto.response.HomeResponse;
+import subscribers.clearbunyang.domain.property.dto.response.PropertySummaryResponse;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
-import subscribers.clearbunyang.domain.property.model.response.HomeResponse;
-import subscribers.clearbunyang.domain.property.model.response.PropertySummaryResponse;
 import subscribers.clearbunyang.domain.property.repository.KeywordRepository;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
-import subscribers.clearbunyang.global.model.PagedDto;
+import subscribers.clearbunyang.global.dto.PagedDto;
 
 @Slf4j
 @Service

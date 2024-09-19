@@ -7,13 +7,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import subscribers.clearbunyang.domain.property.dto.request.PropertySaveRequest;
+import subscribers.clearbunyang.domain.property.dto.request.PropertyUpdateRequest;
+import subscribers.clearbunyang.domain.property.dto.response.MyPropertyCardResponse;
+import subscribers.clearbunyang.domain.property.dto.response.MyPropertyTableResponse;
 import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.domain.property.model.request.PropertySaveRequestDTO;
-import subscribers.clearbunyang.domain.property.model.request.PropertyUpdateRequestDTO;
-import subscribers.clearbunyang.domain.property.model.response.MyPropertyCardResponseDTO;
-import subscribers.clearbunyang.domain.property.model.response.MyPropertyTableResponseDTO;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
-import subscribers.clearbunyang.global.model.PagedDto;
+import subscribers.clearbunyang.global.dto.PagedDto;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
 @RestController
@@ -34,7 +34,7 @@ public class AdminPropertyController {
     @Operation(summary = "매물등록")
     @PostMapping("/properties")
     public void addProperty(
-            @Valid @RequestBody PropertySaveRequestDTO requestDTO,
+            @Valid @RequestBody PropertySaveRequest requestDTO,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         propertyService.saveProperty(requestDTO, customUserDetails.getUserId());
     }
@@ -49,7 +49,7 @@ public class AdminPropertyController {
      */
     @Operation(summary = "매물관리-첫번째 페이지네이션")
     @GetMapping("/my-properties/card")
-    public PagedDto<MyPropertyCardResponseDTO> getCardsByOffset(
+    public PagedDto<MyPropertyCardResponse> getCardsByOffset(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "4") int size,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
@@ -67,7 +67,7 @@ public class AdminPropertyController {
      */
     @Operation(summary = "매물관리-두번째 페이지네이션")
     @GetMapping("/my-properties/table")
-    public PagedDto<MyPropertyTableResponseDTO> getTablesByOffset(
+    public PagedDto<MyPropertyTableResponse> getTablesByOffset(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "4") int size,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
@@ -82,7 +82,7 @@ public class AdminPropertyController {
      * @param customUserDetails
      */
     @Operation(summary = "매물삭제")
-    @GetMapping("/properties/{propertyId}")
+    @DeleteMapping("/properties/{propertyId}")
     public void deleteProperty(
             @PathVariable Long propertyId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
@@ -90,10 +90,17 @@ public class AdminPropertyController {
         propertyService.deleteProperty(propertyId, adminId);
     }
 
+    /**
+     * 매물을 수정하는 메소드
+     *
+     * @param propertyId
+     * @param requestDTO
+     * @param customUserDetails
+     */
     @PatchMapping("/properties/{propertyId}")
     public void updateProperty(
             @PathVariable Long propertyId,
-            @Valid @RequestBody PropertyUpdateRequestDTO requestDTO,
+            @Valid @RequestBody PropertyUpdateRequest requestDTO,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Long adminId = customUserDetails.getUserId();
         Property updatedProperty = propertyService.updateProperty(propertyId, requestDTO, adminId);

@@ -10,23 +10,23 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import subscribers.clearbunyang.domain.file.entity.File;
-import subscribers.clearbunyang.domain.file.entity.enums.FileType;
-import subscribers.clearbunyang.domain.file.repository.FileRepository;
+import subscribers.clearbunyang.domain.auth.entity.Admin;
+import subscribers.clearbunyang.domain.auth.entity.enums.AdminState;
+import subscribers.clearbunyang.domain.auth.repository.AdminRepository;
+import subscribers.clearbunyang.domain.property.dto.response.HomeResponse;
+import subscribers.clearbunyang.domain.property.dto.response.PropertySummaryResponse;
 import subscribers.clearbunyang.domain.property.entity.Keyword;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.entity.enums.KeywordName;
 import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
-import subscribers.clearbunyang.domain.property.model.response.HomeResponse;
-import subscribers.clearbunyang.domain.property.model.response.PropertySummaryResponse;
 import subscribers.clearbunyang.domain.property.repository.KeywordRepository;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
-import subscribers.clearbunyang.domain.user.entity.Admin;
-import subscribers.clearbunyang.domain.user.entity.enums.AdminState;
-import subscribers.clearbunyang.domain.user.repository.AdminRepository;
-import subscribers.clearbunyang.global.model.PagedDto;
+import subscribers.clearbunyang.global.dto.PagedDto;
+import subscribers.clearbunyang.global.file.entity.File;
+import subscribers.clearbunyang.global.file.entity.enums.FileType;
+import subscribers.clearbunyang.global.file.repository.FileRepository;
 
 @SpringBootTest
 @DisplayName("HomeService-통합 테스트")

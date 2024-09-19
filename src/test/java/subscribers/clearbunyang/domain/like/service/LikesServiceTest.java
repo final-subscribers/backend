@@ -2,7 +2,6 @@ package subscribers.clearbunyang.domain.like.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,14 +14,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.PageRequest;
+import subscribers.clearbunyang.domain.auth.entity.Member;
+import subscribers.clearbunyang.domain.auth.repository.MemberRepository;
 import subscribers.clearbunyang.domain.likes.entity.Likes;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.likes.service.LikesService;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
-import subscribers.clearbunyang.domain.user.entity.Member;
-import subscribers.clearbunyang.domain.user.repository.MemberRepository;
+import subscribers.clearbunyang.global.exception.EntityNotFoundException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
-import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 
 class LikesServiceTest {
 
@@ -94,6 +93,6 @@ class LikesServiceTest {
 
         assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
         verify(propertyRepository, never())
-                .findByDateRange(any(LocalDate.class), any(PageRequest.class), anyBoolean());
+                .findByDateRangeFalse(any(LocalDate.class), any(PageRequest.class));
     }
 }

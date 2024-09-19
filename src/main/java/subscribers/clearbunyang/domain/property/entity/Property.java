@@ -11,15 +11,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import subscribers.clearbunyang.domain.auth.entity.Admin;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
-import subscribers.clearbunyang.domain.file.entity.File;
 import subscribers.clearbunyang.domain.likes.entity.Likes;
+import subscribers.clearbunyang.domain.property.dto.request.PropertySaveRequest;
+import subscribers.clearbunyang.domain.property.dto.request.PropertyUpdateRequest;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
-import subscribers.clearbunyang.domain.property.model.request.PropertySaveRequestDTO;
-import subscribers.clearbunyang.domain.property.model.request.PropertyUpdateRequestDTO;
-import subscribers.clearbunyang.domain.user.entity.Admin;
 import subscribers.clearbunyang.global.entity.BaseEntity;
+import subscribers.clearbunyang.global.file.entity.File;
 
 @Entity
 @Getter
@@ -131,7 +131,7 @@ public class Property extends BaseEntity {
         this.admin = adminId;
     }
 
-    public static Property toEntity(PropertySaveRequestDTO propertyDTO, Admin admin) {
+    public static Property toEntity(PropertySaveRequest propertyDTO, Admin admin) {
         return Property.builder()
                 .name(propertyDTO.getName())
                 .constructor(propertyDTO.getConstructor())
@@ -170,7 +170,7 @@ public class Property extends BaseEntity {
         this.setDiscountPrice(discountPrice);
     }
 
-    public void update(PropertyUpdateRequestDTO requestDTO) {
+    public void update(PropertyUpdateRequest requestDTO) {
         this.name = requestDTO.getName();
         this.constructor = requestDTO.getConstructor();
         this.areaAddr = requestDTO.getAreaAddr();

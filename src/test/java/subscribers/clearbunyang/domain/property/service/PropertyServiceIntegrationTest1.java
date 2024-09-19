@@ -11,25 +11,25 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.auth.entity.Admin;
+import subscribers.clearbunyang.domain.auth.entity.Member;
+import subscribers.clearbunyang.domain.auth.repository.AdminRepository;
+import subscribers.clearbunyang.domain.auth.repository.MemberRepository;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
-import subscribers.clearbunyang.domain.file.entity.File;
-import subscribers.clearbunyang.domain.file.entity.enums.FileType;
-import subscribers.clearbunyang.domain.file.repository.FileRepository;
 import subscribers.clearbunyang.domain.likes.entity.Likes;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
+import subscribers.clearbunyang.domain.property.dto.request.KeywordRequest;
+import subscribers.clearbunyang.domain.property.dto.request.PropertyUpdateRequest;
 import subscribers.clearbunyang.domain.property.entity.Area;
 import subscribers.clearbunyang.domain.property.entity.Keyword;
 import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.domain.property.model.request.KeywordRequestDTO;
-import subscribers.clearbunyang.domain.property.model.request.PropertyUpdateRequestDTO;
 import subscribers.clearbunyang.domain.property.repository.AreaRepository;
 import subscribers.clearbunyang.domain.property.repository.KeywordRepository;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
-import subscribers.clearbunyang.domain.user.entity.Admin;
-import subscribers.clearbunyang.domain.user.entity.Member;
-import subscribers.clearbunyang.domain.user.repository.AdminRepository;
-import subscribers.clearbunyang.domain.user.repository.MemberRepository;
-import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
+import subscribers.clearbunyang.global.exception.EntityNotFoundException;
+import subscribers.clearbunyang.global.file.entity.File;
+import subscribers.clearbunyang.global.file.entity.enums.FileType;
+import subscribers.clearbunyang.global.file.repository.FileRepository;
 import subscribers.clearbunyang.testfixtures.*;
 
 @SpringBootTest
@@ -68,7 +68,7 @@ public class PropertyServiceIntegrationTest1 {
     void saveProperty() {
         List<Keyword> keywords = keywordRepository.findByPropertyId(savedProperty.getId());
         List<Area> areas = areaRepository.findByPropertyId(savedProperty.getId());
-        List<KeywordRequestDTO> searchEnabledKeywords =
+        List<KeywordRequest> searchEnabledKeywords =
                 PropertySaveRequestDTOFixture.createDefault().getKeywords().stream()
                         .filter(keyword -> keyword.getSearchEnabled())
                         .toList();
@@ -159,8 +159,7 @@ public class PropertyServiceIntegrationTest1 {
     @Test
     @DisplayName("매물 수정 테스트")
     void updateProperty() {
-        PropertyUpdateRequestDTO updateRequestDTO =
-                PropertyUpdateRequestDTOFixture.createDefault2();
+        PropertyUpdateRequest updateRequestDTO = PropertyUpdateRequestDTOFixture.createDefault2();
         propertyService.updateProperty(savedProperty.getId(), updateRequestDTO, savedAdmin.getId());
         entityManager.flush();
         entityManager.clear();

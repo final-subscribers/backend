@@ -10,8 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import subscribers.clearbunyang.domain.auth.entity.Member;
 import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.domain.user.entity.Member;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
 @Entity
