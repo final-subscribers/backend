@@ -2,12 +2,17 @@ package subscribers.clearbunyang.domain.consultation.dto.memberConsultations;
 
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
+import subscribers.clearbunyang.global.exception.InvalidValueException;
+import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.file.dto.FileResponseDTO;
+import subscribers.clearbunyang.global.file.entity.enums.FileType;
 
 @Getter
 @NoArgsConstructor
@@ -15,7 +20,7 @@ import subscribers.clearbunyang.global.file.dto.FileResponseDTO;
 @Builder
 public class MyConsultationsResponse {
 
-    private FileResponseDTO imageUrl;
+    private String imageUrl;
     private Long id;
     private String name;
     private LocalDate consultationCreatedAt;
@@ -25,8 +30,22 @@ public class MyConsultationsResponse {
     private LocalDate preferredAt;
 
     public static MyConsultationsResponse toDto(MemberConsultation memberConsultation) {
+
+        List<FileResponseDTO> fileResponseDTOS =
+                memberConsultation.getProperty().getFiles().stream()
+                        .map(FileResponseDTO::toDTO)
+                        .collect(Collectors.toList());
+
+        String propertyImageUrl =
+                fileResponseDTOS.stream()
+                        .filter(file -> FileType.PROPERTY_IMAGE == file.getType())
+                        .map(FileResponseDTO::getUrl) // url만 추출
+                        .findFirst()
+                        .orElseThrow(
+                                () -> new InvalidValueException(ErrorCode.FILE_TYPE_NOT_FOUND));
+
         return MyConsultationsResponse.builder()
-                //            .imageUrl()  이미지 가져오는 처리 필요
+                .imageUrl(propertyImageUrl)
                 .id(memberConsultation.getProperty().getId())
                 .name(memberConsultation.getMemberName())
                 .consultationCreatedAt(memberConsultation.getCreatedAt().toLocalDate())
