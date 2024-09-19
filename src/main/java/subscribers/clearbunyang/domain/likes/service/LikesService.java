@@ -17,6 +17,8 @@ import subscribers.clearbunyang.domain.auth.repository.MemberRepository;
 import subscribers.clearbunyang.domain.likes.dto.response.LikesPropertyResponse;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
+import subscribers.clearbunyang.domain.property.repository.KeywordRepository;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.global.exception.EntityNotFoundException;
 import subscribers.clearbunyang.global.exception.InvalidValueException;
@@ -30,6 +32,7 @@ public class LikesService {
     private final LikesRepository likesRepository;
     private final MemberRepository memberRepository;
     private final PropertyRepository propertyRepository;
+    private final KeywordRepository keywordRepository;
 
     @Autowired private RedisTemplate<String, Object> redisTemplate;
 
@@ -136,10 +139,35 @@ public class LikesService {
                                 })
                         .collect(Collectors.toList());
 
+        List<LikesPropertyResponse> likesPropertyResponses =
+                filteredProperties.stream()
+                        .map(
+                                property -> {
+                                    List<String> infraKeywords =
+                                            keywordRepository
+                                                    .findByPropertyIdAndTypeAndIsSearchableTrue(
+                                                            property.getId(), KeywordType.INFRA)
+                                                    .stream()
+                                                    .map(keyword -> keyword.getName().name())
+                                                    .collect(Collectors.toList());
+
+                                    List<String> benefitKeywords =
+                                            keywordRepository
+                                                    .findByPropertyIdAndTypeAndIsSearchableTrue(
+                                                            property.getId(), KeywordType.BENEFIT)
+                                                    .stream()
+                                                    .map(keyword -> keyword.getName().name())
+                                                    .collect(Collectors.toList());
+
+                                    return LikesPropertyResponse.fromEntity(
+                                            property, infraKeywords, benefitKeywords);
+                                })
+                        .collect(Collectors.toList());
+
         Page<Property> filteredPage =
                 new PageImpl<>(filteredProperties, pageRequest, filteredProperties.size());
 
-        return filteredPage.map(LikesPropertyResponse::fromEntity);
+        return new PageImpl<>(likesPropertyResponses, pageRequest, filteredProperties.size());
     }
 
     /**

@@ -3,7 +3,6 @@ package subscribers.clearbunyang.domain.likes.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +19,9 @@ public class LikesPropertyResponse {
 
     private Long id;
 
-    private List<String[]> keyword;
+    private List<String> infra;
+
+    private List<String> benefit;
 
     @JsonProperty("imageUrl")
     private String imageUrl;
@@ -43,7 +44,8 @@ public class LikesPropertyResponse {
     @JsonProperty("salesPrice")
     private int salesPrice;
 
-    public static LikesPropertyResponse fromEntity(Property property) {
+    public static LikesPropertyResponse fromEntity(
+            Property property, List<String> infraKeywords, List<String> benefitKeywords) {
 
         String imageUrl = property.getFiles().stream().findFirst().map(File::getLink).orElse(null);
 
@@ -57,16 +59,8 @@ public class LikesPropertyResponse {
 
         return LikesPropertyResponse.builder()
                 .id(property.getId())
-                .keyword(
-                        property.getKeywords().stream()
-                                .filter(keyword -> keyword.isSearchable())
-                                .map(
-                                        k ->
-                                                new String[] {
-                                                    String.valueOf(k.getName()),
-                                                    String.valueOf(k.getType())
-                                                })
-                                .collect(Collectors.toList()))
+                .infra(infraKeywords)
+                .benefit(benefitKeywords)
                 .imageUrl(imageUrl)
                 .name(property.getName())
                 .areaAddr(property.getAddrDo() + " " + property.getAddrGu())
