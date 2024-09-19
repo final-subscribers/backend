@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import subscribers.clearbunyang.domain.consultation.entity.AdminConsultation;
 
 @Getter
 @NoArgsConstructor
@@ -16,10 +15,6 @@ import subscribers.clearbunyang.domain.consultation.entity.AdminConsultation;
 public class ConsultantResponse {
 
     private String consultant;
-
-    public static ConsultantResponse toDto(AdminConsultation consultant) {
-        return ConsultantResponse.builder().consultant(consultant.getConsultant()).build();
-    }
 
     public static ConsultantResponse toDto(String consultant) {
         return ConsultantResponse.builder().consultant(consultant).build();
