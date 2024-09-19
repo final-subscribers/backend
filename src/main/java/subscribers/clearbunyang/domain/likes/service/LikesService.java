@@ -141,4 +141,28 @@ public class LikesService {
 
         return filteredPage.map(LikesPropertyResponse::fromEntity);
     }
+
+    /**
+     * 좋아요가 되어있는지 redis에서 확인 후 없으면 디비에서 확인해서 리턴하는 메소드
+     *
+     * @param memberId
+     * @param propertyId
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public boolean isLiked(Long memberId, Long propertyId) {
+        if (memberId == null) return false;
+        String key = memberId + ":" + propertyId;
+        Boolean isLikedInRedis = redisTemplate.opsForHash().hasKey("likes", key);
+
+        if (isLikedInRedis != null && isLikedInRedis) {
+            System.out.println(
+                    "Like exists for memberId " + memberId + " and propertyId " + propertyId);
+            return true;
+        } else {
+            System.out.println(
+                    "No like found for memberId " + memberId + " and propertyId " + propertyId);
+            return likesRepository.existsByMemberIdAndPropertyId(memberId, propertyId);
+        }
+    }
 }
