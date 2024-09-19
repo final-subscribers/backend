@@ -2,7 +2,6 @@ package subscribers.clearbunyang.domain.consultation.service;
 
 
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +30,15 @@ public class ConsultationService {
     private final AdminConsultationRepository adminConsultationRepository;
     private final MemberConsultationRepository memberConsultationRepository;
     private final PropertyRepository propertyRepository;
+
+    // 상담사 고정값
+    private final List<ConsultantResponse> consultantListResponses =
+            List.of(
+                    new ConsultantResponse("a1-1"),
+                    new ConsultantResponse("a1-2"),
+                    new ConsultantResponse("a1-3"),
+                    new ConsultantResponse("a1-4"),
+                    new ConsultantResponse("a1-5"));
 
     @Transactional(readOnly = true)
     public ConsultCompletedResponse getConsultCompletedResponse(Long adminConsultationId) {
@@ -61,14 +69,6 @@ public class ConsultationService {
     @Transactional(readOnly = true)
     public ConsultantListResponse getConsultants(Long propertyId) {
         getPropertyId(propertyId);
-        List<AdminConsultation> adminConsultation =
-                adminConsultationRepository.findAllConsultantByPropertyId(propertyId);
-
-        List<ConsultantResponse> consultantListResponses =
-                adminConsultation.stream()
-                        .map(ConsultantResponse::toDto)
-                        .distinct() // 중복제거
-                        .collect(Collectors.toList());
 
         return ConsultantListResponse.toDto(consultantListResponses);
     }
@@ -79,6 +79,14 @@ public class ConsultationService {
         AdminConsultation adminConsultation = getAdminConsultation(adminConsultationId);
 
         if (adminConsultation.getMemberConsultation().getMedium() != Medium.LMS) {
+            throw new InvalidValueException(ErrorCode.BAD_REQUEST);
+        }
+
+        boolean isValidConsultant =
+                consultantListResponses.stream()
+                        .anyMatch(c -> c.getConsultant().equals(consultant));
+
+        if (!isValidConsultant) {
             throw new InvalidValueException(ErrorCode.BAD_REQUEST);
         }
 

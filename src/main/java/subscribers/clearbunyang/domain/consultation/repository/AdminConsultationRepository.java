@@ -76,9 +76,4 @@ public interface AdminConsultationRepository extends JpaRepository<AdminConsulta
             @Param("preferredAt") LocalDate preferredAt,
             @Param("consultant") String consultant,
             Pageable pageable);
-
-    @Query(
-            "SELECT ac FROM AdminConsultation  ac LEFT JOIN FETCH ac.memberConsultation mc"
-                    + " WHERE mc.property.id = :propertyId")
-    List<AdminConsultation> findAllConsultantByPropertyId(Long propertyId);
 }
