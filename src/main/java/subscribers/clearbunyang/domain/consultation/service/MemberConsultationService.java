@@ -12,6 +12,7 @@ import subscribers.clearbunyang.domain.auth.repository.MemberRepository;
 import subscribers.clearbunyang.domain.consultation.dto.memberConsultations.ConsultationResponse;
 import subscribers.clearbunyang.domain.consultation.dto.memberConsultations.MyConsultationsResponse;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
+import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
 import subscribers.clearbunyang.global.dto.PagedDto;
 import subscribers.clearbunyang.global.exception.InvalidValueException;
@@ -33,8 +34,8 @@ public class MemberConsultationService {
         String searchParam = (search == null || search.trim().isEmpty()) ? "" : search.trim();
 
         List<MemberConsultation> consultations =
-                memberConsultationRepository.findPendingConsultationsByUserIdAndSearch(
-                        userId, searchParam);
+                memberConsultationRepository.findConsultationsByUserIdAndSearch(
+                        userId, searchParam, Status.PENDING);
 
         int totalCount = memberConsultationRepository.countConsultationsByUserId(userId);
 
@@ -60,8 +61,8 @@ public class MemberConsultationService {
         String searchParam = (search == null || search.trim().isEmpty()) ? "" : search.trim();
 
         List<MemberConsultation> consultations =
-                memberConsultationRepository.findCompletedConsultationsByUserIdAndSearch(
-                        userId, searchParam);
+                memberConsultationRepository.findConsultationsByUserIdAndSearch(
+                        userId, searchParam, Status.COMPLETED);
 
         int totalCount = memberConsultationRepository.countConsultationsByUserId(userId);
 
