@@ -12,15 +12,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.property.dto.PropertyDateDto;
 import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.domain.property.model.PropertyDateDto;
+import subscribers.clearbunyang.global.exception.EntityNotFoundException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
-import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 
 public interface PropertyRepository extends JpaRepository<Property, Long> {
 
     @Query(
-            "SELECT new subscribers.clearbunyang.domain.property.model.PropertyDateDto(p.id, p.name, p.endDate, p.startDate) "
+            "SELECT new subscribers.clearbunyang.domain.property.dto.PropertyDateDto(p.id, p.name, p.endDate, p.startDate) "
                     + "FROM Property p WHERE p.startDate <= :today AND p.endDate >= :today ORDER BY p.id DESC")
     List<PropertyDateDto> findPendingPropertiesDateDto(LocalDate today, Pageable pageable);
 
@@ -30,7 +30,7 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     }
 
     @Query(
-            "SELECT new subscribers.clearbunyang.domain.property.model.PropertyDateDto(p.id, p.name, p.endDate, p.startDate) "
+            "SELECT new subscribers.clearbunyang.domain.property.dto.PropertyDateDto(p.id, p.name, p.endDate, p.startDate) "
                     + "FROM Property p WHERE p.endDate < :today ORDER BY p.id DESC")
     List<PropertyDateDto> findCompletedPropertiesDateDto(LocalDate today, Pageable pageable);
 

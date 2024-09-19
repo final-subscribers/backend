@@ -13,8 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import subscribers.clearbunyang.domain.consultation.dto.adminConsultation.request.ConsultRequest;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
-import subscribers.clearbunyang.domain.consultation.model.request.ConsultRequest;
 import subscribers.clearbunyang.global.entity.BaseEntity;
 
 @Entity

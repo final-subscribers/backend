@@ -10,14 +10,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.auth.entity.Member;
+import subscribers.clearbunyang.domain.auth.repository.MemberRepository;
 import subscribers.clearbunyang.domain.likes.entity.Likes;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
-import subscribers.clearbunyang.domain.user.entity.Member;
-import subscribers.clearbunyang.domain.user.repository.MemberRepository;
+import subscribers.clearbunyang.global.exception.EntityNotFoundException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
-import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 
 @Component
 @EnableScheduling

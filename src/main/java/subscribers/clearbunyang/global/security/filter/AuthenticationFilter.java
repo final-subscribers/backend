@@ -11,8 +11,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.OncePerRequestFilter;
-import subscribers.clearbunyang.global.token.JwtTokenProcessor;
-import subscribers.clearbunyang.global.util.CookieUtil;
+import subscribers.clearbunyang.global.security.token.JwtTokenProcessor;
+import subscribers.clearbunyang.global.security.util.CookieUtil;
 
 @Slf4j
 @RequiredArgsConstructor

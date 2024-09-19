@@ -5,21 +5,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import subscribers.clearbunyang.domain.user.model.request.MemberSignUpRequest;
-import subscribers.clearbunyang.domain.user.repository.MemberRepository;
-import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
+import subscribers.clearbunyang.domain.auth.dto.request.MemberSignUpRequest;
+import subscribers.clearbunyang.domain.auth.dto.request.SmsCertificationCodeRequest;
+import subscribers.clearbunyang.domain.auth.repository.MemberRepository;
+import subscribers.clearbunyang.global.exception.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
-import subscribers.clearbunyang.global.sms.model.SmsCertificationCodeRequest;
-import subscribers.clearbunyang.global.sms.service.SmsCertificationDao;
-import subscribers.clearbunyang.global.sms.service.SmsCertificationUtil;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class AuthSmsService {
 
-    private final SmsCertificationUtil smsCertificationUtil;
-    private final SmsCertificationDao smsCertificationDao;
+    private final SendSmsService sendSmsService;
+    private final SendSmsDao sendSmsDao;
     private final MemberRepository memberRepository;
 
     @Transactional
@@ -32,8 +30,8 @@ public class AuthSmsService {
 
         int randomNumber = (int) (Math.random() * 9000) + 1000;
         String certificationNumber = String.valueOf(randomNumber);
-        smsCertificationUtil.sendSms(phoneNumber, certificationNumber);
-        smsCertificationDao.createSmsCertification(phoneNumber, certificationNumber);
+        sendSmsService.sendSms(phoneNumber, certificationNumber);
+        sendSmsDao.createSmsCertification(phoneNumber, certificationNumber);
     }
 
     @Transactional
@@ -41,21 +39,21 @@ public class AuthSmsService {
         if (!isVerify(request)) {
             throw new InvalidValueException(ErrorCode.INVALID_VERIFICATION_CODE);
         }
-        smsCertificationDao.markAsVerified(request.getPhoneNumber());
-        smsCertificationDao.removeSmsCertification(request.getPhoneNumber());
+        sendSmsDao.markAsVerified(request.getPhoneNumber());
+        sendSmsDao.removeSmsCertification(request.getPhoneNumber());
     }
 
     @Transactional
     public boolean isVerify(SmsCertificationCodeRequest request) {
-        return (smsCertificationDao.hasKey(request.getPhoneNumber())
-                && smsCertificationDao
+        return (sendSmsDao.hasKey(request.getPhoneNumber())
+                && sendSmsDao
                         .getSmsCertification(request.getPhoneNumber())
                         .equals(request.getCertificationCode()));
     }
 
     @Transactional
     public void isVerified(MemberSignUpRequest request) {
-        if (!smsCertificationDao.isVerified(request.getPhoneNumber())) {
+        if (!sendSmsDao.isVerified(request.getPhoneNumber())) {
             throw new InvalidValueException(ErrorCode.INVALID_VERIFICATION_SMS);
         }
     }

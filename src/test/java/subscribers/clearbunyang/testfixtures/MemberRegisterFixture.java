@@ -1,8 +1,8 @@
 package subscribers.clearbunyang.testfixtures;
 
 
-import subscribers.clearbunyang.domain.user.entity.Member;
-import subscribers.clearbunyang.domain.user.entity.enums.UserRole;
+import subscribers.clearbunyang.domain.auth.entity.Member;
+import subscribers.clearbunyang.domain.auth.entity.enums.UserRole;
 
 public class MemberRegisterFixture {
     public static Member createDefault() {

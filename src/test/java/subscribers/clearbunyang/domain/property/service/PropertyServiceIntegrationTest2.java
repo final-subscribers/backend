@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.auth.entity.Admin;
+import subscribers.clearbunyang.domain.auth.repository.AdminRepository;
+import subscribers.clearbunyang.domain.property.dto.response.MyPropertyCardResponse;
+import subscribers.clearbunyang.domain.property.dto.response.MyPropertyTableResponse;
 import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.domain.property.model.response.MyPropertyCardResponseDTO;
-import subscribers.clearbunyang.domain.property.model.response.MyPropertyTableResponseDTO;
-import subscribers.clearbunyang.domain.user.entity.Admin;
-import subscribers.clearbunyang.domain.user.repository.AdminRepository;
-import subscribers.clearbunyang.global.model.PagedDto;
+import subscribers.clearbunyang.global.dto.PagedDto;
 import subscribers.clearbunyang.testfixtures.AdminRegisterFixture;
 import subscribers.clearbunyang.testfixtures.MemberConsultationRequestDTOFixture;
 import subscribers.clearbunyang.testfixtures.PropertySaveRequestDTOFixture;
@@ -70,7 +70,7 @@ public class PropertyServiceIntegrationTest2 {
     void getCard() {
         int currentPage = 1;
         int size = 3;
-        PagedDto<MyPropertyCardResponseDTO> cards =
+        PagedDto<MyPropertyCardResponse> cards =
                 propertyService.getCards(currentPage, size, savedAdmin.getId());
 
         assertThat(cards.getTotalPages()).isEqualTo((savedProperties.size() + size - 1) / size);
@@ -93,7 +93,7 @@ public class PropertyServiceIntegrationTest2 {
 
         int currentPage = 1;
         int size = 3;
-        PagedDto<MyPropertyTableResponseDTO> cards =
+        PagedDto<MyPropertyTableResponse> cards =
                 propertyService.getTables(currentPage, size, savedAdmin.getId());
 
         assertThat(cards.getTotalPages()).isEqualTo((savedProperties.size() + size - 1) / size);

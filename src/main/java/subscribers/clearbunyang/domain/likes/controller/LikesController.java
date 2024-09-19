@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import subscribers.clearbunyang.domain.likes.model.response.LikesPageResponse;
-import subscribers.clearbunyang.domain.likes.model.response.LikesPropertyResponse;
+import subscribers.clearbunyang.domain.likes.dto.response.LikesPageResponse;
+import subscribers.clearbunyang.domain.likes.dto.response.LikesPropertyResponse;
 import subscribers.clearbunyang.domain.likes.service.LikesService;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 

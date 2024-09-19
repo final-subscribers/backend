@@ -12,15 +12,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import subscribers.clearbunyang.domain.likes.model.response.LikesPropertyResponse;
+import subscribers.clearbunyang.domain.auth.entity.Member;
+import subscribers.clearbunyang.domain.auth.repository.MemberRepository;
+import subscribers.clearbunyang.domain.likes.dto.response.LikesPropertyResponse;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
-import subscribers.clearbunyang.domain.user.entity.Member;
-import subscribers.clearbunyang.domain.user.repository.MemberRepository;
-import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
+import subscribers.clearbunyang.global.exception.EntityNotFoundException;
+import subscribers.clearbunyang.global.exception.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
-import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 
 @Service
 @Transactional

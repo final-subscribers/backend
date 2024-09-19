@@ -32,7 +32,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import subscribers.clearbunyang.global.security.filter.AuthenticationFilter;
-import subscribers.clearbunyang.global.token.JwtTokenProcessor;
+import subscribers.clearbunyang.global.security.token.JwtTokenProcessor;
 
 @Configuration
 @EnableWebSecurity
@@ -137,7 +137,8 @@ public class SecurityConfig {
                         "https://final-project-l15zu1wpp-yeojins-projects-a26b6f35.vercel.app",
                         "https://final-project-eta-silk.vercel.app");
         configuration.setAllowedOrigins(allowed);
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(
+                Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(
                 Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowCredentials(true);

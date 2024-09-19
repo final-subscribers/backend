@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import subscribers.clearbunyang.domain.property.model.request.MemberConsultationRequestDTO;
-import subscribers.clearbunyang.domain.property.model.response.PropertyDetailsResponseDTO;
+import subscribers.clearbunyang.domain.property.dto.request.MemberConsultationRequest;
+import subscribers.clearbunyang.domain.property.dto.response.PropertyDetailsResponse;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
@@ -32,7 +32,7 @@ public class CommonPropertyController {
     @PostMapping("{propertyId}/consultation")
     public void addConsultation(
             @PathVariable Long propertyId,
-            @Valid @RequestBody MemberConsultationRequestDTO requestDTO,
+            @Valid @RequestBody MemberConsultationRequest requestDTO,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Long memberId;
         if (customUserDetails != null) {
@@ -56,7 +56,7 @@ public class CommonPropertyController {
      */
     @Operation(summary = "매물 상세 조회")
     @GetMapping("{propertyId}")
-    public PropertyDetailsResponseDTO getProperty(
+    public PropertyDetailsResponse getProperty(
             @PathVariable Long propertyId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Long memberId =

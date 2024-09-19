@@ -18,16 +18,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
+import subscribers.clearbunyang.domain.property.dto.request.AreaRequest;
+import subscribers.clearbunyang.domain.property.dto.request.PropertySaveRequest;
+import subscribers.clearbunyang.domain.property.dto.request.PropertyUpdateRequest;
+import subscribers.clearbunyang.domain.property.dto.response.MyPropertyCardResponse;
+import subscribers.clearbunyang.domain.property.dto.response.MyPropertyTableResponse;
 import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.domain.property.model.request.AreaRequestDTO;
-import subscribers.clearbunyang.domain.property.model.request.PropertySaveRequestDTO;
-import subscribers.clearbunyang.domain.property.model.request.PropertyUpdateRequestDTO;
-import subscribers.clearbunyang.domain.property.model.response.MyPropertyCardResponseDTO;
-import subscribers.clearbunyang.domain.property.model.response.MyPropertyTableResponseDTO;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.global.config.SecurityConfig;
+import subscribers.clearbunyang.global.dto.PagedDto;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
-import subscribers.clearbunyang.global.model.PagedDto;
 import subscribers.clearbunyang.security.AuthenticationFilterMocking;
 import subscribers.clearbunyang.security.annotation.WithMockCustomAdmin;
 import subscribers.clearbunyang.security.annotation.WithMockCustomMember;
@@ -47,9 +47,9 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
     @Test
     @WithMockCustomAdmin
     public void addProperty1() throws Exception {
-        PropertySaveRequestDTO requestDTO = PropertySaveRequestDTOFixture.createDefault();
+        PropertySaveRequest requestDTO = PropertySaveRequestDTOFixture.createDefault();
         Property mockProperty = new Property();
-        when(propertyService.saveProperty(any(PropertySaveRequestDTO.class), any(Long.class)))
+        when(propertyService.saveProperty(any(PropertySaveRequest.class), any(Long.class)))
                 .thenReturn(mockProperty);
 
         mockMvc.perform(
@@ -64,9 +64,9 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
     @Test
     @WithMockCustomMember
     public void addProperty3() throws Exception {
-        PropertySaveRequestDTO requestDTO = PropertySaveRequestDTOFixture.createDefault();
+        PropertySaveRequest requestDTO = PropertySaveRequestDTOFixture.createDefault();
         Property mockProperty = new Property();
-        when(propertyService.saveProperty(any(PropertySaveRequestDTO.class), any(Long.class)))
+        when(propertyService.saveProperty(any(PropertySaveRequest.class), any(Long.class)))
                 .thenReturn(mockProperty);
 
         mockMvc.perform(
@@ -81,11 +81,11 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
     @Test
     @WithMockCustomAdmin
     public void addProperty2() throws Exception {
-        PropertySaveRequestDTO requestDTO = PropertySaveRequestDTOFixture.createDefault();
-        requestDTO.getAreas().add(new AreaRequestDTO(60, 50000, 60000, 10));
+        PropertySaveRequest requestDTO = PropertySaveRequestDTOFixture.createDefault();
+        requestDTO.getAreas().add(new AreaRequest(60, 50000, 60000, 10));
         Property mockProperty = new Property();
 
-        when(propertyService.saveProperty(any(PropertySaveRequestDTO.class), any(Long.class)))
+        when(propertyService.saveProperty(any(PropertySaveRequest.class), any(Long.class)))
                 .thenReturn(mockProperty);
 
         mockMvc.perform(
@@ -103,9 +103,9 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
     @DisplayName("등록한 매물 조회-첫번째 페이지네이션 테스트")
     @WithMockCustomAdmin
     public void getCardsByOffsetTest() throws Exception {
-        List<MyPropertyCardResponseDTO> cardResponseDTOList =
+        List<MyPropertyCardResponse> cardResponseDTOList =
                 List.of(
-                        MyPropertyCardResponseDTO.builder()
+                        MyPropertyCardResponse.builder()
                                 .id(1L)
                                 .name("Test Property")
                                 .addrDo("서울")
@@ -114,8 +114,8 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
                                 .endDate(LocalDate.now().plusDays(30))
                                 .build());
 
-        PagedDto<MyPropertyCardResponseDTO> pagedDto =
-                PagedDto.<MyPropertyCardResponseDTO>builder()
+        PagedDto<MyPropertyCardResponse> pagedDto =
+                PagedDto.<MyPropertyCardResponse>builder()
                         .pageSize(4)
                         .totalPages(1)
                         .currentPage(0)
@@ -139,9 +139,9 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
     @DisplayName("등록한 매물 조회-두번째 페이지네이션 테스트")
     @WithMockCustomAdmin
     public void getTablesByOffsetTest() throws Exception {
-        List<MyPropertyTableResponseDTO> tableResponseDTOList =
+        List<MyPropertyTableResponse> tableResponseDTOList =
                 List.of(
-                        MyPropertyTableResponseDTO.builder()
+                        MyPropertyTableResponse.builder()
                                 .id(1L)
                                 .isPending(true)
                                 .name("Test Property")
@@ -151,8 +151,8 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
                                 .endDate(LocalDate.now().plusDays(20))
                                 .build());
 
-        PagedDto<MyPropertyTableResponseDTO> pagedDto =
-                PagedDto.<MyPropertyTableResponseDTO>builder()
+        PagedDto<MyPropertyTableResponse> pagedDto =
+                PagedDto.<MyPropertyTableResponse>builder()
                         .pageSize(4)
                         .totalPages(1)
                         .currentPage(0)
@@ -176,10 +176,9 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
     @DisplayName("매물 수정 테스트")
     @WithMockCustomAdmin
     public void updateProperty1() throws Exception {
-        when(propertyService.updateProperty(
-                        anyLong(), any(PropertyUpdateRequestDTO.class), anyLong()))
+        when(propertyService.updateProperty(anyLong(), any(PropertyUpdateRequest.class), anyLong()))
                 .thenReturn(new Property());
-        PropertyUpdateRequestDTO requestDTO = PropertyUpdateRequestDTOFixture.createDefault();
+        PropertyUpdateRequest requestDTO = PropertyUpdateRequestDTOFixture.createDefault();
 
         mockMvc.perform(
                         patch("/api/admin/properties/{propertyId}", anyLong())
@@ -193,10 +192,9 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
     @DisplayName("매물 수정 테스트- validation 발생")
     @WithMockCustomAdmin
     public void updateProperty2() throws Exception {
-        when(propertyService.updateProperty(
-                        anyLong(), any(PropertyUpdateRequestDTO.class), anyLong()))
+        when(propertyService.updateProperty(anyLong(), any(PropertyUpdateRequest.class), anyLong()))
                 .thenReturn(new Property());
-        PropertyUpdateRequestDTO requestDTO = PropertyUpdateRequestDTOFixture.createDefault();
+        PropertyUpdateRequest requestDTO = PropertyUpdateRequestDTOFixture.createDefault();
         requestDTO.setInfra(null);
         requestDTO.setBenefit(null);
 

@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
+import subscribers.clearbunyang.domain.property.dto.request.MemberConsultationRequest;
 import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.domain.property.model.request.MemberConsultationRequestDTO;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.testfixtures.MemberConsultationRequestDTOFixture;
@@ -29,7 +29,7 @@ public class MemberConsultationInsert {
         for (int i = 0; i < selected.size(); i++) {
             Property property = propertyRepository.findPropertyById(selected.get(i));
             for (int j = 0; j < 10; j++) {
-                MemberConsultationRequestDTO requestDTO =
+                MemberConsultationRequest requestDTO =
                         MemberConsultationRequestDTOFixture.createCustom(
                                 RandomKoreanNameGenerator.generateRandomName(),
                                 RandomPhoneNumberGenerator.generatePhoneNumber(),

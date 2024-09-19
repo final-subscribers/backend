@@ -12,7 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
-import subscribers.clearbunyang.domain.property.model.request.MemberConsultationRequestDTO;
+import subscribers.clearbunyang.domain.property.dto.request.MemberConsultationRequest;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.global.config.SecurityConfig;
 import subscribers.clearbunyang.security.AuthenticationFilterMocking;
@@ -27,7 +27,7 @@ public class CommonPropertyControllerTest extends AuthenticationFilterMocking {
     @Autowired MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
     @MockBean private PropertyService propertyService;
-    private MemberConsultationRequestDTO requestDTO;
+    private MemberConsultationRequest requestDTO;
 
     @BeforeEach
     @Order(Integer.MAX_VALUE)

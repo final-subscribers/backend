@@ -17,23 +17,23 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
+import subscribers.clearbunyang.domain.auth.entity.Admin;
+import subscribers.clearbunyang.domain.auth.entity.Member;
+import subscribers.clearbunyang.domain.auth.entity.enums.AdminState;
+import subscribers.clearbunyang.domain.auth.entity.enums.UserRole;
+import subscribers.clearbunyang.domain.auth.repository.AdminRepository;
+import subscribers.clearbunyang.domain.auth.repository.MemberRepository;
+import subscribers.clearbunyang.domain.likes.dto.response.LikesPropertyResponse;
 import subscribers.clearbunyang.domain.likes.entity.Likes;
-import subscribers.clearbunyang.domain.likes.model.response.LikesPropertyResponse;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.likes.service.LikesService;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
-import subscribers.clearbunyang.domain.user.entity.Admin;
-import subscribers.clearbunyang.domain.user.entity.Member;
-import subscribers.clearbunyang.domain.user.entity.enums.AdminState;
-import subscribers.clearbunyang.domain.user.entity.enums.UserRole;
-import subscribers.clearbunyang.domain.user.repository.AdminRepository;
-import subscribers.clearbunyang.domain.user.repository.MemberRepository;
 import subscribers.clearbunyang.global.config.BatchConfig;
+import subscribers.clearbunyang.global.exception.EntityNotFoundException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
-import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 
 @SpringBootTest
 @Testcontainers

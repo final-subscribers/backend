@@ -9,7 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import subscribers.clearbunyang.domain.user.model.response.UserInfoResponse;
+import subscribers.clearbunyang.domain.auth.dto.response.UserInfoResponse;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
 @RestController

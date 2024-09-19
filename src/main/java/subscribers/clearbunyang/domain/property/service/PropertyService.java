@@ -10,33 +10,33 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.auth.entity.Admin;
+import subscribers.clearbunyang.domain.auth.entity.Member;
+import subscribers.clearbunyang.domain.auth.repository.AdminRepository;
+import subscribers.clearbunyang.domain.auth.repository.MemberRepository;
 import subscribers.clearbunyang.domain.consultation.entity.AdminConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.domain.consultation.repository.AdminConsultationRepository;
 import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
-import subscribers.clearbunyang.domain.file.entity.enums.FileType;
-import subscribers.clearbunyang.domain.file.model.FileRequestDTO;
-import subscribers.clearbunyang.domain.file.repository.FileRepository;
-import subscribers.clearbunyang.domain.file.service.FileService;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
+import subscribers.clearbunyang.domain.property.dto.request.*;
+import subscribers.clearbunyang.domain.property.dto.response.KeywordResponse;
+import subscribers.clearbunyang.domain.property.dto.response.MyPropertyCardResponse;
+import subscribers.clearbunyang.domain.property.dto.response.MyPropertyTableResponse;
+import subscribers.clearbunyang.domain.property.dto.response.PropertyDetailsResponse;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
-import subscribers.clearbunyang.domain.property.model.request.*;
-import subscribers.clearbunyang.domain.property.model.response.KeywordResponseDTO;
-import subscribers.clearbunyang.domain.property.model.response.MyPropertyCardResponseDTO;
-import subscribers.clearbunyang.domain.property.model.response.MyPropertyTableResponseDTO;
-import subscribers.clearbunyang.domain.property.model.response.PropertyDetailsResponseDTO;
 import subscribers.clearbunyang.domain.property.repository.AreaRepository;
 import subscribers.clearbunyang.domain.property.repository.KeywordRepository;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
-import subscribers.clearbunyang.domain.user.entity.Admin;
-import subscribers.clearbunyang.domain.user.entity.Member;
-import subscribers.clearbunyang.domain.user.repository.AdminRepository;
-import subscribers.clearbunyang.domain.user.repository.MemberRepository;
-import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
+import subscribers.clearbunyang.global.dto.PagedDto;
+import subscribers.clearbunyang.global.exception.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
-import subscribers.clearbunyang.global.model.PagedDto;
+import subscribers.clearbunyang.global.file.dto.FileRequestDTO;
+import subscribers.clearbunyang.global.file.entity.enums.FileType;
+import subscribers.clearbunyang.global.file.repository.FileRepository;
+import subscribers.clearbunyang.global.file.service.FileService;
 
 @RequiredArgsConstructor
 @Service
@@ -63,7 +63,7 @@ public class PropertyService {
      */
     @Transactional
     @CacheEvict(value = "sidebarList", allEntries = true)
-    public Property saveProperty(PropertySaveRequestDTO propertyDTO, Long adminId) {
+    public Property saveProperty(PropertySaveRequest propertyDTO, Long adminId) {
         Admin admin = adminRepository.findAdminById(adminId);
         String imageUrl =
                 propertyDTO.getFiles().stream()
@@ -72,9 +72,9 @@ public class PropertyService {
                         .findFirst()
                         .orElseThrow(
                                 () -> new InvalidValueException(ErrorCode.FILE_TYPE_NOT_FOUND));
-        AreaRequestDTO smallestArea =
+        AreaRequest smallestArea =
                 propertyDTO.getAreas().stream()
-                        .min(Comparator.comparing(AreaRequestDTO::getSquareMeter))
+                        .min(Comparator.comparing(AreaRequest::getSquareMeter))
                         .orElseThrow(() -> new InvalidValueException(ErrorCode.AREA_NOT_FOUND));
 
         Property property = Property.toEntity(propertyDTO, admin);
@@ -104,7 +104,7 @@ public class PropertyService {
             allEntries = true)
     // todo 리팩토링 하기
     public MemberConsultation saveConsultation(
-            Long propertyId, MemberConsultationRequestDTO requestDTO, Long memberId) {
+            Long propertyId, MemberConsultationRequest requestDTO, Long memberId) {
         Property property = propertyRepository.findPropertyById(propertyId);
         Member member = (memberId != null) ? memberRepository.findMemberById(memberId) : null;
         AdminConsultation adminConsultation = AdminConsultation.builder().build();
@@ -124,17 +124,17 @@ public class PropertyService {
      * @return
      */
     @Transactional(readOnly = true)
-    public PropertyDetailsResponseDTO getPropertyDetails(Long propertyId, Long memberId) {
+    public PropertyDetailsResponse getPropertyDetails(Long propertyId, Long memberId) {
         Property property = propertyRepository.getByPropertyUsingFetchJoin(propertyId);
         boolean likesExisted = false;
         if (memberId != null) {
             likesExisted = likesRepository.existsByMemberIdAndPropertyId(memberId, propertyId);
         }
 
-        Map<KeywordType, List<KeywordResponseDTO>> categorizedKeywords =
+        Map<KeywordType, List<KeywordResponse>> categorizedKeywords =
                 keywordService.categorizedKeywords(propertyId);
 
-        return PropertyDetailsResponseDTO.toDTO(property, categorizedKeywords, likesExisted);
+        return PropertyDetailsResponse.toDTO(property, categorizedKeywords, likesExisted);
     }
 
     /**
@@ -147,13 +147,13 @@ public class PropertyService {
      */
     // todo 인덱스 설정하기
     @Transactional(readOnly = true)
-    public PagedDto<MyPropertyCardResponseDTO> getCards(int page, int size, Long adminId) {
+    public PagedDto<MyPropertyCardResponse> getCards(int page, int size, Long adminId) {
         PageRequest pageRequest =
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "endDate", "createdAt"));
         Page<Property> pages = propertyRepository.findByAdmin_Id(adminId, pageRequest);
-        List<MyPropertyCardResponseDTO> cardResponseDTO =
+        List<MyPropertyCardResponse> cardResponseDTO =
                 pages.getContent().stream()
-                        .map(it -> MyPropertyCardResponseDTO.toDTO(it))
+                        .map(it -> MyPropertyCardResponse.toDTO(it))
                         .collect(Collectors.toList());
         return PagedDto.toDTO(page, size, pages.getTotalPages(), cardResponseDTO);
     }
@@ -167,7 +167,7 @@ public class PropertyService {
      * @return
      */
     @Transactional(readOnly = true)
-    public PagedDto<MyPropertyTableResponseDTO> getTables(int page, int size, Long adminId) {
+    public PagedDto<MyPropertyTableResponse> getTables(int page, int size, Long adminId) {
         PageRequest pageRequest =
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "endDate", "createdAt"));
         Page<Property> pages = propertyRepository.findByAdmin_Id(adminId, pageRequest);
@@ -184,13 +184,13 @@ public class PropertyService {
                                         obj -> (Long) obj[1] // Pending count
                                         ));
 
-        List<MyPropertyTableResponseDTO> cardResponseDTO =
+        List<MyPropertyTableResponse> cardResponseDTO =
                 pages.getContent().stream()
                         .map(
                                 property -> {
                                     Long pendingCount =
                                             pendingCountsMap.getOrDefault(property.getId(), 0L);
-                                    return MyPropertyTableResponseDTO.toDTO(property, pendingCount);
+                                    return MyPropertyTableResponse.toDTO(property, pendingCount);
                                 })
                         .collect(Collectors.toList());
         return PagedDto.toDTO(page, size, pages.getTotalPages(), cardResponseDTO);
@@ -216,7 +216,7 @@ public class PropertyService {
     @Transactional
     // TODO 리팩토링하기
     public Property updateProperty(
-            Long propertyId, PropertyUpdateRequestDTO requestDTO, Long adminId) {
+            Long propertyId, PropertyUpdateRequest requestDTO, Long adminId) {
         /**
          * propertySaveResponseDTO 필드를 propertyUpdateRequestDTO 필드로 바꾸기(API 명세서도)
          *
@@ -236,7 +236,7 @@ public class PropertyService {
         files.add(requestDTO.getSupplyInformation());
         if (requestDTO.getMarketing() != null) files.add(requestDTO.getMarketing());
 
-        List<KeywordRequestDTO> keywords = new ArrayList<>();
+        List<KeywordRequest> keywords = new ArrayList<>();
         keywords.addAll(requestDTO.getBenefit());
         keywords.addAll(requestDTO.getInfra());
 
@@ -247,9 +247,9 @@ public class PropertyService {
         property.update(requestDTO);
 
         String imageUrl = requestDTO.getPropertyImage().getUrl();
-        AreaRequestDTO smallestArea =
+        AreaRequest smallestArea =
                 requestDTO.getAreas().stream()
-                        .min(Comparator.comparing(AreaRequestDTO::getSquareMeter))
+                        .min(Comparator.comparing(AreaRequest::getSquareMeter))
                         .orElseThrow(() -> new InvalidValueException(ErrorCode.AREA_NOT_FOUND));
         property.setDenormalizationFields(
                 imageUrl,

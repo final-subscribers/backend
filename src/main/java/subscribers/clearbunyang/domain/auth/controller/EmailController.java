@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import subscribers.clearbunyang.domain.auth.dto.request.EmailVerificationCodeRequest;
+import subscribers.clearbunyang.domain.auth.dto.request.EmailVerificationRequest;
 import subscribers.clearbunyang.domain.auth.service.AuthEmailService;
-import subscribers.clearbunyang.global.email.model.EmailVerificationCodeRequest;
-import subscribers.clearbunyang.global.email.model.EmailVerificationRequest;
 
 @RestController
 @RequestMapping("/api/auth/register")

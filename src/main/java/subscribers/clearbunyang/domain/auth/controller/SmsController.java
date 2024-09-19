@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import subscribers.clearbunyang.domain.auth.dto.request.SmsCertificationCodeRequest;
+import subscribers.clearbunyang.domain.auth.dto.request.SmsCertificationRequest;
 import subscribers.clearbunyang.domain.auth.service.AuthSmsService;
-import subscribers.clearbunyang.global.sms.model.SmsCertificationCodeRequest;
-import subscribers.clearbunyang.global.sms.model.SmsCertificationRequest;
 
 @RestController
 @RequestMapping("/api/auth/register")

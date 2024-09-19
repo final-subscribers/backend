@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import subscribers.clearbunyang.domain.property.model.response.HomeResponse;
+import subscribers.clearbunyang.domain.property.dto.response.HomeResponse;
 import subscribers.clearbunyang.domain.property.service.HomeService;
-import subscribers.clearbunyang.global.model.PagedDto;
+import subscribers.clearbunyang.global.dto.PagedDto;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
 @RequiredArgsConstructor
