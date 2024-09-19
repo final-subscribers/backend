@@ -1,4 +1,4 @@
-package subscribers.clearbunyang.global.exception;
+package subscribers.clearbunyang.global.exception.handler;
 
 
 import jakarta.annotation.Priority;
@@ -16,9 +16,10 @@ import subscribers.clearbunyang.domain.consultation.exception.ConsultantExceptio
 import subscribers.clearbunyang.domain.consultation.exception.DistributedLockException;
 import subscribers.clearbunyang.global.api.Response;
 import subscribers.clearbunyang.global.api.Result;
-import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
+import subscribers.clearbunyang.global.exception.CustomException;
+import subscribers.clearbunyang.global.exception.EntityNotFoundException;
+import subscribers.clearbunyang.global.exception.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
-import subscribers.clearbunyang.global.exception.notFound.EntityNotFoundException;
 
 @Slf4j
 @Priority(Integer.MAX_VALUE)
