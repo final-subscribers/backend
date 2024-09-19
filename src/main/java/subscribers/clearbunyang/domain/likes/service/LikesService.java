@@ -156,12 +156,8 @@ public class LikesService {
         Boolean isLikedInRedis = redisTemplate.opsForHash().hasKey("likes", key);
 
         if (isLikedInRedis != null && isLikedInRedis) {
-            System.out.println(
-                    "Like exists for memberId " + memberId + " and propertyId " + propertyId);
             return true;
         } else {
-            System.out.println(
-                    "No like found for memberId " + memberId + " and propertyId " + propertyId);
             return likesRepository.existsByMemberIdAndPropertyId(memberId, propertyId);
         }
     }

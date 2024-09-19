@@ -75,7 +75,6 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
      * @param propertyId
      * @return
      */
-    // todo default_batch_fetch_size가 있어도 property와 1:n 관계인 엔티티들을 호출할떄마다 sql 쿼리문이 실행됨. 이거 맞아?
     @Query("SELECT p FROM Property p " + "JOIN FETCH p.areas " + "WHERE p.id = :propertyId")
     Optional<Property> findByPropertyIdUsingFetchJoin(Long propertyId);
 

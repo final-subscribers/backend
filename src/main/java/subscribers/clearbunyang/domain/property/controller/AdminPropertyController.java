@@ -11,7 +11,6 @@ import subscribers.clearbunyang.domain.property.dto.request.PropertySaveRequest;
 import subscribers.clearbunyang.domain.property.dto.request.PropertyUpdateRequest;
 import subscribers.clearbunyang.domain.property.dto.response.MyPropertyCardResponse;
 import subscribers.clearbunyang.domain.property.dto.response.MyPropertyTableResponse;
-import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.global.dto.PagedDto;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
@@ -103,7 +102,6 @@ public class AdminPropertyController {
             @Valid @RequestBody PropertyUpdateRequest requestDTO,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Long adminId = customUserDetails.getUserId();
-        Property updatedProperty = propertyService.updateProperty(propertyId, requestDTO, adminId);
-        System.out.println("성공");
+        propertyService.updateProperty(propertyId, requestDTO, adminId);
     }
 }
