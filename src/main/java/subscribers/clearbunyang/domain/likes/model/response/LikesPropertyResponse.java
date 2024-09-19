@@ -50,7 +50,10 @@ public class LikesPropertyResponse {
         Area selectedArea = property.getAreas().stream().findFirst().orElse(null);
 
         int price = (selectedArea != null) ? selectedArea.getPrice() : 0;
-        int discountPrice = (selectedArea != null) ? selectedArea.getDiscountPrice() : 0;
+        int discountPrice =
+                (selectedArea != null && selectedArea.getDiscountPrice() != null)
+                        ? selectedArea.getDiscountPrice()
+                        : 0;
 
         return LikesPropertyResponse.builder()
                 .id(property.getId())

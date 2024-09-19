@@ -32,7 +32,7 @@ public class LikesPageResponse {
     public static LikesPageResponse fromPage(
             Page<LikesPropertyResponse> propertyPage, int pageSize, int currentPage) {
         return LikesPageResponse.builder()
-                .favoriteNumber(propertyPage.getTotalElements())
+                .favoriteNumber(propertyPage.getContent().size())
                 .totalPages(propertyPage.getTotalPages())
                 .pageSize(pageSize)
                 .currentPage(currentPage)
