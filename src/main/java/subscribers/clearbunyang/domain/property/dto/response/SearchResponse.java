@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SearchResponse {
 
-    private List<PropertySearchResponse> propertySearchResponses;
+    private List<PropertySummaryResponse> propertySearchResponses;
 
-    public static SearchResponse toDto(List<PropertySearchResponse> propertySearchResponses) {
+    public static SearchResponse toDto(List<PropertySummaryResponse> propertySearchResponses) {
         return SearchResponse.builder().propertySearchResponses(propertySearchResponses).build();
     }
 }

@@ -106,12 +106,20 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
             "SELECT DISTINCT p FROM Property p "
                     + "LEFT JOIN p.areas a "
                     + "LEFT JOIN p.keywords k "
-                    + "WHERE "
-                    + "(:search IS NULL OR :search = '' OR LOWER(p.buildingName) LIKE LOWER(CONCAT('%', :search, '%')) "
+                    + "WHERE"
+                    + "(LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) "
+                    + "OR LOWER(p.areaAddr) LIKE LOWER(CONCAT('%', :search, '%')) "
                     + "OR LOWER(p.addrDo) LIKE LOWER(CONCAT('%', :search, '%')) "
                     + "OR LOWER(p.addrGu) LIKE LOWER(CONCAT('%', :search, '%')) "
-                    + "OR LOWER(p.addrDong) LIKE LOWER(CONCAT('%', :search, '%'))) "
-                    + "AND (:area IS NULL OR LOWER(p.addrDo) IN :area) "
+                    + "OR LOWER(p.addrDong) LIKE LOWER(CONCAT('%', :search, '%')))")
+    List<Property> findPropertiesBySearching(@Param("search") String search);
+
+    @Query(
+            "SELECT DISTINCT p FROM Property p "
+                    + "LEFT JOIN p.areas a "
+                    + "LEFT JOIN p.keywords k "
+                    + "WHERE "
+                    + "(:area IS NULL OR LOWER(p.addrDo) IN :area) "
                     + "AND (:propertyType IS NULL OR p.propertyType = :propertyType) "
                     + "AND (:salesType IS NULL OR p.salesType = :salesType) "
                     + "AND (:keyword IS NULL OR EXISTS (SELECT 1 FROM p.keywords k WHERE LOWER(k.name) = LOWER(:keyword))) "
@@ -121,8 +129,7 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
                     + "AND (:areaMax IS NULL OR EXISTS (SELECT 1 FROM p.areas a WHERE a.squareMeter <= :areaMax)) "
                     + "AND (:totalMin IS NULL OR p.totalNumber >= :totalMin) "
                     + "AND (:totalMax IS NULL OR p.totalNumber <= :totalMax)")
-    List<Property> findProperties(
-            @Param("search") String search,
+    List<Property> findPropertiesByFiltering(
             @Param("area") List<String> area,
             @Param("propertyType") PropertyType propertyType,
             @Param("salesType") SalesType salesType,
