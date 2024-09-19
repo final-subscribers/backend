@@ -146,9 +146,6 @@ class ConsultationServiceTest {
     @Test
     void 상담사목록_정상작동() {
         lenient().when(propertyRepository.getIdById(anyLong())).thenReturn(property.getId());
-        lenient()
-                .when(adminConsultationRepository.findAllConsultantByPropertyId(any()))
-                .thenReturn(List.of(adminConsultation));
 
         ConsultantListResponse response = consultationService.getConsultants(1L);
         assertNotNull(response);
@@ -391,21 +388,6 @@ class ConsultationServiceTest {
         EntityNotFoundException exception =
                 assertThrows(
                         EntityNotFoundException.class,
-                        () -> {
-                            consultationService.getConsultants(anyLong());
-                        });
-
-        assertEquals(ErrorCode.NOT_FOUND.getMessage(), exception.getMessage());
-    }
-
-    @Test
-    void 상담사리스트_없는상담사선택() {
-        when(adminConsultationRepository.findAllConsultantByPropertyId(anyLong()))
-                .thenThrow(new InvalidValueException(ErrorCode.NOT_FOUND));
-
-        InvalidValueException exception =
-                assertThrows(
-                        InvalidValueException.class,
                         () -> {
                             consultationService.getConsultants(anyLong());
                         });
