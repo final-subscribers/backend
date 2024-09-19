@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import subscribers.clearbunyang.domain.file.entity.enums.FileType;
 import subscribers.clearbunyang.domain.file.model.FileResponseDTO;
 import subscribers.clearbunyang.domain.property.entity.Property;
+import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
 import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
@@ -23,6 +24,7 @@ public class PropertySearchResponse {
     private String imageUrl;
     private String propertyName;
     private String areaAddr;
+    private PropertyType propertyType;
     private SalesType salesType;
     private int totalNumber;
     private List<String> infra;
@@ -51,6 +53,7 @@ public class PropertySearchResponse {
                 .imageUrl(propertyImageUrl)
                 .propertyName(property.getName())
                 .areaAddr(property.getAreaAddr())
+                .propertyType(property.getPropertyType())
                 .salesType(property.getSalesType())
                 .totalNumber(property.getTotalNumber())
                 .infra(infraKeywords)

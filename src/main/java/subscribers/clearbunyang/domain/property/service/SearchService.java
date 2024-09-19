@@ -44,10 +44,9 @@ public class SearchService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 
-        String searchParam = (search == null || search.trim().isEmpty()) ? "" : search.trim();
-
+        String searchParam = (search == null || search.trim().isEmpty()) ? null : search.trim();
         List<String> areaParam =
-                (area != null && !area.isEmpty()) ? List.of(area.split("\\s*,\\s*")) : List.of();
+                (area != null && !area.isEmpty()) ? List.of(area.split("\\s*,\\s*")) : null;
 
         List<Property> properties =
                 propertyRepository.findProperties(
