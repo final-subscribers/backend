@@ -101,7 +101,7 @@ public class PropertyService {
     @Transactional
     @CacheEvict(
             value = {"ConsultPendingList", "ConsultCompletedList"},
-            key = "#propertyId")
+            allEntries = true)
     // todo 리팩토링 하기
     public MemberConsultation saveConsultation(
             Long propertyId, MemberConsultationRequestDTO requestDTO, Long memberId) {
