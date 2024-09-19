@@ -51,21 +51,31 @@ public class CommonPropertyController {
     }
 
     /**
-     * 매물 상세 정보를 가져오는 메소드
+     * 비회원의 매물 상세 정보를 가져오는 메소드
      *
      * @param propertyId
      * @param customUserDetails
      * @return
      */
-    @Operation(summary = "매물 상세 조회")
+    @Operation(summary = "비회원의 매물 상세 조회")
     @GetMapping("/common/properties/{propertyId}")
+    public PropertyDetailsResponse getProperty(@PathVariable Long propertyId) {
+        return propertyService.getPropertyDetails(propertyId, null);
+    }
+
+    /**
+     * 유저의 매물 상세 정보를 가져오는 메소드
+     *
+     * @param propertyId
+     * @param customUserDetails
+     * @return
+     */
+    @Operation(summary = "유저의 매물 상세 조회")
+    @GetMapping("/member/properties/{propertyId}")
     public PropertyDetailsResponse getProperty(
             @PathVariable Long propertyId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        Long memberId =
-                (customUserDetails == null || customUserDetails.isInstanceOfAdmin())
-                        ? null
-                        : customUserDetails.getUserId();
+        Long memberId = customUserDetails.getUserId();
         return propertyService.getPropertyDetails(propertyId, memberId);
     }
 }

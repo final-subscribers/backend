@@ -20,6 +20,7 @@ import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.domain.consultation.repository.AdminConsultationRepository;
 import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
+import subscribers.clearbunyang.domain.likes.service.LikesService;
 import subscribers.clearbunyang.domain.property.dto.request.*;
 import subscribers.clearbunyang.domain.property.dto.response.KeywordResponse;
 import subscribers.clearbunyang.domain.property.dto.response.MyPropertyCardResponse;
@@ -53,6 +54,7 @@ public class PropertyService {
     private final KeywordRepository keywordRepository;
     private final AreaRepository areaRepository;
     private final FileRepository fileRepository;
+    private final LikesService likesService;
 
     /**
      * 물건을 저장하는 메소드
@@ -126,10 +128,7 @@ public class PropertyService {
     @Transactional(readOnly = true)
     public PropertyDetailsResponse getPropertyDetails(Long propertyId, Long memberId) {
         Property property = propertyRepository.getByPropertyUsingFetchJoin(propertyId);
-        boolean likesExisted = false;
-        if (memberId != null) {
-            likesExisted = likesRepository.existsByMemberIdAndPropertyId(memberId, propertyId);
-        }
+        boolean likesExisted = likesService.isLiked(memberId, propertyId);
 
         Map<KeywordType, List<KeywordResponse>> categorizedKeywords =
                 keywordService.categorizedKeywords(propertyId);
