@@ -82,7 +82,7 @@ public class AdminPropertyController {
      * @param customUserDetails
      */
     @Operation(summary = "매물삭제")
-    @GetMapping("/properties/{propertyId}")
+    @DeleteMapping("/properties/{propertyId}")
     public void deleteProperty(
             @PathVariable Long propertyId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
@@ -90,6 +90,13 @@ public class AdminPropertyController {
         propertyService.deleteProperty(propertyId, adminId);
     }
 
+    /**
+     * 매물을 수정하는 메소드
+     *
+     * @param propertyId
+     * @param requestDTO
+     * @param customUserDetails
+     */
     @PatchMapping("/properties/{propertyId}")
     public void updateProperty(
             @PathVariable Long propertyId,
