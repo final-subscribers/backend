@@ -20,7 +20,8 @@ public interface MemberConsultationRepository extends JpaRepository<MemberConsul
             "SELECT mc FROM MemberConsultation mc "
                     + "JOIN mc.property p "
                     + "WHERE mc.member.id = :userId AND mc.status = :status "
-                    + "AND (LOWER(p.buildingName) LIKE LOWER(CONCAT('%', :search, '%')) "
+                    + "AND (LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) "
+                    + "OR LOWER(p.areaAddr) LIKE LOWER(CONCAT('%', :search, '%')) "
                     + "OR LOWER(p.addrDo) LIKE LOWER(CONCAT('%', :search, '%')) "
                     + "OR LOWER(p.addrGu) LIKE LOWER(CONCAT('%', :search, '%')) "
                     + "OR LOWER(p.addrDong) LIKE LOWER(CONCAT('%', :search, '%')))")
