@@ -38,11 +38,7 @@ public enum ErrorCode {
 
     // jwt
     INVALID_TOKEN(400, "J001", "토큰이 올바르지 않습니다."),
-    EXPIRED_TOKEN(400, "J002", "만료된 토큰 정보입니다."),
-    UNSUPPORTED_TOKEN(400, "J003", "지원하지 않는 토큰 정보입니다."),
-    CLAIMS_EMPTY_TOKEN(400, "J004", "토큰 정보가 비어있습니다."),
     REFRESH_TOKEN_NOT_FOUND(404, "J005", "리프레쉬 토큰 정보가 존재하지 않습니다."),
-    INVALID_REFRESH_TOKEN(400, "J006", "리프레쉬 토큰이 올바르지 않습니다."),
     INVALID_ACCESS_TOKEN(400, "J007", "엑세스 토큰이 올바르지 않습니다."),
 
     // like

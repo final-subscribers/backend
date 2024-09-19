@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import subscribers.clearbunyang.domain.auth.dto.request.AdminSignUpRequest;
+import subscribers.clearbunyang.domain.auth.dto.request.LoginRequest;
+import subscribers.clearbunyang.domain.auth.dto.request.MemberSignUpRequest;
+import subscribers.clearbunyang.domain.auth.dto.response.LoginResponse;
 import subscribers.clearbunyang.domain.auth.service.AuthService;
-import subscribers.clearbunyang.domain.user.model.request.AdminSignUpRequest;
-import subscribers.clearbunyang.domain.user.model.request.LoginRequest;
-import subscribers.clearbunyang.domain.user.model.request.MemberSignUpRequest;
-import subscribers.clearbunyang.domain.user.model.response.LoginResponse;
 
 @RestController
 @RequestMapping("/api/auth")

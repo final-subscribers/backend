@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.consultation.dto.adminConsultation.request.ConsultRequest;
 import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
-import subscribers.clearbunyang.domain.consultation.model.request.ConsultRequest;
-import subscribers.clearbunyang.domain.consultation.service.ConsultationService;
+import subscribers.clearbunyang.domain.consultation.service.AdminConsultationService;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 
@@ -23,7 +23,7 @@ import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 public class CompletedConsultationInsert {
 
     @Autowired private PropertyRepository propertyRepository;
-    @Autowired private ConsultationService consultationService;
+    @Autowired private AdminConsultationService adminConsultationService;
     @Autowired private EntityManager entityManager;
 
     /** lms에서 비회원/member가 추가한 상담을 상담완료로 바꾸는 테스트 데이터 삽입 */
@@ -53,12 +53,13 @@ public class CompletedConsultationInsert {
                                 .consultantMessage("상담 완료되었습니다.")
                                 .build();
 
-                consultationService.registerConsultant(
+                adminConsultationService.registerConsultant(
                         selectedConsultation.getAdminConsultation().getId(),
                         AdminConsultationInsert.generateRandomConsultant());
                 entityManager.flush();
                 entityManager.clear();
-                consultationService.createAdminConsult(selectedConsultation.getId(), requestDTO);
+                adminConsultationService.createAdminConsult(
+                        selectedConsultation.getId(), requestDTO);
             }
         }
     }

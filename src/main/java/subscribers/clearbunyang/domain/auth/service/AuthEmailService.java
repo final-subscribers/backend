@@ -8,12 +8,11 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import subscribers.clearbunyang.domain.user.model.request.AdminSignUpRequest;
-import subscribers.clearbunyang.domain.user.model.request.MemberSignUpRequest;
-import subscribers.clearbunyang.domain.user.repository.AdminRepository;
-import subscribers.clearbunyang.domain.user.repository.MemberRepository;
-import subscribers.clearbunyang.global.email.service.EmailService;
-import subscribers.clearbunyang.global.exception.Invalid.InvalidValueException;
+import subscribers.clearbunyang.domain.auth.dto.request.AdminSignUpRequest;
+import subscribers.clearbunyang.domain.auth.dto.request.MemberSignUpRequest;
+import subscribers.clearbunyang.domain.auth.repository.AdminRepository;
+import subscribers.clearbunyang.domain.auth.repository.MemberRepository;
+import subscribers.clearbunyang.global.exception.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 
 @Service
@@ -21,7 +20,7 @@ import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 @RequiredArgsConstructor
 public class AuthEmailService {
 
-    private final EmailService emailService;
+    private final SendEmailService sendEmailService;
     private final AdminRepository adminRepository;
     private final MemberRepository memberRepository;
     private final RedisTemplate<String, Object> redisTemplate;
@@ -43,7 +42,7 @@ public class AuthEmailService {
         redisTemplate
                 .opsForValue()
                 .set(EMAIL_VERIFICATION_PREFIX + email, verificationCode, Duration.ofMinutes(5));
-        emailService.sendVerifyEmail(email, "시행사 회원가입 인증코드입니다", "인증코드: " + verificationCode);
+        sendEmailService.sendVerifyEmail(email, "시행사 회원가입 인증코드입니다", "인증코드: " + verificationCode);
     }
 
     @Transactional

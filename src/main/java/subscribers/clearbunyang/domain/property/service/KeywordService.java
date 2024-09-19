@@ -10,12 +10,12 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.property.dto.request.KeywordRequest;
+import subscribers.clearbunyang.domain.property.dto.response.KeywordResponse;
 import subscribers.clearbunyang.domain.property.entity.Keyword;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
 import subscribers.clearbunyang.domain.property.exception.JsonConversionException;
-import subscribers.clearbunyang.domain.property.model.request.KeywordRequestDTO;
-import subscribers.clearbunyang.domain.property.model.response.KeywordResponseDTO;
 import subscribers.clearbunyang.domain.property.repository.KeywordRepository;
 
 @RequiredArgsConstructor
@@ -27,22 +27,21 @@ public class KeywordService {
     /**
      * 키워드들을 저장하는 메소드
      *
-     * @param keywordRequestDTOS
+     * @param keywordRequests
      * @param property
      */
     @Transactional
-    public void saveKeywords(List<KeywordRequestDTO> keywordRequestDTOS, Property property) {
+    public void saveKeywords(List<KeywordRequest> keywordRequests, Property property) {
         List<Keyword> searchableKeywords = new ArrayList<>();
-        List<KeywordRequestDTO> nonSearchableKeywords = new ArrayList<>();
+        List<KeywordRequest> nonSearchableKeywords = new ArrayList<>();
 
-        for (KeywordRequestDTO keywordRequestDTO : keywordRequestDTOS) {
-            if (keywordRequestDTO.getSearchEnabled()) {
+        for (KeywordRequest keywordRequest : keywordRequests) {
+            if (keywordRequest.getSearchEnabled()) {
                 Keyword keyword =
-                        Keyword.toEntity(
-                                keywordRequestDTO, objectToJson(keywordRequestDTO), property);
+                        Keyword.toEntity(keywordRequest, objectToJson(keywordRequest), property);
                 searchableKeywords.add(keyword);
             } else {
-                nonSearchableKeywords.add(keywordRequestDTO);
+                nonSearchableKeywords.add(keywordRequest);
             }
         }
         keywordRepository.saveAll(searchableKeywords);
@@ -60,7 +59,7 @@ public class KeywordService {
      */
     @Transactional
     public void saveNonSearchableKeywordsAsJson(
-            List<KeywordRequestDTO> nonSearchableKeywords, Property property) {
+            List<KeywordRequest> nonSearchableKeywords, Property property) {
         Keyword keyword = Keyword.toEntity(objectToJson(nonSearchableKeywords), property);
         keywordRepository.save(keyword);
     }
@@ -87,26 +86,25 @@ public class KeywordService {
      * @return
      */
     @Transactional(readOnly = true)
-    public Map<KeywordType, List<KeywordResponseDTO>> categorizedKeywords(Long propertyId) {
+    public Map<KeywordType, List<KeywordResponse>> categorizedKeywords(Long propertyId) {
         List<Keyword> keywords = keywordRepository.findByPropertyId(propertyId);
         try {
-            List<KeywordResponseDTO> keywordList = new ArrayList<>();
+            List<KeywordResponse> keywordList = new ArrayList<>();
             for (Keyword keyword : keywords) {
 
                 if (keyword.isSearchable()) { // 단일 객체를 읽어드림
                     keywordList.add(
-                            objectMapper.readValue(
-                                    keyword.getJsonValue(), KeywordResponseDTO.class));
+                            objectMapper.readValue(keyword.getJsonValue(), KeywordResponse.class));
                 } else { // 리스트로 읽어 들임
-                    List<KeywordResponseDTO> keywordRequestDTOS =
+                    List<KeywordResponse> keywordRequestDTOS =
                             objectMapper.readValue(
                                     keyword.getJsonValue(),
-                                    new TypeReference<List<KeywordResponseDTO>>() {});
+                                    new TypeReference<List<KeywordResponse>>() {});
                     keywordList.addAll(keywordRequestDTOS);
                 }
             }
 
-            return keywordList.stream().collect(Collectors.groupingBy(KeywordResponseDTO::getType));
+            return keywordList.stream().collect(Collectors.groupingBy(KeywordResponse::getType));
 
         } catch (Exception e) {
             throw new JsonConversionException();

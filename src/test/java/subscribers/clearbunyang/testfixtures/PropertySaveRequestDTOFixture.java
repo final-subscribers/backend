@@ -5,24 +5,24 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import subscribers.clearbunyang.domain.file.entity.enums.FileType;
-import subscribers.clearbunyang.domain.file.model.FileRequestDTO;
+import subscribers.clearbunyang.domain.property.dto.request.AreaRequest;
+import subscribers.clearbunyang.domain.property.dto.request.KeywordRequest;
+import subscribers.clearbunyang.domain.property.dto.request.PropertySaveRequest;
 import subscribers.clearbunyang.domain.property.entity.enums.KeywordName;
 import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
-import subscribers.clearbunyang.domain.property.model.request.AreaRequestDTO;
-import subscribers.clearbunyang.domain.property.model.request.KeywordRequestDTO;
-import subscribers.clearbunyang.domain.property.model.request.PropertySaveRequestDTO;
+import subscribers.clearbunyang.global.file.dto.FileRequestDTO;
+import subscribers.clearbunyang.global.file.entity.enums.FileType;
 
 public class PropertySaveRequestDTOFixture {
 
-    public static PropertySaveRequestDTO createDefault() {
-        List<AreaRequestDTO> areas = new ArrayList<>();
+    public static PropertySaveRequest createDefault() {
+        List<AreaRequest> areas = new ArrayList<>();
         //        areas.add(new AreaRequestDTO(60, 50000, 45000, 10));
         //        areas.add(new AreaRequestDTO(80, 60000, 55000, 8));
-        areas.add(new AreaRequestDTO(60, 50000, null, null));
-        areas.add(new AreaRequestDTO(80, 60000, null, null));
+        areas.add(new AreaRequest(60, 50000, null, null));
+        areas.add(new AreaRequest(80, 60000, null, null));
 
         List<FileRequestDTO> files = new ArrayList<>();
         files.add(
@@ -36,16 +36,14 @@ public class PropertySaveRequestDTOFixture {
                         "https://example.com/supply.pdf",
                         FileType.SUPPLY_INFORMATION));
 
-        List<KeywordRequestDTO> keywords = new ArrayList<>();
+        List<KeywordRequest> keywords = new ArrayList<>();
+        keywords.add(new KeywordRequest(KeywordName.CASH_PAYMENT, KeywordType.BENEFIT, true, 100));
         keywords.add(
-                new KeywordRequestDTO(KeywordName.CASH_PAYMENT, KeywordType.BENEFIT, true, 100));
+                new KeywordRequest(KeywordName.DISCOUNT_SALE, KeywordType.BENEFIT, true, null));
         keywords.add(
-                new KeywordRequestDTO(KeywordName.DISCOUNT_SALE, KeywordType.BENEFIT, true, null));
+                new KeywordRequest(KeywordName.GUARANTEED_PAYMENT, KeywordType.BENEFIT, false, 13));
         keywords.add(
-                new KeywordRequestDTO(
-                        KeywordName.GUARANTEED_PAYMENT, KeywordType.BENEFIT, false, 13));
-        keywords.add(
-                new KeywordRequestDTO(
+                new KeywordRequest(
                         KeywordName.SUBWAY,
                         KeywordType.INFRA,
                         true,
@@ -55,10 +53,9 @@ public class PropertySaveRequestDTOFixture {
                         Map.of("input1", "가족 도서관", "input2", "도보", "input3", "10"),
                         Map.of("input1", "강남 도서관", "input2", "차량", "input3", "15"));
         keywords.add(
-                new KeywordRequestDTO(
-                        KeywordName.LIBRARY, KeywordType.INFRA, false, keywordDetails));
+                new KeywordRequest(KeywordName.LIBRARY, KeywordType.INFRA, false, keywordDetails));
 
-        return new PropertySaveRequestDTO(
+        return new PropertySaveRequest(
                 "푸르지오 아파트",
                 "현대건설",
                 "현대자이",
@@ -81,12 +78,12 @@ public class PropertySaveRequestDTOFixture {
                 keywords);
     }
 
-    public static PropertySaveRequestDTO createCustom(String name, String imageUrl) {
-        List<AreaRequestDTO> areas = new ArrayList<>();
+    public static PropertySaveRequest createCustom(String name, String imageUrl) {
+        List<AreaRequest> areas = new ArrayList<>();
         //        areas.add(new AreaRequestDTO(60, 50000, 45000, 10));
         //        areas.add(new AreaRequestDTO(80, 60000, 55000, 8));
-        areas.add(new AreaRequestDTO(60, 50000, null, null));
-        areas.add(new AreaRequestDTO(80, 60000, null, null));
+        areas.add(new AreaRequest(60, 50000, null, null));
+        areas.add(new AreaRequest(80, 60000, null, null));
 
         List<FileRequestDTO> files = new ArrayList<>();
         files.add(new FileRequestDTO("property_image.jpg", imageUrl, FileType.PROPERTY_IMAGE));
@@ -96,16 +93,14 @@ public class PropertySaveRequestDTOFixture {
                         "https://example.com/supply.pdf",
                         FileType.SUPPLY_INFORMATION));
 
-        List<KeywordRequestDTO> keywords = new ArrayList<>();
+        List<KeywordRequest> keywords = new ArrayList<>();
+        keywords.add(new KeywordRequest(KeywordName.CASH_PAYMENT, KeywordType.BENEFIT, true, 100));
         keywords.add(
-                new KeywordRequestDTO(KeywordName.CASH_PAYMENT, KeywordType.BENEFIT, true, 100));
+                new KeywordRequest(KeywordName.DISCOUNT_SALE, KeywordType.BENEFIT, true, null));
         keywords.add(
-                new KeywordRequestDTO(KeywordName.DISCOUNT_SALE, KeywordType.BENEFIT, true, null));
+                new KeywordRequest(KeywordName.GUARANTEED_PAYMENT, KeywordType.BENEFIT, false, 13));
         keywords.add(
-                new KeywordRequestDTO(
-                        KeywordName.GUARANTEED_PAYMENT, KeywordType.BENEFIT, false, 13));
-        keywords.add(
-                new KeywordRequestDTO(
+                new KeywordRequest(
                         KeywordName.SUBWAY,
                         KeywordType.INFRA,
                         true,
@@ -115,10 +110,9 @@ public class PropertySaveRequestDTOFixture {
                         Map.of("input1", "가족 도서관", "input2", "도보", "input3", "10"),
                         Map.of("input1", "강남 도서관", "input2", "차량", "input3", "15"));
         keywords.add(
-                new KeywordRequestDTO(
-                        KeywordName.LIBRARY, KeywordType.INFRA, false, keywordDetails));
+                new KeywordRequest(KeywordName.LIBRARY, KeywordType.INFRA, false, keywordDetails));
 
-        return new PropertySaveRequestDTO(
+        return new PropertySaveRequest(
                 name,
                 "현대건설",
                 "현대자이",
@@ -141,9 +135,9 @@ public class PropertySaveRequestDTOFixture {
                 keywords);
     }
 
-    public static PropertySaveRequestDTO createCustom(
-            String name, String imageUrl, List<AreaRequestDTO> newAreas) {
-        List<AreaRequestDTO> areas = new ArrayList<>();
+    public static PropertySaveRequest createCustom(
+            String name, String imageUrl, List<AreaRequest> newAreas) {
+        List<AreaRequest> areas = new ArrayList<>();
         areas.addAll(newAreas);
 
         List<FileRequestDTO> files = new ArrayList<>();
@@ -154,16 +148,14 @@ public class PropertySaveRequestDTOFixture {
                         "https://example.com/supply.pdf",
                         FileType.SUPPLY_INFORMATION));
 
-        List<KeywordRequestDTO> keywords = new ArrayList<>();
+        List<KeywordRequest> keywords = new ArrayList<>();
+        keywords.add(new KeywordRequest(KeywordName.CASH_PAYMENT, KeywordType.BENEFIT, true, 100));
         keywords.add(
-                new KeywordRequestDTO(KeywordName.CASH_PAYMENT, KeywordType.BENEFIT, true, 100));
+                new KeywordRequest(KeywordName.DISCOUNT_SALE, KeywordType.BENEFIT, true, null));
         keywords.add(
-                new KeywordRequestDTO(KeywordName.DISCOUNT_SALE, KeywordType.BENEFIT, true, null));
+                new KeywordRequest(KeywordName.GUARANTEED_PAYMENT, KeywordType.BENEFIT, false, 13));
         keywords.add(
-                new KeywordRequestDTO(
-                        KeywordName.GUARANTEED_PAYMENT, KeywordType.BENEFIT, false, 13));
-        keywords.add(
-                new KeywordRequestDTO(
+                new KeywordRequest(
                         KeywordName.SUBWAY,
                         KeywordType.INFRA,
                         true,
@@ -173,10 +165,9 @@ public class PropertySaveRequestDTOFixture {
                         Map.of("input1", "가족 도서관", "input2", "도보", "input3", "10"),
                         Map.of("input1", "강남 도서관", "input2", "차량", "input3", "15"));
         keywords.add(
-                new KeywordRequestDTO(
-                        KeywordName.LIBRARY, KeywordType.INFRA, false, keywordDetails));
+                new KeywordRequest(KeywordName.LIBRARY, KeywordType.INFRA, false, keywordDetails));
 
-        return new PropertySaveRequestDTO(
+        return new PropertySaveRequest(
                 name,
                 "현대건설",
                 "현대자이",

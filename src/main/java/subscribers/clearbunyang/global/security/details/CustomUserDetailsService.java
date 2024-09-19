@@ -4,13 +4,14 @@ package subscribers.clearbunyang.global.security.details;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import subscribers.clearbunyang.domain.user.entity.Admin;
-import subscribers.clearbunyang.domain.user.entity.Member;
-import subscribers.clearbunyang.domain.user.repository.AdminRepository;
-import subscribers.clearbunyang.domain.user.repository.MemberRepository;
+import subscribers.clearbunyang.domain.auth.entity.Admin;
+import subscribers.clearbunyang.domain.auth.entity.Member;
+import subscribers.clearbunyang.domain.auth.repository.AdminRepository;
+import subscribers.clearbunyang.domain.auth.repository.MemberRepository;
 
 @RequiredArgsConstructor
 @Service
@@ -21,14 +22,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
 
     @Override
-    public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(
-            String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("사용자 정보 조회: username={}", username);
         return loadUserByEmail(username);
     }
 
-    public org.springframework.security.core.userdetails.UserDetails loadUserByEmail(String email)
-            throws UsernameNotFoundException {
+    public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
         log.info("사용자 정보 조회: email={}", email);
 
         Optional<Member> user = memberRepository.findByEmail(email);

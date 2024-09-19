@@ -2,16 +2,16 @@ package subscribers.clearbunyang.testfixtures;
 
 
 import java.time.LocalDate;
-import subscribers.clearbunyang.domain.property.model.request.MemberConsultationRequestDTO;
+import subscribers.clearbunyang.domain.property.dto.request.MemberConsultationRequest;
 
 public class MemberConsultationRequestDTOFixture {
-    public static MemberConsultationRequestDTO createDefault() {
-        return new MemberConsultationRequestDTO(
+    public static MemberConsultationRequest createDefault() {
+        return new MemberConsultationRequest(
                 "bom", "01012345678", LocalDate.now().plusDays(2), "Sample consultation message");
     }
 
-    public static MemberConsultationRequestDTO createCustom(
+    public static MemberConsultationRequest createCustom(
             String name, String phoneNumber, LocalDate date, String message) {
-        return new MemberConsultationRequestDTO(name, phoneNumber, date, message);
+        return new MemberConsultationRequest(name, phoneNumber, date, message);
     }
 }
