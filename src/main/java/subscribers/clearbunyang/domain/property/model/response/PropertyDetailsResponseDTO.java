@@ -23,6 +23,8 @@ import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 public class PropertyDetailsResponseDTO {
 
     private String name;
+    private String constructor;
+    private String companyName;
     private SalesType salesType; // 분양 형태
     private PropertyType propertyType; // 분양 타입
     private String buildingName; // 건물 이름
@@ -85,6 +87,8 @@ public class PropertyDetailsResponseDTO {
 
         return PropertyDetailsResponseDTO.builder()
                 .name(property.getName())
+                .constructor(property.getConstructor())
+                .companyName(property.getCompanyName())
                 .salesType(property.getSalesType())
                 .propertyType(property.getPropertyType())
                 .addrDo(property.getAddrDo())
