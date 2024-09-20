@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class PropertyGraphRequirementsDTO {
-    Integer interval;
+    Integer hour;
     Integer year;
     Integer month;
     Integer day;
@@ -26,8 +26,8 @@ public class PropertyGraphRequirementsDTO {
         this.all = pending + completed;
     }
 
-    public PropertyGraphRequirementsDTO(Integer interval, Integer pending, Integer completed) {
-        this.interval = interval;
+    public PropertyGraphRequirementsDTO(Integer hour, Integer pending, Integer completed) {
+        this.hour = hour;
         this.pending = pending;
         this.completed = completed;
         this.all = pending + completed;

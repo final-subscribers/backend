@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.dto.response.PropertySummaryResponse;
@@ -35,10 +34,10 @@ public class SearchService {
 
         String searchParam = (search == null || search.trim().isEmpty()) ? "" : search.trim();
 
-        Pageable pageable = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page, size);
 
         Page<Property> propertyPage =
-                propertyRepository.findPropertiesBySearching(searchParam, pageable);
+                propertyRepository.findPropertiesBySearching(searchParam, pageRequest);
 
         List<PropertySummaryResponse> propertySearchResponses =
                 propertyPage.stream()
@@ -74,7 +73,7 @@ public class SearchService {
 
         SearchResponse searchResponse = SearchResponse.toDto(propertySearchResponses);
 
-        return PagedDto.toDTO(page, size, propertySearchResponses.size(), List.of(searchResponse));
+        return PagedDto.toDTO(page, size, propertyPage.getTotalPages(), List.of(searchResponse));
     }
 
     public PagedDto<SearchResponse> getPropertyByFiltering(
@@ -99,7 +98,7 @@ public class SearchService {
                                 .collect(Collectors.toList())
                         : null;
 
-        Pageable pageable = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page, size);
 
         Page<Property> propertyPage =
                 propertyRepository.findPropertiesByFiltering(
@@ -113,7 +112,7 @@ public class SearchService {
                         areaMax,
                         totalMin,
                         totalMax,
-                        pageable);
+                        pageRequest);
 
         List<PropertySummaryResponse> propertySearchResponses =
                 propertyPage.stream()
@@ -149,6 +148,6 @@ public class SearchService {
 
         SearchResponse searchResponse = SearchResponse.toDto(propertySearchResponses);
 
-        return PagedDto.toDTO(page, size, propertySearchResponses.size(), List.of(searchResponse));
+        return PagedDto.toDTO(page, size, propertyPage.getTotalPages(), List.of(searchResponse));
     }
 }

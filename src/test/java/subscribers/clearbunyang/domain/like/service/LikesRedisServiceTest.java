@@ -357,7 +357,8 @@ class LikesRedisServiceTest {
         likesRepository.save(Likes.builder().member(member).property(property).build());
 
         Page<LikesPropertyResponse> response =
-                likesService.getMyFavoriteProperties(member.getId(), status, page, size);
+                (Page<LikesPropertyResponse>)
+                        likesService.getMyFavoriteProperties(member.getId(), status, page, size);
 
         assertThat(response).isNotEmpty();
         assertThat(response.getTotalElements()).isEqualTo(1);
@@ -385,7 +386,8 @@ class LikesRedisServiceTest {
         redisTemplate.opsForHash().put("likes", redisKey, true);
 
         Page<LikesPropertyResponse> response =
-                likesService.getMyFavoriteProperties(member.getId(), status, page, size);
+                (Page<LikesPropertyResponse>)
+                        likesService.getMyFavoriteProperties(member.getId(), status, page, size);
 
         System.out.println(response);
         assertThat(response).isNotEmpty();
@@ -416,7 +418,8 @@ class LikesRedisServiceTest {
         likesRepository.save(Likes.builder().member(member).property(property).build());
 
         Page<LikesPropertyResponse> response =
-                likesService.getMyFavoriteProperties(member.getId(), status, page, size);
+                (Page<LikesPropertyResponse>)
+                        likesService.getMyFavoriteProperties(member.getId(), status, page, size);
 
         assertThat(response).isEmpty();
     }
@@ -443,7 +446,8 @@ class LikesRedisServiceTest {
         redisTemplate.opsForHash().put("likes", redisKey, false);
 
         Page<LikesPropertyResponse> response =
-                likesService.getMyFavoriteProperties(member.getId(), status, page, size);
+                (Page<LikesPropertyResponse>)
+                        likesService.getMyFavoriteProperties(member.getId(), status, page, size);
 
         assertThat(response).isEmpty();
     }
@@ -500,7 +504,8 @@ class LikesRedisServiceTest {
         int size = 10;
 
         Page<LikesPropertyResponse> response =
-                likesService.getMyFavoriteProperties(member.getId(), status, page, size);
+                (Page<LikesPropertyResponse>)
+                        likesService.getMyFavoriteProperties(member.getId(), status, page, size);
 
         assertThat(response).isNotEmpty();
         assertThat(response.getTotalPages()).isEqualTo(1);
