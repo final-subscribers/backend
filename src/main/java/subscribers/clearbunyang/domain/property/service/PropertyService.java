@@ -209,6 +209,7 @@ public class PropertyService {
         propertyRepository.deletePropertyById(propertyId);
     }
 
+    @CacheEvict(value = "sidebarList", allEntries = true)
     @Transactional
     public Property updateProperty(
             Long propertyId, PropertyUpdateRequest requestDTO, Long adminId) {
