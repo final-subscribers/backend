@@ -39,6 +39,7 @@ import subscribers.clearbunyang.domain.dashBoard.dto.YearMonthDayDTO;
 import subscribers.clearbunyang.domain.dashBoard.dto.YearWeekDTO;
 import subscribers.clearbunyang.domain.dashBoard.entity.enums.GraphInterval;
 import subscribers.clearbunyang.domain.dashBoard.entity.enums.Phase;
+import subscribers.clearbunyang.global.exception.NotFoundException;
 
 @Repository
 public class DashboardRepositoryImpl implements DashboardRepository {
@@ -146,14 +147,16 @@ public class DashboardRepositoryImpl implements DashboardRepository {
         return query.select(
                         Projections.constructor(
                                 PropertyInquiryStatusDTO.class,
-                                memberConsultation.property.id,
-                                memberConsultation.property.name,
+                                property.id,
+                                property.name,
                                 pendingCount,
                                 completedCount))
-                .from(memberConsultation)
-                .where(memberConsultation.property.admin.id.eq(adminId))
-                .groupBy(memberConsultation.property.id)
-                .orderBy(memberConsultation.count().desc())
+                .from(property)
+                .leftJoin(memberConsultation)
+                .on(memberConsultation.property.id.eq(property.id)) // 상담과 매물을 LEFT JOIN
+                .where(property.admin.id.eq(adminId))
+                .groupBy(property.id)
+                .orderBy(memberConsultation.count().desc(), property.id.desc()) // 상담 건수로 정렬
                 .fetch();
     }
 
@@ -164,18 +167,21 @@ public class DashboardRepositoryImpl implements DashboardRepository {
                 query.select(
                                 Projections.constructor(
                                         PropertyInquiryStatusDTO.class,
-                                        memberConsultation.property.id,
-                                        memberConsultation.property.name,
+                                        property.id,
+                                        property.name,
                                         pendingCount,
                                         completedCount))
-                        .from(memberConsultation)
-                        .innerJoin(memberConsultation.property, property)
-                        .where(memberConsultation.property.admin.id.eq(adminId))
-                        .groupBy(memberConsultation.property.id)
-                        .orderBy(memberConsultation.property.id.desc())
+                        .from(property)
+                        .leftJoin(memberConsultation)
+                        .on(memberConsultation.property.eq(property))
+                        .where(property.admin.id.eq(adminId))
+                        .groupBy(property.id)
+                        .orderBy(property.id.desc())
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
+
+        if (list.isEmpty()) throw new NotFoundException(NO_QUERY_RESULT);
 
         JPAQuery<Long> countQuery =
                 query.select(memberConsultation.property.id.countDistinct())
@@ -185,6 +191,7 @@ public class DashboardRepositoryImpl implements DashboardRepository {
         return PageableExecutionUtils.getPage(list, pageable, countQuery::fetchOne);
     }
 
+    // TODO: 더 부하가 적은 쿼리에서 exception을 발생시키는 게 좋을 것
     @Override
     public Optional<PropertyInquiryDetailsDTO> findPropertyInquiryDetails(
             Long propertyId, LocalDate date, GraphInterval graphInterval) {
@@ -195,42 +202,44 @@ public class DashboardRepositoryImpl implements DashboardRepository {
         NumberExpression<Integer> channelCount = mediumSumExpression(CHANNEL);
         NumberExpression<Integer> lmsCount = mediumSumExpression(LMS);
 
-        return Optional.ofNullable(
-                query.select(
-                                Projections.constructor(
-                                        PropertyInquiryDetailsDTO.class,
-                                        pendingCount,
-                                        completedCount,
-                                        phoneCount,
-                                        channelCount,
-                                        lmsCount))
-                        .from(memberConsultation)
-                        .where(
-                                memberConsultation.property.id.eq(propertyId),
-                                memberConsultation.createdAt.between(
-                                        start.atStartOfDay(),
-                                        end.plusDays(1).atStartOfDay().minusNanos(1)))
-                        .groupBy(memberConsultation.property.id)
-                        .fetchOne());
+        Optional<PropertyInquiryDetailsDTO> optional =
+                Optional.ofNullable(
+                        query.select(
+                                        Projections.constructor(
+                                                PropertyInquiryDetailsDTO.class,
+                                                pendingCount,
+                                                completedCount,
+                                                phoneCount,
+                                                channelCount,
+                                                lmsCount))
+                                .from(memberConsultation)
+                                .where(
+                                        memberConsultation.property.id.eq(propertyId),
+                                        memberConsultation.createdAt.between(
+                                                start.atStartOfDay(),
+                                                end.plusDays(1).atStartOfDay().minusNanos(1)))
+                                .groupBy(memberConsultation.property.id)
+                                .fetchOne());
+
+        if (optional.isEmpty()) throw new NotFoundException(NO_QUERY_RESULT);
+
+        return optional;
     }
 
+    // TODO: 24시간 간격으로 기본값 부여된 상태, 2시간 간격으로 줄여야 PM 요구사항에 부합
     @Override
     public List<PropertyGraphRequirementsDTO> findPropertyGraphDaily(
             Long propertyId, LocalDate date) {
         LocalDate start = getStartDate(date, DAILY);
         LocalDate end = getEndDate(date, DAILY);
         List<Integer> searchKey = new ArrayList<>();
-        IntStream.range(0, 12).forEach(searchKey::add);
+        IntStream.range(0, 24).forEach(searchKey::add);
 
         List<PropertyGraphRequirementsDTO> stats =
                 query.select(
                                 Projections.constructor(
                                         PropertyGraphRequirementsDTO.class,
-                                        memberConsultation
-                                                .createdAt
-                                                .hour()
-                                                .divide(2)
-                                                .castToNum(Integer.class),
+                                        memberConsultation.createdAt.hour(),
                                         pendingCount,
                                         completedCount))
                         .from(memberConsultation)
@@ -239,20 +248,14 @@ public class DashboardRepositoryImpl implements DashboardRepository {
                                 memberConsultation.createdAt.between(
                                         start.atStartOfDay(),
                                         end.plusDays(1).atStartOfDay().minusNanos(1)))
-                        .groupBy(
-                                memberConsultation.createdAt,
-                                memberConsultation
-                                        .createdAt
-                                        .hour()
-                                        .divide(2)
-                                        .castToNum(Integer.class))
+                        .groupBy(memberConsultation.createdAt.hour())
                         .fetch();
 
         Map<Integer, PropertyGraphRequirementsDTO> statsMap =
                 stats.stream()
                         .collect(
                                 Collectors.toMap(
-                                        PropertyGraphRequirementsDTO::getInterval, // 올바른 Getter 사용
+                                        PropertyGraphRequirementsDTO::getHour,
                                         Function.identity()));
 
         List<PropertyGraphRequirementsDTO> result = new ArrayList<>();

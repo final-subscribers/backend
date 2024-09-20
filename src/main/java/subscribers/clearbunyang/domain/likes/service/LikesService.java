@@ -161,7 +161,7 @@ public class LikesService {
     public boolean isLiked(Long memberId, Long propertyId) {
         if (memberId == null) return false;
         String key = memberId + ":" + propertyId;
-        Boolean isLikedInRedis = redisTemplate.opsForHash().hasKey("likes", key);
+        Boolean isLikedInRedis = (Boolean) redisTemplate.opsForHash().get("likes", key);
 
         if (isLikedInRedis != null && isLikedInRedis) {
             return true;

@@ -109,7 +109,7 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
                     + "OR LOWER(p.addrDo) LIKE LOWER(CONCAT('%', :search, '%')) "
                     + "OR LOWER(p.addrGu) LIKE LOWER(CONCAT('%', :search, '%')) "
                     + "OR LOWER(p.addrDong) LIKE LOWER(CONCAT('%', :search, '%')))")
-    List<Property> findPropertiesBySearching(@Param("search") String search);
+    Page<Property> findPropertiesBySearching(@Param("search") String search, Pageable pageable);
 
     @Query(
             "SELECT DISTINCT p FROM Property p "
@@ -126,7 +126,7 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
                     + "AND (:areaMax IS NULL OR EXISTS (SELECT 1 FROM p.areas a WHERE a.squareMeter <= :areaMax)) "
                     + "AND (:totalMin IS NULL OR p.totalNumber >= :totalMin) "
                     + "AND (:totalMax IS NULL OR p.totalNumber <= :totalMax)")
-    List<Property> findPropertiesByFiltering(
+    Page<Property> findPropertiesByFiltering(
             @Param("area") List<String> area,
             @Param("propertyType") PropertyType propertyType,
             @Param("salesType") SalesType salesType,
@@ -136,5 +136,6 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
             @Param("areaMin") Integer areaMin,
             @Param("areaMax") Integer areaMax,
             @Param("totalMin") Integer totalMin,
-            @Param("totalMax") Integer totalMax);
+            @Param("totalMax") Integer totalMax,
+            Pageable pageable);
 }
