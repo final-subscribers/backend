@@ -60,7 +60,7 @@
 ![img_4.png](docs/api4.png)
 
 ## 💻결과물
-- [구현 사이트](https://final-project-eta-silk.vercel.app/)
+- [구현 사이트](https://www.clearbunyang.site/)
 - [스웨거](https://entj.site/swagger-ui/index.html)
 
 
