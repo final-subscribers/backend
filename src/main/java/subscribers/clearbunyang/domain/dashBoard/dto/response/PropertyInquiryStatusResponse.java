@@ -13,11 +13,14 @@ import subscribers.clearbunyang.domain.dashBoard.dto.PropertyInquiryStatusDTO;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class PropertyInquiryStatusResponse {
+
+    String propertyName;
     Integer pending;
     Integer all;
 
     public static PropertyInquiryStatusResponse fromDTO(PropertyInquiryStatusDTO dto) {
         return PropertyInquiryStatusResponse.builder()
+                .propertyName(dto.getPropertyName())
                 .pending(dto.getPending())
                 .all(dto.getAll())
                 .build();
