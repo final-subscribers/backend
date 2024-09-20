@@ -11,7 +11,6 @@ import static subscribers.clearbunyang.global.exception.errorCode.ErrorCode.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import java.time.DayOfWeek;
@@ -24,8 +23,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Medium;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
@@ -181,14 +180,19 @@ public class DashboardRepositoryImpl implements DashboardRepository {
                         .limit(pageable.getPageSize())
                         .fetch();
 
-        if (list.isEmpty()) throw new NotFoundException(NO_QUERY_RESULT);
+        if (list.isEmpty()) {
+            throw new NotFoundException(NO_QUERY_RESULT);
+        }
 
-        JPAQuery<Long> countQuery =
-                query.select(memberConsultation.property.id.countDistinct())
-                        .from(memberConsultation)
-                        .where(memberConsultation.property.admin.id.eq(adminId));
+        Long total =
+                Optional.ofNullable(
+                                query.select(memberConsultation.property.id.countDistinct())
+                                        .from(memberConsultation)
+                                        .where(memberConsultation.property.admin.id.eq(adminId))
+                                        .fetchOne())
+                        .orElse(0L);
 
-        return PageableExecutionUtils.getPage(list, pageable, countQuery::fetchOne);
+        return new PageImpl<>(list, pageable, total);
     }
 
     // TODO: 더 부하가 적은 쿼리에서 exception을 발생시키는 게 좋을 것
@@ -221,7 +225,9 @@ public class DashboardRepositoryImpl implements DashboardRepository {
                                 .groupBy(memberConsultation.property.id)
                                 .fetchOne());
 
-        if (optional.isEmpty()) throw new NotFoundException(NO_QUERY_RESULT);
+        if (optional.isEmpty()) {
+            throw new NotFoundException(NO_QUERY_RESULT);
+        }
 
         return optional;
     }

@@ -37,15 +37,16 @@ public class SideBarSelectedPropertyResponse {
     private String propertyType;
 
     public static SideBarSelectedPropertyResponse toDto(Property property) {
-        File imageFile =
+        String url =
                 property.getFiles().stream()
-                        .filter(file -> file.getType() == FileType.PROPERTY_IMAGE)
+                        .filter(file -> FileType.PROPERTY_IMAGE == file.getType())
                         .findFirst()
+                        .map(File::getLink)
                         .orElse(null);
         return SideBarSelectedPropertyResponse.builder()
                 .id(property.getId())
                 .name(property.getName())
-                .image(imageFile != null ? imageFile.getLink() : null)
+                .image(url)
                 .propertyName(property.getName())
                 .companyName(property.getCompanyName())
                 .constructor(property.getConstructor())
