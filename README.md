@@ -80,274 +80,94 @@ src/
 │   │           ├── domain
 │   │           │   ├── consultation
 │   │           │   │   └── entity
-│   │           │   │       ├── QAdminConsultation.java
-│   │           │   │       └── QMemberConsultation.java
 │   │           │   ├── file
 │   │           │   │   └── entity
-│   │           │   │       └── QFile.java
 │   │           │   ├── likes
 │   │           │   │   └── entity
-│   │           │   │       └── QLikes.java
 │   │           │   ├── property
 │   │           │   │   └── entity
-│   │           │   │       ├── QArea.java
-│   │           │   │       ├── QKeyword.java
-│   │           │   │       └── QProperty.java
 │   │           │   └── user
 │   │           │       └── entity
-│   │           │           ├── QAdmin.java
-│   │           │           └── QMember.java
 │   │           └── global
 │   │               └── entity
-│   │                   └── QBaseEntity.java
 │   ├── java
 │   │   └── subscribers
 │   │       └── clearbunyang
-│   │           ├── ClearBunyangApplication.java
 │   │           ├── domain
 │   │           │   ├── auth
 │   │           │   │   ├── controller
-│   │           │   │   │   ├── AuthController.java
-│   │           │   │   │   ├── EmailController.java
-│   │           │   │   │   ├── SmsController.java
-│   │           │   │   │   └── UserInfoController.java
 │   │           │   │   ├── dto
-│   │           │   │   │   ├── request
-│   │           │   │   │   │   ├── AdminSignUpRequest.java
-│   │           │   │   │   │   ├── EmailVerificationCodeRequest.java
-│   │           │   │   │   │   ├── EmailVerificationRequest.java
-│   │           │   │   │   │   ├── LoginRequest.java
-│   │           │   │   │   │   ├── MemberSignUpRequest.java
-│   │           │   │   │   │   ├── SmsCertificationCodeRequest.java
-│   │           │   │   │   │   └── SmsCertificationRequest.java
+│   │           │   │   │   ├── requesta
 │   │           │   │   │   └── response
-│   │           │   │   │       ├── LoginResponse.java
-│   │           │   │   │       └── UserInfoResponse.java
 │   │           │   │   ├── entity
-│   │           │   │   │   ├── Admin.java
-│   │           │   │   │   ├── Member.java
 │   │           │   │   │   └── enums
-│   │           │   │   │       ├── AdminState.java
-│   │           │   │   │       └── UserRole.java
 │   │           │   │   ├── repository
-│   │           │   │   │   ├── AdminRepository.java
-│   │           │   │   │   └── MemberRepository.java
 │   │           │   │   └── service
-│   │           │   │       ├── AuthEmailService.java
-│   │           │   │       ├── AuthService.java
-│   │           │   │       ├── AuthSmsService.java
-│   │           │   │       ├── SendEmailService.java
-│   │           │   │       ├── SendSmsDao.java
-│   │           │   │       └── SendSmsService.java
 │   │           │   ├── consultation
 │   │           │   │   ├── controller
-│   │           │   │   │   ├── AdminConsultationController.java
-│   │           │   │   │   ├── AdminPropertyConsultationController.java
-│   │           │   │   │   └── MemberConsultationController.java
 │   │           │   │   ├── dto
 │   │           │   │   │   ├── adminConsultation
 │   │           │   │   │   │   ├── request
-│   │           │   │   │   │   │   └── ConsultRequest.java
 │   │           │   │   │   │   └── response
-│   │           │   │   │   │       ├── AdminConsultResponse.java
-│   │           │   │   │   │       ├── ConsultCompletedResponse.java
-│   │           │   │   │   │       ├── ConsultPendingResponse.java
-│   │           │   │   │   │       ├── ConsultantListResponse.java
-│   │           │   │   │   │       └── ConsultantResponse.java
 │   │           │   │   │   ├── adminPropertyConsultation
 │   │           │   │   │   │   ├── request
-│   │           │   │   │   │   │   └── NewCustomerAdditionRequest.java
 │   │           │   │   │   │   └── response
-│   │           │   │   │   │       ├── ConsultCompletedListResponse.java
-│   │           │   │   │   │       ├── ConsultCompletedSummaryResponse.java
-│   │           │   │   │   │       ├── ConsultPendingListResponse.java
-│   │           │   │   │   │       ├── ConsultPendingSummaryResponse.java
-│   │           │   │   │   │       ├── SideBarCompletedResponse.java
-│   │           │   │   │   │       ├── SideBarListResponse.java
-│   │           │   │   │   │       ├── SideBarPendingResponse.java
-│   │           │   │   │   │       └── SideBarSelectedPropertyResponse.java
 │   │           │   │   │   └── memberConsultations
-│   │           │   │   │       ├── ConsultationResponse.java
-│   │           │   │   │       └── MyConsultationsResponse.java
 │   │           │   │   ├── entity
-│   │           │   │   │   ├── AdminConsultation.java
-│   │           │   │   │   ├── MemberConsultation.java
 │   │           │   │   │   └── enums
-│   │           │   │   │       ├── Medium.java
-│   │           │   │   │       ├── Status.java
-│   │           │   │   │       └── Tier.java
 │   │           │   │   ├── exception
-│   │           │   │   │   ├── ConsultantException.java
-│   │           │   │   │   └── DistributedLockException.java
 │   │           │   │   ├── repository
-│   │           │   │   │   ├── AdminConsultationRepository.java
-│   │           │   │   │   └── MemberConsultationRepository.java
 │   │           │   │   └── service
-│   │           │   │       ├── AdminConsultationService.java
-│   │           │   │       ├── AdminPropertyConsultationService.java
-│   │           │   │       └── MemberConsultationService.java
 │   │           │   ├── dashBoard
 │   │           │   │   ├── controller
-│   │           │   │   │   └── AdminDashboardController.java
 │   │           │   │   ├── dto
-│   │           │   │   │   ├── ConsultationDateStatsDTO.java
-│   │           │   │   │   ├── PropertyGraphRequirementsDTO.java
-│   │           │   │   │   ├── PropertyInquiryDetailsDTO.java
-│   │           │   │   │   ├── PropertyInquiryStatusDTO.java
-│   │           │   │   │   ├── PropertySelectDTO.java
-│   │           │   │   │   ├── YearMonthDTO.java
-│   │           │   │   │   ├── YearMonthDayDTO.java
-│   │           │   │   │   ├── YearWeekDTO.java
 │   │           │   │   │   └── response
-│   │           │   │   │       ├── CardComponentResponse.java
-│   │           │   │   │       ├── CardCountDescResponse.java
-│   │           │   │   │       ├── CardTodayStatusResponse.java
-│   │           │   │   │       ├── CardWeekProgressResponse.java
-│   │           │   │   │       ├── DropdownSelectsResponse.java
-│   │           │   │   │       ├── GraphRequirementsResponse.java
-│   │           │   │   │       ├── PropertyInquiryDetailsResponse.java
-│   │           │   │   │       ├── PropertyInquiryStatusResponse.java
-│   │           │   │   │       └── PropertySelectResponse.java
 │   │           │   │   ├── entity
 │   │           │   │   │   └── enums
-│   │           │   │   │       ├── GraphInterval.java
-│   │           │   │   │       └── Phase.java
 │   │           │   │   ├── repository
-│   │           │   │   │   ├── DashboardRepository.java
-│   │           │   │   │   └── DashboardRepositoryImpl.java
 │   │           │   │   └── service
-│   │           │   │       └── AdminDashboardService.java
 │   │           │   ├── likes
 │   │           │   │   ├── controller
-│   │           │   │   │   └── LikesController.java
 │   │           │   │   ├── dto
 │   │           │   │   │   └── response
-│   │           │   │   │       ├── LikesPageResponse.java
-│   │           │   │   │       └── LikesPropertyResponse.java
 │   │           │   │   ├── entity
-│   │           │   │   │   └── Likes.java
 │   │           │   │   ├── repository
-│   │           │   │   │   └── LikesRepository.java
 │   │           │   │   └── service
-│   │           │   │       └── LikesService.java
 │   │           │   └── property
 │   │           │       ├── controller
-│   │           │       │   ├── AdminPropertyController.java
-│   │           │       │   ├── CommonPropertyController.java
-│   │           │       │   ├── HomeController.java
-│   │           │       │   └── SearchController.java
 │   │           │       ├── dto
-│   │           │       │   ├── PropertyDateDto.java
 │   │           │       │   ├── request
-│   │           │       │   │   ├── AreaRequest.java
-│   │           │       │   │   ├── KeywordRequest.java
-│   │           │       │   │   ├── MemberConsultationRequest.java
-│   │           │       │   │   ├── PropertySaveRequest.java
-│   │           │       │   │   └── PropertyUpdateRequest.java
 │   │           │       │   └── response
-│   │           │       │       ├── AreaResponse.java
-│   │           │       │       ├── HomeResponse.java
-│   │           │       │       ├── KeywordResponse.java
-│   │           │       │       ├── MyPropertyCardResponse.java
-│   │           │       │       ├── MyPropertyTableResponse.java
-│   │           │       │       ├── PropertyDetailsResponse.java
-│   │           │       │       ├── PropertySummaryResponse.java
-│   │           │       │       └── SearchResponse.java
 │   │           │       ├── entity
-│   │           │       │   ├── Area.java
-│   │           │       │   ├── Keyword.java
-│   │           │       │   ├── Property.java
 │   │           │       │   └── enums
-│   │           │       │       ├── KeywordName.java
-│   │           │       │       ├── KeywordType.java
-│   │           │       │       ├── PropertyType.java
-│   │           │       │       └── SalesType.java
 │   │           │       ├── exception
-│   │           │       │   └── JsonConversionException.java
 │   │           │       ├── repository
-│   │           │       │   ├── AreaRepository.java
-│   │           │       │   ├── KeywordRepository.java
-│   │           │       │   └── PropertyRepository.java
 │   │           │       └── service
-│   │           │           ├── AreaService.java
-│   │           │           ├── HomeService.java
-│   │           │           ├── KeywordService.java
-│   │           │           ├── PropertyService.java
-│   │           │           └── SearchService.java
 │   │           └── global
 │   │               ├── RedissonLock
-│   │               │   ├── DistributedLock.java
-│   │               │   └── DistributedLockAop.java
 │   │               ├── api
-│   │               │   ├── Response.java
-│   │               │   └── Result.java
 │   │               ├── cache
-│   │               │   ├── CacheService.java
-│   │               │   └── RedissonCacheServiceImpl.java
 │   │               ├── config
-│   │               │   ├── AsyncConfig.java
-│   │               │   ├── AsyncDecorator.java
-│   │               │   ├── AsyncHandler.java
-│   │               │   ├── BatchConfig.java
-│   │               │   ├── JpaAuditingConfig.java
-│   │               │   ├── ObjectMapperConfig.java
-│   │               │   ├── RedisConfig.java
-│   │               │   ├── S3Config.java
-│   │               │   ├── SecurityConfig.java
-│   │               │   └── SwaggerConfig.java
 │   │               ├── dto
-│   │               │   └── PagedDto.java
 │   │               ├── entity
-│   │               │   └── BaseEntity.java
 │   │               ├── exception
-│   │               │   ├── CustomException.java
-│   │               │   ├── EntityNotFoundException.java
-│   │               │   ├── InvalidValueException.java
 │   │               │   ├── errorCode
-│   │               │   │   └── ErrorCode.java
 │   │               │   └── handler
-│   │               │       └── GlobalExceptionHandler.java
 │   │               ├── file
 │   │               │   ├── controller
-│   │               │   │   └── FileController.java
 │   │               │   ├── dto
-│   │               │   │   ├── FileRequestDTO.java
-│   │               │   │   ├── FileResponseDTO.java
-│   │               │   │   ├── PresignedUrlRequestDTO.java
-│   │               │   │   └── UploadFileDTO.java
 │   │               │   ├── entity
-│   │               │   │   ├── File.java
 │   │               │   │   └── enums
-│   │               │   │       └── FileType.java
 │   │               │   ├── repository
-│   │               │   │   └── FileRepository.java
 │   │               │   └── service
-│   │               │       └── FileService.java
 │   │               ├── scheduler
-│   │               │   └── Scheduler.java
 │   │               ├── security
 │   │               │   ├── details
-│   │               │   │   ├── CustomUserDetails.java
-│   │               │   │   └── CustomUserDetailsService.java
 │   │               │   ├── filter
-│   │               │   │   └── AuthenticationFilter.java
-│   │               │   ├── token
-│   │               │   │   ├── JwtTokenProcessor.java
-│   │               │   │   ├── JwtTokenProvider.java
-│   │               │   │   ├── JwtTokenService.java
-│   │               │   │   ├── JwtTokenTime.java
-│   │               │   │   └── JwtTokenType.java
+│   │               │   ├── tokeice
 │   │               │   └── util
-│   │               │       └── CookieUtil.java
 │   │               ├── service
-│   │               │   └── DBInit.java
 │   │               └── validation
-│   │                   ├── EmailValidation.java
-│   │                   ├── EmailValidator.java
-│   │                   ├── NumericValidation.java
-│   │                   ├── NumericValidator.java
-│   │                   ├── PasswordValidation.java
-│   │                   └── PasswordValidator.java
 │   └── resources
 │       ├── application.yaml
 │       ├── application.yaml.file
@@ -357,54 +177,54 @@ src/
     └── java
         └── subscribers
             └── clearbunyang
-                ├── ClearBunyangApplicationTests.java
+                ├── ClearBunyangApplicationTests
                 ├── domain
                 │   ├── auth
                 │   │   └── service
-                │   │       ├── AuthSendEmailServiceTest.java
-                │   │       ├── AuthServiceTest.java
-                │   │       └── AuthSmsServiceTest.java
+                │   │       ├── AuthSendEmailServiceTest
+                │   │       ├── AuthServiceTest
+                │   │       └── AuthSmsServiceTest
                 │   ├── consultation
                 │   │   ├── scheduler
-                │   │   │   └── SchedulerIntegrationTest.java
+                │   │   │   └── SchedulerIntegrationTest
                 │   │   └── service
-                │   │       ├── AdminConsultationControllerIntegrationTest.java
-                │   │       ├── AdminConsultationServiceTest.java
-                │   │       ├── AdminPropertyConsultationServiceTest.java
-                │   │       ├── MyConsultationServiceTest.java
+                │   │       ├── AdminConsultationControllerIntegrationTest
+                │   │       ├── AdminConsultationServiceTest
+                │   │       ├── AdminPropertyConsultationServiceTest
+                │   │       ├── MyConsultationServiceTest
                 │   │       └── lockTest.js
                 │   ├── like
                 │   │   └── service
-                │   │       ├── LikesRedisServiceTest.java
-                │   │       └── LikesServiceTest.java
+                │   │       ├── LikesRedisServiceTest
+                │   │       └── LikesServiceTest
                 │   └── property
                 │       ├── controller
-                │       │   ├── AdminPropertyControllerIntegrationTest.java
-                │       │   ├── AdminPropertyControllerTest.java
-                │       │   ├── CommonPropertyControllerIntegrationTest.java
-                │       │   └── CommonPropertyControllerTest.java
+                │       │   ├── AdminPropertyControllerIntegrationTest
+                │       │   ├── AdminPropertyControllerTest
+                │       │   ├── CommonPropertyControllerIntegrationTest
+                │       │   └── CommonPropertyControllerTest
                 │       └── service
-                │           ├── HomeServiceTest.java
-                │           ├── PropertyServiceIntegrationTest1.java
-                │           └── PropertyServiceIntegrationTest2.java
+                │           ├── HomeServiceTest
+                │           ├── PropertyServiceIntegrationTest1
+                │           └── PropertyServiceIntegrationTest2
                 ├── security
-                │   ├── AuthenticationFilterMocking.java
-                │   ├── WithMockCustomAdminSecurityContextFactory.java
-                │   ├── WithMockCustomMemberSecurityContextFactory.java
+                │   ├── AuthenticationFilterMocking
+                │   ├── WithMockCustomAdminSecurityContextFactory
+                │   ├── WithMockCustomMemberSecurityContextFactor
                 │   └── annotation
-                │       ├── WithMockCustomAdmin.java
-                │       └── WithMockCustomMember.java
+                │       ├── WithMockCustomAdmin
+                │       └── WithMockCustomMember
                 ├── testdata
-                │   ├── AdminConsultationInsert.java
-                │   ├── CompletedConsultationInsert.java
-                │   ├── MemberConsultationInsert.java
-                │   ├── RandomDateGenerator.java
-                │   ├── RandomKoreanNameGenerator.java
-                │   └── RandomPhoneNumberGenerator.java
+                │   ├── AdminConsultationInsert
+                │   ├── CompletedConsultationInsert
+                │   ├── MemberConsultationInsert
+                │   ├── RandomDateGenerator
+                │   ├── RandomKoreanNameGenerator
+                │   └── RandomPhoneNumberGenerator
                 └── testfixtures
-                    ├── AdminRegisterFixture.java
-                    ├── MemberConsultationRequestDTOFixture.java
-                    ├── MemberRegisterFixture.java
-                    ├── PropertySaveRequestDTOFixture.java
-                    └── PropertyUpdateRequestDTOFixture.java
+                    ├── AdminRegisterFixture
+                    ├── MemberConsultationRequestDTOFixture
+                    ├── MemberRegisterFixture
+                    ├── PropertySaveRequestDTOFixture
+                    └── PropertyUpdateRequestDTOFixture
 ```
