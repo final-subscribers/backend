@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import subscribers.clearbunyang.domain.dashBoard.dto.ConsultationDateStatsDTO;
 import subscribers.clearbunyang.domain.dashBoard.dto.PropertyGraphRequirementsDTO;
@@ -18,12 +18,12 @@ import subscribers.clearbunyang.domain.dashBoard.dto.response.CardTodayStatusRes
 import subscribers.clearbunyang.domain.dashBoard.dto.response.CardWeekProgressResponse;
 import subscribers.clearbunyang.domain.dashBoard.dto.response.DropdownSelectsResponse;
 import subscribers.clearbunyang.domain.dashBoard.dto.response.GraphRequirementsResponse;
+import subscribers.clearbunyang.domain.dashBoard.dto.response.PropertiesInquiryStatusResponse;
 import subscribers.clearbunyang.domain.dashBoard.dto.response.PropertyInquiryDetailsResponse;
 import subscribers.clearbunyang.domain.dashBoard.dto.response.PropertyInquiryStatusResponse;
 import subscribers.clearbunyang.domain.dashBoard.dto.response.PropertySelectResponse;
 import subscribers.clearbunyang.domain.dashBoard.entity.enums.GraphInterval;
 import subscribers.clearbunyang.domain.dashBoard.repository.DashboardRepository;
-import subscribers.clearbunyang.global.dto.PagedDto;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 
 @Service
@@ -74,14 +74,15 @@ public class AdminDashboardService {
                 .build();
     }
 
-    public PagedDto<PropertyInquiryStatusResponse> getPropertiesInquiryStats(
-            Long adminId, Pageable pageable) {
+    public PropertiesInquiryStatusResponse getPropertiesInquiryStats(
+            Long adminId, int page, int size) {
+        PageRequest pageable = PageRequest.of(page, size);
         Page<PropertyInquiryStatusResponse> propertiesInquiryStats =
                 dashboardRepository
                         .findPropertiesInquiryStats(adminId, pageable)
                         .map(PropertyInquiryStatusResponse::fromDTO);
 
-        return PagedDto.toDTO(propertiesInquiryStats);
+        return PropertiesInquiryStatusResponse.of(propertiesInquiryStats);
     }
 
     public PropertyInquiryDetailsResponse getPropertyInquiryDetails(

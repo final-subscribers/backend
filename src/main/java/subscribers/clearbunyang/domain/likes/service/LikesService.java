@@ -14,9 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.auth.entity.Member;
 import subscribers.clearbunyang.domain.auth.repository.MemberRepository;
+import subscribers.clearbunyang.domain.likes.dto.response.LikesPageResponse;
 import subscribers.clearbunyang.domain.likes.dto.response.LikesPropertyResponse;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
+import subscribers.clearbunyang.domain.property.repository.KeywordRepository;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.global.exception.EntityNotFoundException;
 import subscribers.clearbunyang.global.exception.InvalidValueException;
@@ -30,6 +33,7 @@ public class LikesService {
     private final LikesRepository likesRepository;
     private final MemberRepository memberRepository;
     private final PropertyRepository propertyRepository;
+    private final KeywordRepository keywordRepository;
 
     @Autowired private RedisTemplate<String, Object> redisTemplate;
 
@@ -69,7 +73,7 @@ public class LikesService {
     }
 
     @Transactional(readOnly = true)
-    public Page<LikesPropertyResponse> getMyFavoriteProperties(
+    public LikesPageResponse getMyFavoriteProperties(
             Long memberId, String status, int page, int size) {
         Member member =
                 memberRepository
@@ -79,66 +83,90 @@ public class LikesService {
         LocalDate currentDate = LocalDate.now();
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        Page<Property> properties;
-
-        // 상태 open인지 closed인지에 따라 날짜에 해당하는 페이징된 물건값 싹 다 받아와서 필터 통과시키기
+        List<Property> properties;
         if (status.equals("open")) {
-            properties = propertyRepository.findByDateRangeTrue(currentDate, pageRequest);
+            properties = propertyRepository.findByDateRangeTrue(currentDate);
         } else if (status.equals("closed")) {
-            properties = propertyRepository.findByDateRangeFalse(currentDate, pageRequest);
+            properties = propertyRepository.findByDateRangeFalse(currentDate);
         } else {
             throw new InvalidValueException(ErrorCode.BAD_REQUEST);
         }
 
         List<Property> filteredProperties =
-                properties.getContent().stream()
+                properties.stream()
                         .filter(
                                 property -> {
-                                    System.out.println(
-                                            "Filtering Property ID: " + property.getId());
                                     String key = memberId + ":" + property.getId();
                                     Boolean isLikedInRedis =
                                             (Boolean) redisTemplate.opsForHash().get("likes", key);
-                                    System.out.println(
-                                            "Property ID: "
-                                                    + property.getId()
-                                                    + ", Redis like status: "
-                                                    + isLikedInRedis);
 
-                                    // Redis에서 키값 true인경우 물건값 반환되어야함
                                     if (Boolean.TRUE.equals(isLikedInRedis)) {
-                                        System.out.println(
-                                                "Property ID: "
-                                                        + property.getId()
-                                                        + " is liked in Redis.");
                                         return true;
                                     }
 
-                                    // Redis에서 키값 false인경우 물건값 반환되면 안됨
                                     if (Boolean.FALSE.equals(isLikedInRedis)) {
-                                        System.out.println(
-                                                "Property ID: "
-                                                        + property.getId()
-                                                        + " is disliked in Redis.");
                                         return false;
                                     }
 
-                                    // Redis에서 키값 없으면 좋아요 유무 db에서 확인해서 반환여부 결정
-                                    boolean existsInDb =
-                                            likesRepository.existsByMemberIdAndPropertyId(
-                                                    memberId, property.getId());
-                                    System.out.println(
-                                            "Property ID: "
-                                                    + property.getId()
-                                                    + ", Exists in DB: "
-                                                    + existsInDb);
-                                    return existsInDb;
+                                    return likesRepository.existsByMemberIdAndPropertyId(
+                                            memberId, property.getId());
                                 })
                         .collect(Collectors.toList());
 
-        Page<Property> filteredPage =
-                new PageImpl<>(filteredProperties, pageRequest, filteredProperties.size());
+        int totalElements = filteredProperties.size();
+        int start = (int) pageRequest.getOffset();
+        int end = Math.min((start + size), totalElements);
 
-        return filteredPage.map(LikesPropertyResponse::fromEntity);
+        List<Property> pagedProperties = filteredProperties.subList(start, end);
+
+        List<LikesPropertyResponse> likesPropertyResponses =
+                pagedProperties.stream()
+                        .map(
+                                property -> {
+                                    List<String> infraKeywords =
+                                            keywordRepository
+                                                    .findByPropertyIdAndTypeAndIsSearchableTrue(
+                                                            property.getId(), KeywordType.INFRA)
+                                                    .stream()
+                                                    .map(keyword -> keyword.getName().name())
+                                                    .collect(Collectors.toList());
+
+                                    List<String> benefitKeywords =
+                                            keywordRepository
+                                                    .findByPropertyIdAndTypeAndIsSearchableTrue(
+                                                            property.getId(), KeywordType.BENEFIT)
+                                                    .stream()
+                                                    .map(keyword -> keyword.getName().name())
+                                                    .collect(Collectors.toList());
+
+                                    return LikesPropertyResponse.fromEntity(
+                                            property, infraKeywords, benefitKeywords);
+                                })
+                        .collect(Collectors.toList());
+
+        Page<LikesPropertyResponse> pageResult =
+                new PageImpl<>(likesPropertyResponses, pageRequest, likesPropertyResponses.size());
+
+        return LikesPageResponse.fromPage(pageResult, size, page);
+    }
+
+    /**
+     * 좋아요가 되어있는지 redis에서 확인 후 없으면 디비에서 확인해서 리턴하는 메소드
+     *
+     * @param memberId
+     * @param propertyId
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public boolean isLiked(Long memberId, Long propertyId) {
+        if (memberId == null) return false;
+        String key = memberId + ":" + propertyId;
+        Boolean isLikedInRedis = (Boolean) redisTemplate.opsForHash().get("likes", key);
+
+        if (isLikedInRedis != null && isLikedInRedis) {
+            return true;
+        } else {
+            return likesRepository.existsByMemberIdAndPropertyId(memberId, propertyId);
+        }
     }
 }

@@ -205,4 +205,17 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
                                 .with(csrf()))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @DisplayName("매물 삭제 테스트")
+    @WithMockCustomAdmin
+    public void deleteProperty() throws Exception {
+        doNothing().when(propertyService).deleteProperty(anyLong(), anyLong());
+
+        mockMvc.perform(
+                        delete("/api/admin/properties/{propertyId}", anyLong())
+                                .contentType("application/json")
+                                .with(csrf()))
+                .andExpect(status().isOk());
+    }
 }

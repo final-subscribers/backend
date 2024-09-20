@@ -14,6 +14,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.property.dto.PropertyDateDto;
 import subscribers.clearbunyang.domain.property.entity.Property;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
+import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
+import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
 import subscribers.clearbunyang.global.exception.EntityNotFoundException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 
@@ -59,12 +62,10 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
 
     @Query(
             "SELECT p FROM Property p WHERE p.startDate <= :currentDate AND p.endDate >= :currentDate")
-    Page<Property> findByDateRangeTrue(
-            @Param("currentDate") LocalDate currentDate, @Param("pageable") Pageable pageable);
+    List<Property> findByDateRangeTrue(@Param("currentDate") LocalDate currentDate);
 
     @Query("SELECT p FROM Property p WHERE p.startDate > :currentDate OR p.endDate < :currentDate")
-    Page<Property> findByDateRangeFalse(
-            @Param("currentDate") LocalDate currentDate, @Param("pageable") Pageable pageable);
+    List<Property> findByDateRangeFalse(@Param("currentDate") LocalDate currentDate);
 
     /**
      * 데이터가 가장 많은 엔티티를 fetch join을 통해서 가져오고 나머지 엔티티에 대해서는 batch_fetch_size를 통해서 in 쿼리로 성능 챙기기
@@ -72,7 +73,6 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
      * @param propertyId
      * @return
      */
-    // todo default_batch_fetch_size가 있어도 property와 1:n 관계인 엔티티들을 호출할떄마다 sql 쿼리문이 실행됨. 이거 맞아?
     @Query("SELECT p FROM Property p " + "JOIN FETCH p.areas " + "WHERE p.id = :propertyId")
     Optional<Property> findByPropertyIdUsingFetchJoin(Long propertyId);
 
@@ -98,4 +98,44 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     @Transactional
     @Query("DELETE FROM Property p where p.id=:propertyId")
     int deletePropertyById(Long propertyId);
+
+    @Query(
+            "SELECT DISTINCT p FROM Property p "
+                    + "LEFT JOIN p.areas a "
+                    + "LEFT JOIN p.keywords k "
+                    + "WHERE"
+                    + "(LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) "
+                    + "OR LOWER(p.areaAddr) LIKE LOWER(CONCAT('%', :search, '%')) "
+                    + "OR LOWER(p.addrDo) LIKE LOWER(CONCAT('%', :search, '%')) "
+                    + "OR LOWER(p.addrGu) LIKE LOWER(CONCAT('%', :search, '%')) "
+                    + "OR LOWER(p.addrDong) LIKE LOWER(CONCAT('%', :search, '%')))")
+    Page<Property> findPropertiesBySearching(@Param("search") String search, Pageable pageable);
+
+    @Query(
+            "SELECT DISTINCT p FROM Property p "
+                    + "LEFT JOIN p.areas a "
+                    + "LEFT JOIN p.keywords k "
+                    + "WHERE "
+                    + "(:area IS NULL OR LOWER(p.addrDo) IN :area) "
+                    + "AND (:propertyType IS NULL OR p.propertyType = :propertyType) "
+                    + "AND (:salesType IS NULL OR p.salesType = :salesType) "
+                    + "AND (:keyword IS NULL OR EXISTS (SELECT 1 FROM p.keywords k WHERE LOWER(k.name) = LOWER(:keyword))) "
+                    + "AND (:priceMin IS NULL OR EXISTS (SELECT 1 FROM p.areas a WHERE a.price >= :priceMin OR a.discountPrice >= :priceMin)) "
+                    + "AND (:priceMax IS NULL OR EXISTS (SELECT 1 FROM p.areas a WHERE a.price <= :priceMax OR a.discountPrice <= :priceMax)) "
+                    + "AND (:areaMin IS NULL OR EXISTS (SELECT 1 FROM p.areas a WHERE a.squareMeter >= :areaMin)) "
+                    + "AND (:areaMax IS NULL OR EXISTS (SELECT 1 FROM p.areas a WHERE a.squareMeter <= :areaMax)) "
+                    + "AND (:totalMin IS NULL OR p.totalNumber >= :totalMin) "
+                    + "AND (:totalMax IS NULL OR p.totalNumber <= :totalMax)")
+    Page<Property> findPropertiesByFiltering(
+            @Param("area") List<String> area,
+            @Param("propertyType") PropertyType propertyType,
+            @Param("salesType") SalesType salesType,
+            @Param("keyword") KeywordType keyword,
+            @Param("priceMin") Integer priceMin,
+            @Param("priceMax") Integer priceMax,
+            @Param("areaMin") Integer areaMin,
+            @Param("areaMax") Integer areaMax,
+            @Param("totalMin") Integer totalMin,
+            @Param("totalMax") Integer totalMax,
+            Pageable pageable);
 }

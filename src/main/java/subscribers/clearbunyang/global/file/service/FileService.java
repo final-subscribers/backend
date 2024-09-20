@@ -108,19 +108,6 @@ public class FileService {
      */
     private String createPath(String directoryName, String fileName) {
         String fileId = createFileId();
-        return String.format("%s/%s:%s", directoryName, fileId, fileName);
-    }
-
-    /**
-     * 저장된 파일에 접근할 수 있는 URL 리턴
-     *
-     * @param fileName 파일 이름
-     * @param directoryName 디렉토리 이름
-     * @return
-     */
-    public String getFile(String fileName, String directoryName) {
-        return String.format(
-                "https://%s.r2.cloudflarestorage.com/%s/%s/%s",
-                accountId, bucket, directoryName, fileName);
+        return String.format("%s/%s-%s", directoryName, fileId, fileName);
     }
 }

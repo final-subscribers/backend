@@ -20,6 +20,7 @@ import subscribers.clearbunyang.domain.consultation.entity.enums.Status;
 import subscribers.clearbunyang.domain.consultation.repository.AdminConsultationRepository;
 import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
+import subscribers.clearbunyang.domain.likes.service.LikesService;
 import subscribers.clearbunyang.domain.property.dto.request.*;
 import subscribers.clearbunyang.domain.property.dto.response.KeywordResponse;
 import subscribers.clearbunyang.domain.property.dto.response.MyPropertyCardResponse;
@@ -53,6 +54,7 @@ public class PropertyService {
     private final KeywordRepository keywordRepository;
     private final AreaRepository areaRepository;
     private final FileRepository fileRepository;
+    private final LikesService likesService;
 
     /**
      * 물건을 저장하는 메소드
@@ -102,14 +104,12 @@ public class PropertyService {
     @CacheEvict(
             value = {"ConsultPendingList", "ConsultCompletedList"},
             allEntries = true)
-    // todo 리팩토링 하기
     public MemberConsultation saveConsultation(
             Long propertyId, MemberConsultationRequest requestDTO, Long memberId) {
         Property property = propertyRepository.findPropertyById(propertyId);
         Member member = (memberId != null) ? memberRepository.findMemberById(memberId) : null;
-        AdminConsultation adminConsultation = AdminConsultation.builder().build();
         AdminConsultation savedAdminConsultation =
-                adminConsultationRepository.save(adminConsultation);
+                adminConsultationRepository.save(AdminConsultation.builder().build());
 
         MemberConsultation memberConsultation =
                 MemberConsultation.toEntity(requestDTO, property, member, savedAdminConsultation);
@@ -126,10 +126,7 @@ public class PropertyService {
     @Transactional(readOnly = true)
     public PropertyDetailsResponse getPropertyDetails(Long propertyId, Long memberId) {
         Property property = propertyRepository.getByPropertyUsingFetchJoin(propertyId);
-        boolean likesExisted = false;
-        if (memberId != null) {
-            likesExisted = likesRepository.existsByMemberIdAndPropertyId(memberId, propertyId);
-        }
+        boolean likesExisted = likesService.isLiked(memberId, propertyId);
 
         Map<KeywordType, List<KeywordResponse>> categorizedKeywords =
                 keywordService.categorizedKeywords(propertyId);
@@ -145,7 +142,6 @@ public class PropertyService {
      * @param adminId
      * @return
      */
-    // todo 인덱스 설정하기
     @Transactional(readOnly = true)
     public PagedDto<MyPropertyCardResponse> getCards(int page, int size, Long adminId) {
         PageRequest pageRequest =
@@ -214,35 +210,26 @@ public class PropertyService {
     }
 
     @Transactional
-    // TODO 리팩토링하기
     public Property updateProperty(
             Long propertyId, PropertyUpdateRequest requestDTO, Long adminId) {
-        /**
-         * propertySaveResponseDTO 필드를 propertyUpdateRequestDTO 필드로 바꾸기(API 명세서도)
-         *
-         * <p>1. adminId와 propertyId를 가진 property가 있는지 확인. 없으면 예외 던지기 2. property에서
-         * keywords,areas,files delete 쿼리로 모두 삭제하기 3. property에서 keywords,areas,files addAll 쿼리로 모두
-         * 저장하기 4. property 필드 setter해서 save하기
-         */
         propertyRepository.existsByIdAndAdmin_id(propertyId, adminId);
-
         Property property = propertyRepository.findPropertyById(propertyId);
-        keywordRepository.deleteByPropertyId(propertyId);
-        areaRepository.deleteByPropertyId(propertyId);
-        fileRepository.deleteByPropertyId(propertyId);
 
+        fileRepository.deleteByPropertyId(propertyId);
         List<FileRequestDTO> files = new ArrayList<>();
         files.add(requestDTO.getPropertyImage());
         files.add(requestDTO.getSupplyInformation());
         if (requestDTO.getMarketing() != null) files.add(requestDTO.getMarketing());
 
+        keywordRepository.deleteByPropertyId(propertyId);
         List<KeywordRequest> keywords = new ArrayList<>();
         keywords.addAll(requestDTO.getBenefit());
         keywords.addAll(requestDTO.getInfra());
+        keywordService.saveKeywords(keywords, property);
 
+        areaRepository.deleteByPropertyId(propertyId);
         areaService.saveAreas(requestDTO.getAreas(), property);
         fileService.saveFiles(files, property);
-        keywordService.saveKeywords(keywords, property);
 
         property.update(requestDTO);
 

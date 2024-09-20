@@ -4,8 +4,6 @@ package subscribers.clearbunyang.domain.dashBoard.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,11 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import subscribers.clearbunyang.domain.dashBoard.dto.response.CardComponentResponse;
 import subscribers.clearbunyang.domain.dashBoard.dto.response.DropdownSelectsResponse;
+import subscribers.clearbunyang.domain.dashBoard.dto.response.PropertiesInquiryStatusResponse;
 import subscribers.clearbunyang.domain.dashBoard.dto.response.PropertyInquiryDetailsResponse;
-import subscribers.clearbunyang.domain.dashBoard.dto.response.PropertyInquiryStatusResponse;
 import subscribers.clearbunyang.domain.dashBoard.entity.enums.GraphInterval;
 import subscribers.clearbunyang.domain.dashBoard.service.AdminDashboardService;
-import subscribers.clearbunyang.global.dto.PagedDto;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
 @RestController
@@ -42,11 +39,12 @@ public class AdminDashboardController {
     }
 
     @GetMapping("dashboard/properties")
-    public PagedDto<PropertyInquiryStatusResponse> getDashboardProperties(
-            @PageableDefault(size = 5) Pageable pageable,
+    public PropertiesInquiryStatusResponse getDashboardProperties(
+            @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(name = "size", required = false, defaultValue = "5") int size,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return adminDashboardService.getPropertiesInquiryStats(
-                customUserDetails.getUserId(), pageable);
+                customUserDetails.getUserId(), page, size);
     }
 
     @GetMapping("/dashboard/properties/{property_id}")

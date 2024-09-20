@@ -132,6 +132,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         List<String> allowed =
                 Arrays.asList(
+                        "http://localhost:8080",
                         "http://localhost:5173",
                         "https://entj.site",
                         "https://final-project-l15zu1wpp-yeojins-projects-a26b6f35.vercel.app",

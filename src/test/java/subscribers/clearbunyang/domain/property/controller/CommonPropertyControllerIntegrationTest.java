@@ -21,7 +21,6 @@ import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.global.config.SecurityConfig;
 import subscribers.clearbunyang.security.AuthenticationFilterMocking;
-import subscribers.clearbunyang.security.annotation.WithMockCustomAdmin;
 import subscribers.clearbunyang.security.annotation.WithMockCustomMember;
 import subscribers.clearbunyang.testfixtures.AdminRegisterFixture;
 import subscribers.clearbunyang.testfixtures.MemberConsultationRequestDTOFixture;
@@ -75,28 +74,12 @@ public class CommonPropertyControllerIntegrationTest extends AuthenticationFilte
 
         mockMvc.perform(
                         post(
-                                        "/api/common/properties/{propertyId}/consultation",
+                                        "/api/member/properties/{propertyId}/consultation",
                                         savedProperty.getId())
                                 .contentType("application/json")
                                 .content(objectMapper.writeValueAsString(requestDTO))
                                 .with(csrf()))
                 .andExpect(status().isOk());
-    }
-
-    @DisplayName("상담 등록 테스트: admin일때")
-    @Test
-    @WithMockCustomAdmin
-    public void addConsultation3() throws Exception {
-        MemberConsultationRequest requestDTO = MemberConsultationRequestDTOFixture.createDefault();
-
-        mockMvc.perform(
-                        post(
-                                        "/api/common/properties/{propertyId}/consultation",
-                                        savedProperty.getId())
-                                .contentType("application/json")
-                                .content(objectMapper.writeValueAsString(requestDTO))
-                                .with(csrf()))
-                .andExpect(status().isForbidden());
     }
 
     @DisplayName("매물 읽어오기")

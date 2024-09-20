@@ -11,7 +11,6 @@ import subscribers.clearbunyang.domain.property.dto.request.PropertySaveRequest;
 import subscribers.clearbunyang.domain.property.dto.request.PropertyUpdateRequest;
 import subscribers.clearbunyang.domain.property.dto.response.MyPropertyCardResponse;
 import subscribers.clearbunyang.domain.property.dto.response.MyPropertyTableResponse;
-import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.global.dto.PagedDto;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
@@ -82,7 +81,7 @@ public class AdminPropertyController {
      * @param customUserDetails
      */
     @Operation(summary = "매물삭제")
-    @GetMapping("/properties/{propertyId}")
+    @DeleteMapping("/properties/{propertyId}")
     public void deleteProperty(
             @PathVariable Long propertyId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
@@ -90,13 +89,19 @@ public class AdminPropertyController {
         propertyService.deleteProperty(propertyId, adminId);
     }
 
+    /**
+     * 매물을 수정하는 메소드
+     *
+     * @param propertyId
+     * @param requestDTO
+     * @param customUserDetails
+     */
     @PatchMapping("/properties/{propertyId}")
     public void updateProperty(
             @PathVariable Long propertyId,
             @Valid @RequestBody PropertyUpdateRequest requestDTO,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Long adminId = customUserDetails.getUserId();
-        Property updatedProperty = propertyService.updateProperty(propertyId, requestDTO, adminId);
-        System.out.println("성공");
+        propertyService.updateProperty(propertyId, requestDTO, adminId);
     }
 }

@@ -29,9 +29,4 @@ public class FileController {
                                         uploadFile.getType().name(), uploadFile.getName()))
                 .collect(Collectors.toList());
     }
-    // todo 배포된 프론트에서 해당 URL에 접근할 수 있는지 확인하기
-    @GetMapping("/loadFile")
-    public String loadFile(@RequestParam String fileName, @RequestParam String directoryName) {
-        return fileService.getFile(fileName, directoryName);
-    }
 }

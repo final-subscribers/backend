@@ -19,24 +19,16 @@ public interface MemberConsultationRepository extends JpaRepository<MemberConsul
     @Query(
             "SELECT mc FROM MemberConsultation mc "
                     + "JOIN mc.property p "
-                    + "WHERE mc.member.id = :userId AND mc.adminConsultation IS NULL "
-                    + "AND (LOWER(p.buildingName) LIKE LOWER(CONCAT('%', :search, '%')) "
+                    + "WHERE mc.member.id = :userId AND mc.status = :status "
+                    + "AND (LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) "
+                    + "OR LOWER(p.areaAddr) LIKE LOWER(CONCAT('%', :search, '%')) "
                     + "OR LOWER(p.addrDo) LIKE LOWER(CONCAT('%', :search, '%')) "
                     + "OR LOWER(p.addrGu) LIKE LOWER(CONCAT('%', :search, '%')) "
                     + "OR LOWER(p.addrDong) LIKE LOWER(CONCAT('%', :search, '%')))")
-    List<MemberConsultation> findPendingConsultationsByUserIdAndSearch(
-            @Param("userId") Long userId, @Param("search") String search);
-
-    @Query(
-            "SELECT mc FROM MemberConsultation mc "
-                    + "JOIN mc.property p "
-                    + "WHERE mc.member.id = :userId AND mc.adminConsultation IS NOT NULL "
-                    + "AND (LOWER(p.buildingName) LIKE LOWER(CONCAT('%', :search, '%')) "
-                    + "OR LOWER(p.addrDo) LIKE LOWER(CONCAT('%', :search, '%')) "
-                    + "OR LOWER(p.addrGu) LIKE LOWER(CONCAT('%', :search, '%')) "
-                    + "OR LOWER(p.addrDong) LIKE LOWER(CONCAT('%', :search, '%')))")
-    List<MemberConsultation> findCompletedConsultationsByUserIdAndSearch(
-            @Param("userId") Long userId, @Param("search") String search);
+    List<MemberConsultation> findConsultationsByUserIdAndSearch(
+            @Param("userId") Long userId,
+            @Param("search") String search,
+            @Param("status") Status status);
 
     @Query(
             "SELECT mc FROM MemberConsultation mc "
