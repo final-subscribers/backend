@@ -226,23 +226,20 @@ public class DashboardRepositoryImpl implements DashboardRepository {
         return optional;
     }
 
+    // TODO: 24시간 간격으로 기본값 부여된 상태, 2시간 간격으로 줄여야 PM 요구사항에 부합
     @Override
     public List<PropertyGraphRequirementsDTO> findPropertyGraphDaily(
             Long propertyId, LocalDate date) {
         LocalDate start = getStartDate(date, DAILY);
         LocalDate end = getEndDate(date, DAILY);
         List<Integer> searchKey = new ArrayList<>();
-        IntStream.range(0, 12).forEach(searchKey::add);
+        IntStream.range(0, 24).forEach(searchKey::add);
 
         List<PropertyGraphRequirementsDTO> stats =
                 query.select(
                                 Projections.constructor(
                                         PropertyGraphRequirementsDTO.class,
-                                        memberConsultation
-                                                .createdAt
-                                                .hour()
-                                                .divide(2)
-                                                .castToNum(Integer.class),
+                                        memberConsultation.createdAt.hour(),
                                         pendingCount,
                                         completedCount))
                         .from(memberConsultation)
@@ -251,20 +248,14 @@ public class DashboardRepositoryImpl implements DashboardRepository {
                                 memberConsultation.createdAt.between(
                                         start.atStartOfDay(),
                                         end.plusDays(1).atStartOfDay().minusNanos(1)))
-                        .groupBy(
-                                memberConsultation.createdAt,
-                                memberConsultation
-                                        .createdAt
-                                        .hour()
-                                        .divide(2)
-                                        .castToNum(Integer.class))
+                        .groupBy(memberConsultation.createdAt.hour())
                         .fetch();
 
         Map<Integer, PropertyGraphRequirementsDTO> statsMap =
                 stats.stream()
                         .collect(
                                 Collectors.toMap(
-                                        PropertyGraphRequirementsDTO::getInterval, // 올바른 Getter 사용
+                                        PropertyGraphRequirementsDTO::getHour,
                                         Function.identity()));
 
         List<PropertyGraphRequirementsDTO> result = new ArrayList<>();
