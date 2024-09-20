@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,11 +20,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import subscribers.clearbunyang.domain.property.dto.request.AreaRequest;
+import subscribers.clearbunyang.domain.property.dto.request.KeywordRequest;
 import subscribers.clearbunyang.domain.property.dto.request.PropertySaveRequest;
 import subscribers.clearbunyang.domain.property.dto.request.PropertyUpdateRequest;
 import subscribers.clearbunyang.domain.property.dto.response.MyPropertyCardResponse;
 import subscribers.clearbunyang.domain.property.dto.response.MyPropertyTableResponse;
 import subscribers.clearbunyang.domain.property.entity.Property;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordName;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.global.config.SecurityConfig;
 import subscribers.clearbunyang.global.dto.PagedDto;
@@ -60,6 +64,28 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
                 .andExpect(status().isOk());
     }
 
+    @DisplayName("물건 등록 테스트: request validation 실패")
+    @Test
+    @WithMockCustomAdmin
+    public void addProperty2() throws Exception {
+        PropertySaveRequest requestDTO = PropertySaveRequestDTOFixture.createDefault();
+        requestDTO.getAreas().add(new AreaRequest(60, 50000, 60000, 10));
+        Property mockProperty = new Property();
+
+        when(propertyService.saveProperty(any(PropertySaveRequest.class), any(Long.class)))
+                .thenReturn(mockProperty);
+
+        mockMvc.perform(
+                        post("/api/admin/properties")
+                                .contentType("application/json")
+                                .content(objectMapper.writeValueAsString(requestDTO))
+                                .with(csrf()))
+                .andExpect(status().is(ErrorCode.BAD_REQUEST.getStatus()))
+                .andExpect(
+                        jsonPath("$.result.resultMessage")
+                                .value(ErrorCode.BAD_REQUEST.getMessage()));
+    }
+
     @DisplayName("물건 등록 테스트-member일때")
     @Test
     @WithMockCustomMember
@@ -77,16 +103,33 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
                 .andExpect(status().is4xxClientError());
     }
 
-    @DisplayName("물건 등록 테스트: request validation 실패")
+    @DisplayName("물건 등록 테스트: keyword를 3개 미만으로 선택했을때")
     @Test
     @WithMockCustomAdmin
-    public void addProperty2() throws Exception {
+    public void addProperty4() throws Exception {
         PropertySaveRequest requestDTO = PropertySaveRequestDTOFixture.createDefault();
-        requestDTO.getAreas().add(new AreaRequest(60, 50000, 60000, 10));
-        Property mockProperty = new Property();
+        List<KeywordRequest> keywords = new ArrayList<>();
+        keywords.add(new KeywordRequest(KeywordName.CASH_PAYMENT, KeywordType.BENEFIT, true, 100));
+        requestDTO.setKeywords(keywords);
 
-        when(propertyService.saveProperty(any(PropertySaveRequest.class), any(Long.class)))
-                .thenReturn(mockProperty);
+        mockMvc.perform(
+                        post("/api/admin/properties")
+                                .contentType("application/json")
+                                .content(objectMapper.writeValueAsString(requestDTO))
+                                .with(csrf()))
+                .andExpect(status().is(ErrorCode.BAD_REQUEST.getStatus()))
+                .andExpect(
+                        jsonPath("$.result.resultMessage")
+                                .value(ErrorCode.BAD_REQUEST.getMessage()));
+    }
+
+    @DisplayName(
+            "물건 등록 테스트: keyword에서 DISCOUTN_SALE을 선택했지만 discountPrice,discountPercent 둘다 null로 입력했을때")
+    @Test
+    @WithMockCustomAdmin
+    public void addProperty5() throws Exception {
+        PropertySaveRequest requestDTO = PropertySaveRequestDTOFixture.createDefault();
+        requestDTO.getAreas().add(new AreaRequest(60, 50000, null, null));
 
         mockMvc.perform(
                         post("/api/admin/properties")
@@ -189,7 +232,7 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
     }
 
     @Test
-    @DisplayName("매물 수정 테스트- validation 발생")
+    @DisplayName("매물 수정 테스트- keywords 선택 개수가 3개 미만일때")
     @WithMockCustomAdmin
     public void updateProperty2() throws Exception {
         when(propertyService.updateProperty(anyLong(), any(PropertyUpdateRequest.class), anyLong()))
@@ -197,6 +240,24 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
         PropertyUpdateRequest requestDTO = PropertyUpdateRequestDTOFixture.createDefault();
         requestDTO.setInfra(null);
         requestDTO.setBenefit(null);
+
+        mockMvc.perform(
+                        patch("/api/admin/properties/{propertyId}", 1L)
+                                .contentType("application/json")
+                                .content(objectMapper.writeValueAsString(requestDTO))
+                                .with(csrf()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName(
+            "물건 수정 테스트: keyword에서 DISCOUTN_SALE을 선택했지만 discountPrice,discountPercent 둘다 null로 입력했을때")
+    @WithMockCustomAdmin
+    public void updateProperty3() throws Exception {
+        when(propertyService.updateProperty(anyLong(), any(PropertyUpdateRequest.class), anyLong()))
+                .thenReturn(new Property());
+        PropertyUpdateRequest requestDTO = PropertyUpdateRequestDTOFixture.createDefault();
+        requestDTO.getAreas().add(new AreaRequest(60, 50000, null, null));
 
         mockMvc.perform(
                         patch("/api/admin/properties/{propertyId}", anyLong())

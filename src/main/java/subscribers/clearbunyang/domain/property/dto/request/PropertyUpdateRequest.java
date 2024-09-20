@@ -5,10 +5,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordName;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
 import subscribers.clearbunyang.global.file.dto.FileRequestDTO;
@@ -89,10 +91,33 @@ public class PropertyUpdateRequest {
     @Valid private List<KeywordRequest> benefit;
 
     @Schema(hidden = true) // Swagger에서 숨김 처리
-    @AssertTrue(message = "infra와 benefit 둘다 모두 null 이면 안됨")
+    @AssertTrue(
+            message =
+                    "키워드는 세 개 이상이어야 하고, 그 중 세 개는 꼭 검색 가능한 키워드여야 하며, DISCOUNT_SALE 키워드를 선택했다면 discountPercent 또는 discountPrice가 입력되어야 합니다.")
     public boolean isKeywordsValid() {
-        if (infra == null && benefit == null) return false;
+        if (infra == null) infra = new ArrayList<>();
+        if (benefit == null) benefit = new ArrayList<>();
+
         if (infra.size() + benefit.size() < 3) return false;
+
+        long infraSearchableCount = infra.stream().filter(KeywordRequest::getSearchEnabled).count();
+        long benefitSearchableCount =
+                benefit.stream().filter(KeywordRequest::getSearchEnabled).count();
+        if (infraSearchableCount + benefitSearchableCount != 3) return false;
+
+        boolean infraDiscountSaleExists =
+                infra.stream().anyMatch(keyword -> keyword.getName() == KeywordName.DISCOUNT_SALE);
+        boolean benefitDiscountSaleExists =
+                benefit.stream()
+                        .anyMatch(keyword -> keyword.getName() == KeywordName.DISCOUNT_SALE);
+
+        if (infraDiscountSaleExists || benefitDiscountSaleExists) {
+            return areas.stream()
+                    .allMatch(
+                            area ->
+                                    area.getDiscountPrice() != null
+                                            || area.getDiscountPercent() != null);
+        }
         return true;
     }
 }

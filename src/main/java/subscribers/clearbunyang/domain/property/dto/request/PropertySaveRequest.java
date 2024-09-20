@@ -5,10 +5,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordName;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
 import subscribers.clearbunyang.global.file.dto.FileRequestDTO;
@@ -84,9 +86,27 @@ public class PropertySaveRequest {
     @NotNull @Valid private List<KeywordRequest> keywords; // 키워드 정보 리스트
 
     @Schema(hidden = true) // Swagger에서 숨김 처리
-    @AssertTrue(message = "키워드는 세개 이상이어야함")
+    @AssertTrue(
+            message =
+                    "키워드는 세 개 이상이어야 하고, 그 중 세 개는 꼭 검색 가능한 키워드여야 하며, DISCOUNT_SALE 키워드를 선택했다면 discountPercent 또는 discountPrice가 입력되어야 합니다.")
     public boolean isKeywordsValid() {
+        if (keywords == null) keywords = new ArrayList<>();
+
         if (keywords.size() < 3) return false;
-        return true;
+        long searchableCount = keywords.stream().filter(KeywordRequest::getSearchEnabled).count();
+        if (searchableCount != 3) return false;
+
+        boolean discountSaleExists =
+                keywords.stream()
+                        .anyMatch(keyword -> keyword.getName() == KeywordName.DISCOUNT_SALE);
+        if (discountSaleExists) {
+            return areas.stream()
+                    .allMatch(
+                            area ->
+                                    area.getDiscountPrice() != null
+                                            || area.getDiscountPercent() != null);
+        } else {
+            return true;
+        }
     }
 }
