@@ -37,7 +37,7 @@
 ![img.png](docs/server.png)
 
 ## ERD
-![img.png](docs/db.png)
+![img.png](img.png)
 
 ## 🔧기술 스택 및 도구
 - Java 17
