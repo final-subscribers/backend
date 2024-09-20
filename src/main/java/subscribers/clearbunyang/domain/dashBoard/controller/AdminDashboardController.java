@@ -12,11 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import subscribers.clearbunyang.domain.dashBoard.dto.response.CardComponentResponse;
 import subscribers.clearbunyang.domain.dashBoard.dto.response.DropdownSelectsResponse;
+import subscribers.clearbunyang.domain.dashBoard.dto.response.PropertiesInquiryStatusResponse;
 import subscribers.clearbunyang.domain.dashBoard.dto.response.PropertyInquiryDetailsResponse;
-import subscribers.clearbunyang.domain.dashBoard.dto.response.PropertyInquiryStatusResponse;
 import subscribers.clearbunyang.domain.dashBoard.entity.enums.GraphInterval;
 import subscribers.clearbunyang.domain.dashBoard.service.AdminDashboardService;
-import subscribers.clearbunyang.global.dto.PagedDto;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
 @RestController
@@ -40,7 +39,7 @@ public class AdminDashboardController {
     }
 
     @GetMapping("dashboard/properties")
-    public PagedDto<PropertyInquiryStatusResponse> getDashboardProperties(
+    public PropertiesInquiryStatusResponse getDashboardProperties(
             @RequestParam(name = "page", required = false, defaultValue = "0") int page,
             @RequestParam(name = "size", required = false, defaultValue = "5") int size,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {

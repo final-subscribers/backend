@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.PageRequest;
 import subscribers.clearbunyang.domain.auth.entity.Member;
 import subscribers.clearbunyang.domain.auth.repository.MemberRepository;
 import subscribers.clearbunyang.domain.likes.entity.Likes;
@@ -92,7 +91,6 @@ class LikesServiceTest {
                         () -> likesService.getMyFavoriteProperties(memberId, status, page, size));
 
         assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
-        verify(propertyRepository, never())
-                .findByDateRangeFalse(any(LocalDate.class), any(PageRequest.class));
+        verify(propertyRepository, never()).findByDateRangeFalse(any(LocalDate.class));
     }
 }
