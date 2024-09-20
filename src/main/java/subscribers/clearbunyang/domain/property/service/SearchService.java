@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.dto.response.PropertySummaryResponse;
@@ -32,10 +35,13 @@ public class SearchService {
 
         String searchParam = (search == null || search.trim().isEmpty()) ? "" : search.trim();
 
-        List<Property> properties = propertyRepository.findPropertiesBySearching(searchParam);
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Property> propertyPage =
+                propertyRepository.findPropertiesBySearching(searchParam, pageable);
 
         List<PropertySummaryResponse> propertySearchResponses =
-                properties.stream()
+                propertyPage.stream()
                         .map(
                                 property -> {
                                     boolean likesExisted = false;
@@ -93,7 +99,9 @@ public class SearchService {
                                 .collect(Collectors.toList())
                         : null;
 
-        List<Property> properties =
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Property> propertyPage =
                 propertyRepository.findPropertiesByFiltering(
                         areaParam,
                         propertyType,
@@ -104,10 +112,11 @@ public class SearchService {
                         areaMin,
                         areaMax,
                         totalMin,
-                        totalMax);
+                        totalMax,
+                        pageable);
 
         List<PropertySummaryResponse> propertySearchResponses =
-                properties.stream()
+                propertyPage.stream()
                         .map(
                                 property -> {
                                     boolean likesExisted = false;
