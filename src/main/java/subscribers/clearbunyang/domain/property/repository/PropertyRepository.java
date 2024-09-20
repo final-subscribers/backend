@@ -14,7 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.property.dto.PropertyDateDto;
 import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordName;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
 import subscribers.clearbunyang.global.exception.EntityNotFoundException;
@@ -117,9 +117,9 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
                     + "LEFT JOIN p.keywords k "
                     + "WHERE "
                     + "(:area IS NULL OR LOWER(p.addrDo) IN :area) "
-                    + "AND (:propertyType IS NULL OR p.propertyType = :propertyType) "
-                    + "AND (:salesType IS NULL OR p.salesType = :salesType) "
-                    + "AND (:keyword IS NULL OR EXISTS (SELECT 1 FROM p.keywords k WHERE LOWER(k.name) = LOWER(:keyword))) "
+                    + "AND (:propertyType IS NULL OR p.propertyType IN :propertyType) "
+                    + "AND (:salesType IS NULL OR p.salesType IN :salesType) "
+                    + "AND (:keywords IS NULL OR EXISTS (SELECT 1 FROM p.keywords k WHERE k.name IN :keywords))"
                     + "AND (:priceMin IS NULL OR EXISTS (SELECT 1 FROM p.areas a WHERE a.price >= :priceMin OR a.discountPrice >= :priceMin)) "
                     + "AND (:priceMax IS NULL OR EXISTS (SELECT 1 FROM p.areas a WHERE a.price <= :priceMax OR a.discountPrice <= :priceMax)) "
                     + "AND (:areaMin IS NULL OR EXISTS (SELECT 1 FROM p.areas a WHERE a.squareMeter >= :areaMin)) "
@@ -128,9 +128,9 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
                     + "AND (:totalMax IS NULL OR p.totalNumber <= :totalMax)")
     Page<Property> findPropertiesByFiltering(
             @Param("area") List<String> area,
-            @Param("propertyType") PropertyType propertyType,
-            @Param("salesType") SalesType salesType,
-            @Param("keyword") KeywordType keyword,
+            @Param("propertyType") List<PropertyType> propertyType,
+            @Param("salesType") List<SalesType> salesType,
+            @Param("keywords") List<KeywordName> keywords,
             @Param("priceMin") Integer priceMin,
             @Param("priceMax") Integer priceMax,
             @Param("areaMin") Integer areaMin,

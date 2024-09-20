@@ -3,6 +3,7 @@ package subscribers.clearbunyang.domain.property.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import subscribers.clearbunyang.domain.property.dto.response.SearchResponse;
-import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordName;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
 import subscribers.clearbunyang.domain.property.service.SearchService;
@@ -42,9 +43,9 @@ public class SearchController {
     public PagedDto<SearchResponse> getPropertyByFiltering(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestParam(required = false) String area,
-            @RequestParam(required = false) PropertyType propertyType,
-            @RequestParam(required = false) SalesType salesType,
-            @RequestParam(required = false) KeywordType keyword,
+            @RequestParam(required = false) List<PropertyType> propertyType,
+            @RequestParam(required = false) List<SalesType> salesType,
+            @RequestParam(required = false) List<KeywordName> keyword,
             @RequestParam(required = false) Integer priceMin,
             @RequestParam(required = false) Integer priceMax,
             @RequestParam(required = false) Integer areaMin,

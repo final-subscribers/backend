@@ -13,6 +13,7 @@ import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.property.dto.response.PropertySummaryResponse;
 import subscribers.clearbunyang.domain.property.dto.response.SearchResponse;
 import subscribers.clearbunyang.domain.property.entity.Property;
+import subscribers.clearbunyang.domain.property.entity.enums.KeywordName;
 import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
 import subscribers.clearbunyang.domain.property.entity.enums.PropertyType;
 import subscribers.clearbunyang.domain.property.entity.enums.SalesType;
@@ -71,7 +72,10 @@ public class SearchService {
                                 })
                         .collect(Collectors.toList());
 
-        SearchResponse searchResponse = SearchResponse.toDto(propertySearchResponses);
+        int totalProperties = (int) propertyPage.getTotalElements();
+
+        SearchResponse searchResponse =
+                SearchResponse.toDto(totalProperties, propertySearchResponses);
 
         return PagedDto.toDTO(page, size, propertyPage.getTotalPages(), List.of(searchResponse));
     }
@@ -79,9 +83,9 @@ public class SearchService {
     public PagedDto<SearchResponse> getPropertyByFiltering(
             Long memberId,
             String area,
-            PropertyType propertyType,
-            SalesType salesType,
-            KeywordType keyword,
+            List<PropertyType> propertyType,
+            List<SalesType> salesType,
+            List<KeywordName> keyword,
             Integer priceMin,
             Integer priceMax,
             Integer areaMin,
@@ -94,7 +98,7 @@ public class SearchService {
         List<String> areaParam =
                 (area != null && !area.isEmpty())
                         ? Arrays.stream(area.split("/"))
-                                .map(String::trim) // 각 지역 이름에 공백이 있다면 제거
+                                .map(String::trim)
                                 .collect(Collectors.toList())
                         : null;
 
@@ -103,8 +107,8 @@ public class SearchService {
         Page<Property> propertyPage =
                 propertyRepository.findPropertiesByFiltering(
                         areaParam,
-                        propertyType,
-                        salesType,
+                        (propertyType == null || propertyType.isEmpty()) ? null : propertyType,
+                        (salesType == null || salesType.isEmpty()) ? null : salesType,
                         keyword,
                         priceMin,
                         priceMax,
@@ -146,7 +150,10 @@ public class SearchService {
                                 })
                         .collect(Collectors.toList());
 
-        SearchResponse searchResponse = SearchResponse.toDto(propertySearchResponses);
+        int totalProperties = (int) propertyPage.getTotalElements();
+
+        SearchResponse searchResponse =
+                SearchResponse.toDto(totalProperties, propertySearchResponses);
 
         return PagedDto.toDTO(page, size, propertyPage.getTotalPages(), List.of(searchResponse));
     }
