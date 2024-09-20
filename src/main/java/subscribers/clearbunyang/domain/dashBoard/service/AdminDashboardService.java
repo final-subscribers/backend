@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import subscribers.clearbunyang.domain.dashBoard.dto.ConsultationDateStatsDTO;
 import subscribers.clearbunyang.domain.dashBoard.dto.PropertyGraphRequirementsDTO;
@@ -75,7 +75,8 @@ public class AdminDashboardService {
     }
 
     public PagedDto<PropertyInquiryStatusResponse> getPropertiesInquiryStats(
-            Long adminId, Pageable pageable) {
+            Long adminId, int page, int size) {
+        PageRequest pageable = PageRequest.of(page, size);
         Page<PropertyInquiryStatusResponse> propertiesInquiryStats =
                 dashboardRepository
                         .findPropertiesInquiryStats(adminId, pageable)

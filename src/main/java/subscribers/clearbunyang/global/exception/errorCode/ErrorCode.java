@@ -16,6 +16,7 @@ public enum ErrorCode {
             HttpStatus.INTERNAL_SERVER_ERROR.value(), "500", "JSON 형식이 아니라 변환에 실패했습니다"),
     INVALID_INPUT_VALUE(400, "C001", "유효하지 않은 입력입니다."),
     NOT_FOUND(404, "C002", "Not Found"),
+    NO_QUERY_RESULT(404, "C003", "No Query Result"),
     DATETIME_INVALID(400, "C003", "유효하지 않은 날짜입니다"),
 
     // User

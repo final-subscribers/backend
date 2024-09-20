@@ -39,6 +39,7 @@ import subscribers.clearbunyang.domain.dashBoard.dto.YearMonthDayDTO;
 import subscribers.clearbunyang.domain.dashBoard.dto.YearWeekDTO;
 import subscribers.clearbunyang.domain.dashBoard.entity.enums.GraphInterval;
 import subscribers.clearbunyang.domain.dashBoard.entity.enums.Phase;
+import subscribers.clearbunyang.global.exception.NotFoundException;
 
 @Repository
 public class DashboardRepositoryImpl implements DashboardRepository {
@@ -177,6 +178,8 @@ public class DashboardRepositoryImpl implements DashboardRepository {
                         .limit(pageable.getPageSize())
                         .fetch();
 
+        if (list.isEmpty()) throw new NotFoundException(NO_QUERY_RESULT);
+
         JPAQuery<Long> countQuery =
                 query.select(memberConsultation.property.id.countDistinct())
                         .from(memberConsultation)
@@ -185,6 +188,7 @@ public class DashboardRepositoryImpl implements DashboardRepository {
         return PageableExecutionUtils.getPage(list, pageable, countQuery::fetchOne);
     }
 
+    // TODO: 더 부하가 적은 쿼리에서 exception을 발생시키는 게 좋을 것
     @Override
     public Optional<PropertyInquiryDetailsDTO> findPropertyInquiryDetails(
             Long propertyId, LocalDate date, GraphInterval graphInterval) {
@@ -195,23 +199,28 @@ public class DashboardRepositoryImpl implements DashboardRepository {
         NumberExpression<Integer> channelCount = mediumSumExpression(CHANNEL);
         NumberExpression<Integer> lmsCount = mediumSumExpression(LMS);
 
-        return Optional.ofNullable(
-                query.select(
-                                Projections.constructor(
-                                        PropertyInquiryDetailsDTO.class,
-                                        pendingCount,
-                                        completedCount,
-                                        phoneCount,
-                                        channelCount,
-                                        lmsCount))
-                        .from(memberConsultation)
-                        .where(
-                                memberConsultation.property.id.eq(propertyId),
-                                memberConsultation.createdAt.between(
-                                        start.atStartOfDay(),
-                                        end.plusDays(1).atStartOfDay().minusNanos(1)))
-                        .groupBy(memberConsultation.property.id)
-                        .fetchOne());
+        Optional<PropertyInquiryDetailsDTO> optional =
+                Optional.ofNullable(
+                        query.select(
+                                        Projections.constructor(
+                                                PropertyInquiryDetailsDTO.class,
+                                                pendingCount,
+                                                completedCount,
+                                                phoneCount,
+                                                channelCount,
+                                                lmsCount))
+                                .from(memberConsultation)
+                                .where(
+                                        memberConsultation.property.id.eq(propertyId),
+                                        memberConsultation.createdAt.between(
+                                                start.atStartOfDay(),
+                                                end.plusDays(1).atStartOfDay().minusNanos(1)))
+                                .groupBy(memberConsultation.property.id)
+                                .fetchOne());
+
+        if (optional.isEmpty()) throw new NotFoundException(NO_QUERY_RESULT);
+
+        return optional;
     }
 
     @Override
