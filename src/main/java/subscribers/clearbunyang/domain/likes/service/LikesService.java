@@ -145,7 +145,7 @@ public class LikesService {
                         .collect(Collectors.toList());
 
         Page<LikesPropertyResponse> pageResult =
-                new PageImpl<>(likesPropertyResponses, pageRequest, likesPropertyResponses.size());
+                new PageImpl<>(likesPropertyResponses, pageRequest, totalElements);
 
         return LikesPageResponse.fromPage(pageResult, size, page);
     }
