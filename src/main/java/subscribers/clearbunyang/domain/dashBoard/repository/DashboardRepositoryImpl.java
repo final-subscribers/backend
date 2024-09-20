@@ -165,15 +165,16 @@ public class DashboardRepositoryImpl implements DashboardRepository {
                 query.select(
                                 Projections.constructor(
                                         PropertyInquiryStatusDTO.class,
-                                        memberConsultation.property.id,
-                                        memberConsultation.property.name,
+                                        property.id,
+                                        property.name,
                                         pendingCount,
                                         completedCount))
-                        .from(memberConsultation)
-                        .innerJoin(memberConsultation.property, property)
-                        .where(memberConsultation.property.admin.id.eq(adminId))
-                        .groupBy(memberConsultation.property.id)
-                        .orderBy(memberConsultation.property.id.desc())
+                        .from(property)
+                        .leftJoin(memberConsultation)
+                        .on(memberConsultation.property.eq(property))
+                        .where(property.admin.id.eq(adminId))
+                        .groupBy(property.id)
+                        .orderBy(property.id.desc())
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
