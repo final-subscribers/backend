@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.global.file.entity.File;
-import subscribers.clearbunyang.global.file.entity.enums.FileType;
 
 @Getter
 @NoArgsConstructor
@@ -37,15 +36,11 @@ public class SideBarSelectedPropertyResponse {
     private String propertyType;
 
     public static SideBarSelectedPropertyResponse toDto(Property property) {
-        File imageFile =
-                property.getFiles().stream()
-                        .filter(file -> file.getType() == FileType.PROPERTY_IMAGE)
-                        .findFirst()
-                        .orElse(null);
+        String imageFile = property.getFiles().stream().findFirst().map(File::getLink).orElse(null);
         return SideBarSelectedPropertyResponse.builder()
                 .id(property.getId())
                 .name(property.getName())
-                .image(imageFile != null ? imageFile.getLink() : null)
+                .image(imageFile)
                 .propertyName(property.getName())
                 .companyName(property.getCompanyName())
                 .constructor(property.getConstructor())
