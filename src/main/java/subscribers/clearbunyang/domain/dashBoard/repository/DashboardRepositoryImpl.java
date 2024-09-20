@@ -147,14 +147,16 @@ public class DashboardRepositoryImpl implements DashboardRepository {
         return query.select(
                         Projections.constructor(
                                 PropertyInquiryStatusDTO.class,
-                                memberConsultation.property.id,
-                                memberConsultation.property.name,
+                                property.id,
+                                property.name,
                                 pendingCount,
                                 completedCount))
-                .from(memberConsultation)
-                .where(memberConsultation.property.admin.id.eq(adminId))
-                .groupBy(memberConsultation.property.id)
-                .orderBy(memberConsultation.count().desc())
+                .from(property)
+                .leftJoin(memberConsultation)
+                .on(memberConsultation.property.id.eq(property.id)) // 상담과 매물을 LEFT JOIN
+                .where(property.admin.id.eq(adminId))
+                .groupBy(property.id)
+                .orderBy(memberConsultation.count().desc(), property.id.desc()) // 상담 건수로 정렬
                 .fetch();
     }
 
