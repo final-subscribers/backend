@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import subscribers.clearbunyang.domain.property.entity.Property;
-import subscribers.clearbunyang.global.file.entity.File;
 
 @Getter
 @NoArgsConstructor
@@ -36,11 +35,11 @@ public class SideBarSelectedPropertyResponse {
     private String propertyType;
 
     public static SideBarSelectedPropertyResponse toDto(Property property) {
-        String imageFile = property.getFiles().stream().findFirst().map(File::getLink).orElse(null);
+        String imageUrl = property.getImageUrl();
         return SideBarSelectedPropertyResponse.builder()
                 .id(property.getId())
                 .name(property.getName())
-                .image(imageFile)
+                .image(imageUrl)
                 .propertyName(property.getName())
                 .companyName(property.getCompanyName())
                 .constructor(property.getConstructor())
