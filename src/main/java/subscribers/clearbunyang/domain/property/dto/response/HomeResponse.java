@@ -20,9 +20,9 @@ public class HomeResponse {
         return HomeResponse.builder()
                 .homeImagesUrl(
                         List.of(
-                                "https://down.humoruniv.com//hwiparambbs/data/editor/pdswait/e_s941967001_54424d83ad875aebff802c182e0bb4d96e88a6fb.jpg",
-                                "https://down.humoruniv.com//hwiparambbs/data/editor/pdswait/e_s941967002_b83b74ed967105c20c99d8686749ba9efc5ef607.jpg",
-                                "https://down.humoruniv.com//hwiparambbs/data/editor/pdswait/e_s941967004_441b9e09e1edf1d1b1dd412ab24c429936bfa41c.jpg"))
+                                "https://cdn.pixabay.com/photo/2015/11/06/11/48/multi-family-home-1026490_1280.jpg",
+                                "https://cdn.pixabay.com/photo/2017/03/27/15/17/apartment-2179337_1280.jpg",
+                                "https://cdn.pixabay.com/photo/2022/09/16/17/07/city-7459162_1280.jpg"))
                 .properties(homeProperties)
                 .build();
     }
