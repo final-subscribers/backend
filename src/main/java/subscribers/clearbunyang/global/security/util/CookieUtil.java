@@ -19,6 +19,7 @@ public class CookieUtil {
                         .path("/")
                         .maxAge(Duration.ofSeconds(maxAgeInSeconds))
                         .sameSite("None")
+                        .domain("entj.site")
                         .build();
         response.addHeader("Set-Cookie", cookie.toString());
     }
