@@ -44,11 +44,8 @@ public class SearchService {
                 propertyPage.stream()
                         .map(
                                 property -> {
-                                    boolean likesExisted = false;
-                                    if (memberId != null) {
-                                        likesExisted =
-                                                likesService.isLiked(memberId, property.getId());
-                                    }
+                                    boolean likesExisted =
+                                            likesService.isLiked(memberId, property.getId());
 
                                     List<String> infraKeywords =
                                             keywordRepository
