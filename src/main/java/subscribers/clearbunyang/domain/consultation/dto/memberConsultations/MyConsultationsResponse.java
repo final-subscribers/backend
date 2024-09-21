@@ -47,7 +47,7 @@ public class MyConsultationsResponse {
         return MyConsultationsResponse.builder()
                 .imageUrl(propertyImageUrl)
                 .id(memberConsultation.getProperty().getId())
-                .name(memberConsultation.getMemberName())
+                .name(memberConsultation.getProperty().getName())
                 .consultationCreatedAt(memberConsultation.getCreatedAt().toLocalDate())
                 .message(memberConsultation.getMemberMessage())
                 .memberName(memberConsultation.getMemberName())

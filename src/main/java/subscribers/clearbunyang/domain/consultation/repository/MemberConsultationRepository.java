@@ -13,8 +13,9 @@ import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 
 public interface MemberConsultationRepository extends JpaRepository<MemberConsultation, Long> {
 
-    @Query("SELECT COUNT(mc) FROM MemberConsultation mc WHERE mc.member.id = :userId")
-    int countConsultationsByUserId(@Param("userId") Long userId);
+    @Query(
+            "SELECT COUNT(mc) FROM MemberConsultation mc WHERE mc.member.id = :userId AND mc.status = :status")
+    int countConsultationsByUserId(@Param("userId") Long userId, @Param("status") Status status);
 
     @Query(
             "SELECT mc FROM MemberConsultation mc "

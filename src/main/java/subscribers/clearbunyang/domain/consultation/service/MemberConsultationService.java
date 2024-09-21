@@ -37,7 +37,8 @@ public class MemberConsultationService {
                 memberConsultationRepository.findConsultationsByUserIdAndSearch(
                         userId, searchParam, Status.PENDING);
 
-        int totalCount = memberConsultationRepository.countConsultationsByUserId(userId);
+        int totalCount =
+                memberConsultationRepository.countConsultationsByUserId(userId, Status.PENDING);
 
         List<MyConsultationsResponse> consultationsResponses =
                 consultations.stream()
@@ -64,7 +65,8 @@ public class MemberConsultationService {
                 memberConsultationRepository.findConsultationsByUserIdAndSearch(
                         userId, searchParam, Status.COMPLETED);
 
-        int totalCount = memberConsultationRepository.countConsultationsByUserId(userId);
+        int totalCount =
+                memberConsultationRepository.countConsultationsByUserId(userId, Status.COMPLETED);
 
         List<MyConsultationsResponse> consultationsResponses =
                 consultations.stream()
