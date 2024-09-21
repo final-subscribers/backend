@@ -20,9 +20,9 @@ public class HomeResponse {
         return HomeResponse.builder()
                 .homeImagesUrl(
                         List.of(
-                                "https://cdn.pixabay.com/photo/2015/11/06/11/48/multi-family-home-1026490_1280.jpg",
-                                "https://cdn.pixabay.com/photo/2017/03/27/15/17/apartment-2179337_1280.jpg",
-                                "https://cdn.pixabay.com/photo/2022/09/16/17/07/city-7459162_1280.jpg"))
+                                "https://i0.wp.com/nurproperties.com/wp-content/uploads/2019/12/tsdlt00004.jpg?fit=960%2C540&ssl=1",
+                                "https://i0.wp.com/www.homesinmalta.com/wp-content/uploads/2023/02/facade-1.jpg?fit=960%2C540&ssl=1",
+                                "https://image.slidesdocs.com/responsive-images/background/city-tall-building-buildings-powerpoint-background_2bd46ecff0__960_540.jpg"))
                 .properties(homeProperties)
                 .build();
     }
