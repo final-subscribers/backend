@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
+import subscribers.clearbunyang.domain.likes.service.LikesService;
 import subscribers.clearbunyang.domain.property.dto.response.PropertySummaryResponse;
 import subscribers.clearbunyang.domain.property.dto.response.SearchResponse;
 import subscribers.clearbunyang.domain.property.entity.Property;
@@ -28,7 +28,7 @@ public class SearchService {
 
     private final PropertyRepository propertyRepository;
     private final KeywordRepository keywordRepository;
-    private final LikesRepository likesRepository;
+    private final LikesService likesService;
 
     public PagedDto<SearchResponse> getPropertyBySearching(
             Long memberId, String search, Integer size, Integer page) {
@@ -47,8 +47,7 @@ public class SearchService {
                                     boolean likesExisted = false;
                                     if (memberId != null) {
                                         likesExisted =
-                                                likesRepository.existsByMemberIdAndPropertyId(
-                                                        memberId, property.getId());
+                                                likesService.isLiked(memberId, property.getId());
                                     }
 
                                     List<String> infraKeywords =
@@ -125,8 +124,7 @@ public class SearchService {
                                     boolean likesExisted = false;
                                     if (memberId != null) {
                                         likesExisted =
-                                                likesRepository.existsByMemberIdAndPropertyId(
-                                                        memberId, property.getId());
+                                                likesService.isLiked(memberId, property.getId());
                                     }
 
                                     List<String> infraKeywords =

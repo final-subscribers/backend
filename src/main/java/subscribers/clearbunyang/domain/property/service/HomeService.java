@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
+import subscribers.clearbunyang.domain.likes.service.LikesService;
 import subscribers.clearbunyang.domain.property.dto.response.HomeResponse;
 import subscribers.clearbunyang.domain.property.dto.response.PropertySummaryResponse;
 import subscribers.clearbunyang.domain.property.entity.Property;
@@ -21,8 +21,8 @@ import subscribers.clearbunyang.global.dto.PagedDto;
 public class HomeService {
 
     private final PropertyRepository propertyRepository;
-    private final LikesRepository likesRepository;
     private final KeywordRepository keywordRepository;
+    private final LikesService likesService;
 
     final int size = 5;
     final int totalItems = 20;
@@ -43,8 +43,7 @@ public class HomeService {
                                     boolean likesExisted = false;
                                     if (memberId != null) {
                                         likesExisted =
-                                                likesRepository.existsByMemberIdAndPropertyId(
-                                                        memberId, property.getId());
+                                                likesService.isLiked(memberId, property.getId());
                                     }
 
                                     List<String> infraKeywords =
