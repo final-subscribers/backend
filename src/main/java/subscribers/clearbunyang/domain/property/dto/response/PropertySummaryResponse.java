@@ -31,6 +31,7 @@ public class PropertySummaryResponse {
     private List<String> benefit;
     private int price;
     private Integer discountPrice;
+    private Integer discountPercent;
     private boolean like;
 
     public static PropertySummaryResponse toDto(
@@ -64,6 +65,7 @@ public class PropertySummaryResponse {
                 .benefit(benefitKeywords)
                 .price(property.getPrice())
                 .discountPrice(property.getDiscountPrice())
+                .discountPercent(property.getDiscountPercent())
                 .like(likeExisted)
                 .build();
     }
