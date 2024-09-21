@@ -137,12 +137,13 @@ public class SecurityConfig {
                         "https://localhost:5173",
                         "https://entj.site",
                         "https://final-project-l15zu1wpp-yeojins-projects-a26b6f35.vercel.app",
-                        "https://final-project-eta-silk.vercel.app");
+                        "https://final-project-eta-silk.vercel.app",
+                        "https://www.clearbunyang.site");
         configuration.setAllowedOrigins(allowed);
         configuration.setAllowedMethods(
                 Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(
-                Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+                Arrays.asList("Authorization", "Cache-Control", "Content-Type", "Set-Cookie"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
