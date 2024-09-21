@@ -21,8 +21,8 @@ public class PropertySaveRequestDTOFixture {
         List<AreaRequest> areas = new ArrayList<>();
         //        areas.add(new AreaRequestDTO(60, 50000, 45000, 10));
         //        areas.add(new AreaRequestDTO(80, 60000, 55000, 8));
-        areas.add(new AreaRequest(60, 50000, null, 13));
-        areas.add(new AreaRequest(80, 60000, null, 11));
+        areas.add(new AreaRequest(60, 50000, 40000, 13));
+        areas.add(new AreaRequest(80, 60000, 50000, 11));
 
         List<FileRequestDTO> files = new ArrayList<>();
         files.add(

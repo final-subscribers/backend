@@ -88,7 +88,7 @@ public class PropertySaveRequest {
     @Schema(hidden = true) // Swagger에서 숨김 처리
     @AssertTrue(
             message =
-                    "키워드는 세 개 이상이어야 하고, 그 중 세 개는 꼭 검색 가능한 키워드여야 하며, DISCOUNT_SALE 키워드를 선택했다면 discountPercent 또는 discountPrice가 입력되어야 합니다.")
+                    "키워드는 세 개 이상이어야 하고, 그 중 세 개는 꼭 검색 가능한 키워드여야 하며, DISCOUNT_SALE 키워드를 선택했다면 discountPercent와 discountPrice가 모두 입력되어야 합니다.")
     public boolean isKeywordsValid() {
         if (keywords == null) keywords = new ArrayList<>();
 
@@ -104,7 +104,7 @@ public class PropertySaveRequest {
                     .allMatch(
                             area ->
                                     area.getDiscountPrice() != null
-                                            || area.getDiscountPercent() != null);
+                                            && area.getDiscountPercent() != null);
         } else {
             return true;
         }

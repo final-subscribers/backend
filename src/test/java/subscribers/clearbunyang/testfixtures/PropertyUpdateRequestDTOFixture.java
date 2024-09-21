@@ -19,8 +19,8 @@ public class PropertyUpdateRequestDTOFixture {
 
     public static PropertyUpdateRequest createDefault() {
         List<AreaRequest> areas = new ArrayList<>();
-        areas.add(new AreaRequest(60, 50000, null, 13));
-        areas.add(new AreaRequest(80, 60000, null, 11));
+        areas.add(new AreaRequest(60, 50000, 40000, 13));
+        areas.add(new AreaRequest(80, 60000, 50000, 11));
 
         FileRequestDTO propertyImage =
                 new FileRequestDTO(

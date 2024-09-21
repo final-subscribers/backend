@@ -257,7 +257,7 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
         when(propertyService.updateProperty(anyLong(), any(PropertyUpdateRequest.class), anyLong()))
                 .thenReturn(new Property());
         PropertyUpdateRequest requestDTO = PropertyUpdateRequestDTOFixture.createDefault();
-        requestDTO.getAreas().add(new AreaRequest(60, 50000, null, null));
+        requestDTO.getAreas().add(new AreaRequest(60, 50000, 30000, null));
 
         mockMvc.perform(
                         patch("/api/admin/properties/{propertyId}", anyLong())

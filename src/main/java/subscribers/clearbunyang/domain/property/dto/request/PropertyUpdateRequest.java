@@ -116,7 +116,7 @@ public class PropertyUpdateRequest {
                     .allMatch(
                             area ->
                                     area.getDiscountPrice() != null
-                                            || area.getDiscountPercent() != null);
+                                            && area.getDiscountPercent() != null);
         }
         return true;
     }
