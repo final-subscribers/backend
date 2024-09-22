@@ -123,10 +123,7 @@ public class LikesService {
         int start = (int) pageRequest.getOffset();
         int end = Math.min(start + size, totalElements);
 
-        List<Property> pagedProperties =
-                start >= totalElements
-                        ? Collections.emptyList()
-                        : filteredProperties.subList(start, end);
+        List<Property> pagedProperties = filteredProperties.subList(start, end);
 
         List<LikesPropertyResponse> likesPropertyResponses =
                 pagedProperties.stream()
