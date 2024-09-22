@@ -63,8 +63,8 @@ public class PropertyService {
      * @param adminId
      * @return
      */
-    @Transactional
     @CacheEvict(value = "sidebarList", allEntries = true)
+    @Transactional
     public Property saveProperty(PropertySaveRequest propertyDTO, Long adminId) {
         Admin admin = adminRepository.findAdminById(adminId);
         String imageUrl =
@@ -100,10 +100,10 @@ public class PropertyService {
      * @param requestDTO
      * @param memberId
      */
-    @Transactional
     @CacheEvict(
             value = {"ConsultPendingList", "ConsultCompletedList"},
             allEntries = true)
+    @Transactional
     public MemberConsultation saveConsultation(
             Long propertyId, MemberConsultationRequest requestDTO, Long memberId) {
         Property property = propertyRepository.findPropertyById(propertyId);
@@ -198,6 +198,7 @@ public class PropertyService {
      * @param propertyId
      * @param adminId
      */
+    @CacheEvict(value = "sidebarList", allEntries = true)
     @Transactional
     public void deleteProperty(Long propertyId, Long adminId) {
         propertyRepository.existsByIdAndAdmin_id(propertyId, adminId);

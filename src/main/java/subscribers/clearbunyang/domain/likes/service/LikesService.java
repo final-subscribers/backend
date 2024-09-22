@@ -2,6 +2,7 @@ package subscribers.clearbunyang.domain.likes.service;
 
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -113,9 +114,14 @@ public class LikesService {
                                 })
                         .collect(Collectors.toList());
 
+        if (filteredProperties.isEmpty()) {
+            return LikesPageResponse.fromPage(
+                    new PageImpl<>(Collections.emptyList(), pageRequest, 0), size, page);
+        }
+
         int totalElements = filteredProperties.size();
         int start = (int) pageRequest.getOffset();
-        int end = Math.min((start + size), totalElements);
+        int end = Math.min(start + size, totalElements);
 
         List<Property> pagedProperties = filteredProperties.subList(start, end);
 
