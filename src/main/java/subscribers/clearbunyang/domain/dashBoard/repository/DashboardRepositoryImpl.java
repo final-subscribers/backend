@@ -186,9 +186,9 @@ public class DashboardRepositoryImpl implements DashboardRepository {
 
         Long total =
                 Optional.ofNullable(
-                                query.select(memberConsultation.property.id.countDistinct())
-                                        .from(memberConsultation)
-                                        .where(memberConsultation.property.admin.id.eq(adminId))
+                                query.select(property.id.count())
+                                        .from(property)
+                                        .where(property.admin.id.eq(adminId))
                                         .fetchOne())
                         .orElse(0L);
 
