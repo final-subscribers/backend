@@ -4,6 +4,7 @@ package subscribers.clearbunyang.domain.property.service;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -62,8 +63,8 @@ public class PropertyService {
      * @param adminId
      * @return
      */
+    @CacheEvict(value = "sidebarList", allEntries = true)
     @Transactional
-    // @CacheEvict(value = "sidebarList", allEntries = true)
     public Property saveProperty(PropertySaveRequest propertyDTO, Long adminId) {
         Admin admin = adminRepository.findAdminById(adminId);
         String imageUrl =
@@ -99,10 +100,10 @@ public class PropertyService {
      * @param requestDTO
      * @param memberId
      */
+    @CacheEvict(
+            value = {"ConsultPendingList", "ConsultCompletedList"},
+            allEntries = true)
     @Transactional
-    /* @CacheEvict(
-    value = {"ConsultPendingList", "ConsultCompletedList"},
-    allEntries = true)*/
     public MemberConsultation saveConsultation(
             Long propertyId, MemberConsultationRequest requestDTO, Long memberId) {
         Property property = propertyRepository.findPropertyById(propertyId);
@@ -197,6 +198,7 @@ public class PropertyService {
      * @param propertyId
      * @param adminId
      */
+    @CacheEvict(value = "sidebarList", allEntries = true)
     @Transactional
     public void deleteProperty(Long propertyId, Long adminId) {
         propertyRepository.existsByIdAndAdmin_id(propertyId, adminId);
@@ -208,7 +210,7 @@ public class PropertyService {
         propertyRepository.deletePropertyById(propertyId);
     }
 
-    // @CacheEvict(value = "sidebarList", allEntries = true)
+    @CacheEvict(value = "sidebarList", allEntries = true)
     @Transactional
     public Property updateProperty(
             Long propertyId, PropertyUpdateRequest requestDTO, Long adminId) {
