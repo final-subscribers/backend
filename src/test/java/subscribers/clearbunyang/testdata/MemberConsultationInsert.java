@@ -24,8 +24,7 @@ public class MemberConsultationInsert {
     /** lms에서 비회원/member가 상담 추가하는 테스트 데이터 삽입 */
     @Test
     void saveMemberConsultation() {
-        List<Property> properties = propertyRepository.findAll();
-        List<Long> selected = List.of(856L, 857L, 858L, 882L, 884L, 855L);
+        List<Long> selected = List.of(43L, 44L, 45L, 46L, 48L, 49L);
         for (int i = 0; i < selected.size(); i++) {
             Property property = propertyRepository.findPropertyById(selected.get(i));
             for (int j = 0; j < 10; j++) {
