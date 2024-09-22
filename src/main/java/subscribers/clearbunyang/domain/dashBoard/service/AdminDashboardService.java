@@ -1,6 +1,7 @@
 package subscribers.clearbunyang.domain.dashBoard.service;
 
 import static subscribers.clearbunyang.domain.dashBoard.entity.enums.Phase.*;
+import static subscribers.clearbunyang.global.exception.errorCode.ErrorCode.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,7 +25,7 @@ import subscribers.clearbunyang.domain.dashBoard.dto.response.PropertyInquirySta
 import subscribers.clearbunyang.domain.dashBoard.dto.response.PropertySelectResponse;
 import subscribers.clearbunyang.domain.dashBoard.entity.enums.GraphInterval;
 import subscribers.clearbunyang.domain.dashBoard.repository.DashboardRepository;
-import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
+import subscribers.clearbunyang.global.exception.NotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -59,6 +60,8 @@ public class AdminDashboardService {
 
         List<PropertyInquiryStatusDTO> properties =
                 dashboardRepository.findStatsOrderByCountDesc(adminId);
+        if (properties.isEmpty()) throw new NotFoundException(NO_QUERY_RESULT);
+
         CardCountDescResponse highestConsultation =
                 CardCountDescResponse.fromDTO(properties.get(0));
         CardCountDescResponse lowestConsultation =
@@ -119,6 +122,6 @@ public class AdminDashboardService {
         } else if (graphInterval == GraphInterval.MONTHLY) {
             return dashboardRepository.findPropertyGraphMonthly(propertyId, date);
         }
-        throw new IllegalArgumentException(ErrorCode.INVALID_INPUT_VALUE.getMessage());
+        throw new IllegalArgumentException(INVALID_INPUT_VALUE.getMessage());
     }
 }
