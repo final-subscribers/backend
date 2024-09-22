@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.likes.service.LikesService;
 import subscribers.clearbunyang.domain.property.dto.response.HomeResponse;
 import subscribers.clearbunyang.domain.property.dto.response.PropertySummaryResponse;
@@ -27,7 +28,7 @@ public class HomeService {
     final int size = 5;
     final int totalItems = 20;
 
-    //    @Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public PagedDto<HomeResponse> getHome(Long memberId, int page) {
 
         List<Property> top20Properties = propertyRepository.findTop20ByOrderByLikeCountDesc();
