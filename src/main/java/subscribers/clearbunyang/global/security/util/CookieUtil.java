@@ -43,6 +43,7 @@ public class CookieUtil {
                         .path("/")
                         .maxAge(0)
                         .sameSite("None")
+                        .domain("entj.site")
                         .build();
         response.addHeader("Set-Cookie", cookie.toString());
     }
