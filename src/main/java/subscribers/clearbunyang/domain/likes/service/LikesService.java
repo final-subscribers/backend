@@ -115,6 +115,11 @@ public class LikesService {
                         .collect(Collectors.toList());
 
         int totalElements = filteredProperties.size();
+        if (totalElements == 0) {
+            return LikesPageResponse.fromPage(
+                    new PageImpl<>(Collections.emptyList(), pageRequest, 0), size, page);
+        }
+
         int start = (int) pageRequest.getOffset();
         int end = Math.min((start + size), totalElements);
 
