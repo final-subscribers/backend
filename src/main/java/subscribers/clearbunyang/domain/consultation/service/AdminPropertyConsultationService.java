@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,9 +42,9 @@ public class AdminPropertyConsultationService {
     private final PropertyRepository propertyRepository;
 
     @Transactional
-    @CacheEvict(
-            value = {"ConsultPendingList", "ConsultCompletedList"},
-            key = "#propertyId")
+    /* @CacheEvict(
+    value = {"ConsultPendingList", "ConsultCompletedList"},
+    key = "#propertyId")*/
     public void createNewCustomerAddition(Long propertyId, NewCustomerAdditionRequest request) {
         Property property = getProperty(propertyId);
 
@@ -57,7 +55,7 @@ public class AdminPropertyConsultationService {
         memberConsultationRepository.save(memberConsultation);
     }
 
-    @Cacheable(value = "sidebarList", keyGenerator = "keyGenerator")
+    // @Cacheable(value = "sidebarList", keyGenerator = "keyGenerator")
     @Transactional(readOnly = true)
     public SideBarListResponse getSideBarList(Long propertyId) {
         LocalDate today = LocalDate.now();
@@ -77,7 +75,7 @@ public class AdminPropertyConsultationService {
                 sideBarPendingResponse, completedSummaryResponse, sideBarSelectedPropertyResponse);
     }
 
-    @Cacheable(value = "ConsultPendingList", keyGenerator = "customKeyGenerator")
+    // @Cacheable(value = "ConsultPendingList", keyGenerator = "customKeyGenerator")
     @Transactional(readOnly = true)
     public PagedDto<ConsultPendingListResponse> getConsultPendingListResponse(
             Long propertyId,
@@ -104,7 +102,7 @@ public class AdminPropertyConsultationService {
                 List.of(consultPendingListResponse));
     }
 
-    @Cacheable(value = "ConsultCompletedList", keyGenerator = "customKeyGenerator")
+    // @Cacheable(value = "ConsultCompletedList", keyGenerator = "customKeyGenerator")
     @Transactional(readOnly = true)
     public PagedDto<ConsultCompletedListResponse> getConsultCompletedListResponse(
             Long propertyId,
