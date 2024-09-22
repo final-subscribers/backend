@@ -56,6 +56,6 @@ public class AuthController {
     public void logout(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String redirectUri = authService.logout(request, response);
-        response.sendRedirect(redirectUri);
+        //        response.sendRedirect(redirectUri);
     }
 }
