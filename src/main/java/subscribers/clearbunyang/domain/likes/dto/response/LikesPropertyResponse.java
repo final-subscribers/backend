@@ -44,7 +44,7 @@ public class LikesPropertyResponse {
     @JsonProperty("salesPrice")
     private int salesPrice;
 
-    private int discountPercent;
+    private Integer discountPercent;
 
     public static LikesPropertyResponse fromEntity(
             Property property, List<String> infraKeywords, List<String> benefitKeywords) {
