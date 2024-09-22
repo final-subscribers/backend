@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.auth.entity.Member;
@@ -31,11 +33,13 @@ public class MemberConsultationService {
             Long userId, String search, int page, int size) {
         validateUserId(userId);
 
+        PageRequest pageRequest = PageRequest.of(page, size);
+
         String searchParam = (search == null || search.trim().isEmpty()) ? "" : search.trim();
 
-        List<MemberConsultation> consultations =
+        Page<MemberConsultation> consultations =
                 memberConsultationRepository.findConsultationsByUserIdAndSearch(
-                        userId, searchParam, Status.PENDING);
+                        userId, searchParam, Status.PENDING, pageRequest);
 
         int totalCount =
                 memberConsultationRepository.countConsultationsByUserId(userId, Status.PENDING);
@@ -59,11 +63,13 @@ public class MemberConsultationService {
             Long userId, String search, int page, int size) {
         validateUserId(userId);
 
+        PageRequest pageRequest = PageRequest.of(page, size);
+
         String searchParam = (search == null || search.trim().isEmpty()) ? "" : search.trim();
 
-        List<MemberConsultation> consultations =
+        Page<MemberConsultation> consultations =
                 memberConsultationRepository.findConsultationsByUserIdAndSearch(
-                        userId, searchParam, Status.COMPLETED);
+                        userId, searchParam, Status.COMPLETED, pageRequest);
 
         int totalCount =
                 memberConsultationRepository.countConsultationsByUserId(userId, Status.COMPLETED);

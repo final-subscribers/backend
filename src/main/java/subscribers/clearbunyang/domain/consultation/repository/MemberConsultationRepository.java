@@ -3,6 +3,8 @@ package subscribers.clearbunyang.domain.consultation.repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,10 +28,11 @@ public interface MemberConsultationRepository extends JpaRepository<MemberConsul
                     + "OR LOWER(p.addrDo) LIKE LOWER(CONCAT('%', :search, '%')) "
                     + "OR LOWER(p.addrGu) LIKE LOWER(CONCAT('%', :search, '%')) "
                     + "OR LOWER(p.addrDong) LIKE LOWER(CONCAT('%', :search, '%')))")
-    List<MemberConsultation> findConsultationsByUserIdAndSearch(
+    Page<MemberConsultation> findConsultationsByUserIdAndSearch(
             @Param("userId") Long userId,
             @Param("search") String search,
-            @Param("status") Status status);
+            @Param("status") Status status,
+            Pageable pageable);
 
     @Query(
             "SELECT mc FROM MemberConsultation mc "
