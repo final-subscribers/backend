@@ -57,7 +57,7 @@ public class AdminPropertyConsultationService {
         memberConsultationRepository.save(memberConsultation);
     }
 
-    // @Cacheable(value = "sidebarList", keyGenerator = "keyGenerator")
+    @Cacheable(value = "sidebarList", keyGenerator = "keyGenerator")
     @Transactional(readOnly = true)
     public SideBarListResponse getSideBarList(Long propertyId) {
         LocalDate today = LocalDate.now();
