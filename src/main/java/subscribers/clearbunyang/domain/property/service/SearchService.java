@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.likes.service.LikesService;
 import subscribers.clearbunyang.domain.property.dto.response.PropertySummaryResponse;
 import subscribers.clearbunyang.domain.property.dto.response.SearchResponse;
@@ -30,6 +31,7 @@ public class SearchService {
     private final KeywordRepository keywordRepository;
     private final LikesService likesService;
 
+    @Transactional(readOnly = true)
     public PagedDto<SearchResponse> getPropertyBySearching(
             Long memberId, String search, Integer size, Integer page) {
 

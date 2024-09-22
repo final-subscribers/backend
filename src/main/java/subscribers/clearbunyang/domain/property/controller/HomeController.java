@@ -16,17 +16,24 @@ import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/common/home")
+@RequestMapping("/api")
 @Tag(name = "홈 화면", description = "메인 화면")
 public class HomeController {
     private final HomeService homeService;
 
-    @Operation(summary = "메인 화면 호출 시 좋아요 많은 순으로 매물 출력")
-    @GetMapping
-    public PagedDto<HomeResponse> getHome(
+    @Operation(summary = "비로그인/메인 화면 호출 시 좋아요 많은 순으로 매물 출력")
+    @GetMapping("/common/home")
+    public PagedDto<HomeResponse> getCommonHome(
+            @RequestParam(required = false, value = "page", defaultValue = "0") int page) {
+        return homeService.getHome(null, page);
+    }
+
+    @Operation(summary = "로그인/메인 화면 호출 시 좋아요 많은 순으로 매물 출력")
+    @GetMapping("/member/home")
+    public PagedDto<HomeResponse> getMemberHome(
             @RequestParam(required = false, value = "page", defaultValue = "0") int page,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        Long memberId = (customUserDetails != null) ? customUserDetails.getUserId() : null;
+        Long memberId = customUserDetails.getUserId();
         return homeService.getHome(memberId, page);
     }
 }
