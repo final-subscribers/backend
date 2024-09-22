@@ -44,6 +44,8 @@ public class LikesPropertyResponse {
     @JsonProperty("salesPrice")
     private int salesPrice;
 
+    private int discountPercent
+
     public static LikesPropertyResponse fromEntity(
             Property property, List<String> infraKeywords, List<String> benefitKeywords) {
 
@@ -69,6 +71,7 @@ public class LikesPropertyResponse {
                 .count(property.getTotalNumber())
                 .price(price)
                 .salesPrice(discountPrice)
+            .discountPercent(property.getDiscountPercent())
                 .build();
     }
 }
