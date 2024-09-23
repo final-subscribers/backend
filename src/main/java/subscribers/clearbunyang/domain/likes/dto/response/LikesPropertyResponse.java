@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import subscribers.clearbunyang.domain.property.entity.Area;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.global.file.entity.File;
+import subscribers.clearbunyang.global.file.entity.enums.FileType;
 
 @Getter
 @NoArgsConstructor
@@ -44,12 +45,17 @@ public class LikesPropertyResponse {
     @JsonProperty("salesPrice")
     private int salesPrice;
 
-    private int discountPercent;
+    private Integer discountPercent;
 
     public static LikesPropertyResponse fromEntity(
             Property property, List<String> infraKeywords, List<String> benefitKeywords) {
 
-        String imageUrl = property.getFiles().stream().findFirst().map(File::getLink).orElse(null);
+        String imageUrl =
+                property.getFiles().stream()
+                        .filter(file -> file.getType() == FileType.PROPERTY_IMAGE)
+                        .findFirst()
+                        .map(File::getLink)
+                        .orElse(null);
 
         Area selectedArea = property.getAreas().stream().findFirst().orElse(null);
 
