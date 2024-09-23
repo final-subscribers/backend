@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import subscribers.clearbunyang.domain.auth.entity.Member;
@@ -33,7 +35,7 @@ public class MemberConsultationService {
             Long userId, String search, int page, int size) {
         validateUserId(userId);
 
-        PageRequest pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Direction.DESC, "createdAt"));
 
         String searchParam = (search == null || search.trim().isEmpty()) ? "" : search.trim();
 
@@ -63,7 +65,7 @@ public class MemberConsultationService {
             Long userId, String search, int page, int size) {
         validateUserId(userId);
 
-        PageRequest pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Direction.DESC, "createdAt"));
 
         String searchParam = (search == null || search.trim().isEmpty()) ? "" : search.trim();
 
