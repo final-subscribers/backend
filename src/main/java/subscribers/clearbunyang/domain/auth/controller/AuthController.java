@@ -43,19 +43,18 @@ public class AuthController {
 
     @Operation(summary = "로그인")
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(
-            @RequestBody LoginRequest request, HttpServletResponse response) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         LoginResponse loginResponse = authService.login(request);
-        authService.addTokenCookies(
-                response, loginResponse.getAccessToken(), loginResponse.getRefreshToken());
-        return ResponseEntity.ok(loginResponse);
+        return ResponseEntity.ok()
+                .header("Authorization", "Bearer " + loginResponse.getAccessToken())
+                .body(loginResponse);
     }
 
     @Operation(summary = "로그아웃")
     @PostMapping("/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        String redirectUri = authService.logout(request, response);
+        String redirectUri = authService.logout(request);
         //        response.sendRedirect(redirectUri);
     }
 }

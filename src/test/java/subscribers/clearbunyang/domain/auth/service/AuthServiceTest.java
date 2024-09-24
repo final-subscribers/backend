@@ -267,7 +267,7 @@ public class AuthServiceTest {
 
         try (MockedStatic<CookieUtil> mockedCookieUtil = mockStatic(CookieUtil.class)) {
 
-            authService.addTokenCookies(response, accessToken, refreshToken);
+            //            authService.addTokenCookies(response, accessToken, refreshToken);
 
             mockedCookieUtil.verify(
                     () ->
@@ -297,7 +297,7 @@ public class AuthServiceTest {
         when(adminRepository.findByEmail("member@example.com"))
                 .thenReturn(Optional.of(new Admin()));
 
-        authService.standardLogout(request, response);
+        authService.standardLogout(request);
 
         verify(response)
                 .addHeader(
@@ -322,8 +322,7 @@ public class AuthServiceTest {
         when(adminRepository.existsByEmail("user@example.com")).thenReturn(false);
         when(memberRepository.existsByEmail("user@example.com")).thenReturn(false);
 
-        assertThrows(
-                EntityNotFoundException.class, () -> authService.standardLogout(request, response));
+        assertThrows(EntityNotFoundException.class, () -> authService.standardLogout(request));
     }
 
     @Test
@@ -333,7 +332,7 @@ public class AuthServiceTest {
 
         try (MockedStatic<CookieUtil> mockedCookieUtil = mockStatic(CookieUtil.class)) {
 
-            authService.deleteTokenCookies(response);
+            //            authService.deleteTokenCookies(response);
 
             mockedCookieUtil.verify(
                     () -> CookieUtil.deleteCookie(eq(response), eq("accessToken")), times(1));

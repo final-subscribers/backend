@@ -3,7 +3,6 @@ package subscribers.clearbunyang.global.security.token;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -19,7 +18,7 @@ import subscribers.clearbunyang.global.exception.EntityNotFoundException;
 import subscribers.clearbunyang.global.exception.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.security.details.CustomUserDetailsService;
-import subscribers.clearbunyang.global.security.util.CookieUtil;
+// import subscribers.clearbunyang.global.security.util.CookieUtil;
 
 @Slf4j
 @Component
@@ -60,12 +59,12 @@ public class JwtTokenProcessor {
     private String refreshToken(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         try {
-            Cookie refreshTokenCookie = CookieUtil.getCookie(request, "refreshToken");
-            if (refreshTokenCookie == null) {
+            String authorizationHeader = request.getHeader("Authorization");
+            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
                 throw new EntityNotFoundException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
             }
 
-            String refreshToken = refreshTokenCookie.getValue();
+            String refreshToken = authorizationHeader.substring(7);
             Claims claims =
                     jwtTokenProvider.getUserInfoFromToken(refreshToken, JwtTokenType.REFRESH);
             String email = claims.getSubject();
@@ -81,11 +80,7 @@ public class JwtTokenProcessor {
             }
 
             String newAccessToken = jwtTokenProvider.createToken(email, role, JwtTokenType.ACCESS);
-            CookieUtil.addCookie(
-                    response,
-                    "accessToken",
-                    newAccessToken,
-                    JwtTokenType.ACCESS.getExpireTime() / 1000);
+            response.setHeader("Authorization", "Bearer " + newAccessToken);
             log.info("Access 토큰 재발급: 이메일={}, NewAccessToken={}", email, newAccessToken);
             return newAccessToken;
         } catch (EntityNotFoundException | InvalidValueException e) {

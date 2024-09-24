@@ -2,8 +2,6 @@ package subscribers.clearbunyang.domain.auth.service;
 
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +27,7 @@ import subscribers.clearbunyang.global.file.repository.FileRepository;
 import subscribers.clearbunyang.global.security.token.JwtTokenProvider;
 import subscribers.clearbunyang.global.security.token.JwtTokenService;
 import subscribers.clearbunyang.global.security.token.JwtTokenType;
-import subscribers.clearbunyang.global.security.util.CookieUtil;
+// import subscribers.clearbunyang.global.security.util.CookieUtil;
 
 @Service
 @Slf4j
@@ -49,17 +47,20 @@ public class AuthService {
     @Value("${spring.security.redirect-uri}") private String logoutRedirectUri;
 
     @Transactional
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
-        String cookieName = CookieUtil.getCookieNames(request);
-        log.info("로그인 방식: {}", cookieName);
+    public String logout(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        String accessToken = null;
 
-        if ("accessToken".equals(cookieName)) {
-            log.info("일반 로그아웃");
-            standardLogout(request, response);
-            return logoutRedirectUri;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            accessToken = authorizationHeader.substring(7);
+            log.info("로그인방식: Bearer " + accessToken);
         } else {
             throw new InvalidValueException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
+
+        log.info("일반 로그아웃");
+        standardLogout(request);
+        return logoutRedirectUri;
     }
 
     @Transactional
@@ -242,47 +243,50 @@ public class AuthService {
         return LoginResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
-    public void addTokenCookies(
-            HttpServletResponse response, String accessToken, String refreshToken) {
-        CookieUtil.addCookie(
-                response, "accessToken", accessToken, JwtTokenType.ACCESS.getExpireTime() / 1000);
-        CookieUtil.addCookie(
-                response,
-                "refreshToken",
-                refreshToken,
-                JwtTokenType.REFRESH.getExpireTime() / 1000);
-    }
+    //    public void addTokenCookies(
+    //            HttpServletResponse response, String accessToken, String refreshToken) {
+    //        CookieUtil.addCookie(
+    //                response, "accessToken", accessToken, JwtTokenType.ACCESS.getExpireTime() /
+    // 1000);
+    //        CookieUtil.addCookie(
+    //                response,
+    //                "refreshToken",
+    //                refreshToken,
+    //                JwtTokenType.REFRESH.getExpireTime() / 1000);
+    //    }
 
     @Transactional
-    public void standardLogout(HttpServletRequest request, HttpServletResponse response) {
+    public void standardLogout(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
 
-        String accessToken =
-                Objects.requireNonNull(CookieUtil.getCookie(request, "accessToken")).getValue();
+        String accessToken = null;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            accessToken = authorizationHeader.substring(7);
+        }
+
+        if (accessToken == null) {
+            throw new InvalidValueException(ErrorCode.INVALID_TOKEN);
+        }
+
         String email = jwtTokenProvider.getEmailFromToken(accessToken, JwtTokenType.ACCESS);
 
         if (adminRepository.existsByEmail(email)) {
-            Admin admin =
-                    adminRepository
-                            .findByEmail(email)
-                            .orElseThrow(
-                                    () -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
+            adminRepository
+                    .findByEmail(email)
+                    .orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
         } else if (memberRepository.existsByEmail(email)) {
-            Member member =
-                    memberRepository
-                            .findByEmail(email)
-                            .orElseThrow(
-                                    () -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
+            memberRepository
+                    .findByEmail(email)
+                    .orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
         } else {
             throw new EntityNotFoundException(ErrorCode.USER_NOT_FOUND);
         }
 
-        deleteTokenCookies(response);
-
         log.info("로그아웃 성공: 이메일={}", email);
     }
 
-    public void deleteTokenCookies(HttpServletResponse response) {
-        CookieUtil.deleteCookie(response, "accessToken");
-        CookieUtil.deleteCookie(response, "refreshToken");
-    }
+    //    public void deleteTokenCookies(HttpServletResponse response) {
+    //        CookieUtil.deleteCookie(response, "accessToken");
+    //        CookieUtil.deleteCookie(response, "refreshToken");
+    //    }
 }
