@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.OncePerRequestFilter;
 import subscribers.clearbunyang.global.security.token.JwtTokenProcessor;
-import subscribers.clearbunyang.global.security.util.CookieUtil;
+// import subscribers.clearbunyang.global.security.util.CookieUtil;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,15 +25,17 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String cookieName = CookieUtil.getCookieNames(request);
-        log.info("cookieName: {}", cookieName);
+        String authorizationHeader = request.getHeader("Authorization");
+        log.info("Authorization Header: {}", authorizationHeader);
 
-        if ("accessToken".equals(cookieName)) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String accessToken = authorizationHeader.substring(7);
+            request.setAttribute("access_token", accessToken);
             jwtTokenProcessor.processToken(request, response);
         } else {
-            log.warn("No processor found for cookie name: {}", cookieName);
+            log.info("Authorization header is invalid");
             response.sendError(
-                    HttpServletResponse.SC_FORBIDDEN, "Unauthorized: No valid cookie found");
+                    HttpServletResponse.SC_UNAUTHORIZED, "Authorization header is invalid");
             return;
         }
 
