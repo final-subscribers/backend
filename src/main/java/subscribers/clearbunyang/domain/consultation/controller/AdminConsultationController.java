@@ -24,7 +24,7 @@ import subscribers.clearbunyang.domain.consultation.service.AdminConsultationSer
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/consultations")
-@Tag(name = "어드민- 상담")
+@Tag(name = "고객관리- 상담")
 public class AdminConsultationController {
 
     private final AdminConsultationService adminConsultationService;

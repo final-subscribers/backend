@@ -24,7 +24,7 @@ import subscribers.clearbunyang.global.dto.PagedDto;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/properties/{propertyId}/consultations")
-@Tag(name = "어드민- 매물에 대한 상담")
+@Tag(name = "고객관리- 매물에 대한 상담")
 public class AdminPropertyConsultationController {
 
     private final AdminPropertyConsultationService adminPropertyConsultationService;
