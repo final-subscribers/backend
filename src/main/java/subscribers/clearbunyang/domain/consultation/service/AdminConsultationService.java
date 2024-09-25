@@ -48,7 +48,9 @@ public class AdminConsultationService {
             throw new InvalidValueException(ErrorCode.NOT_FOUND);
         }
 
-        return ConsultCompletedResponse.toDto(adminConsultation);
+        long totalCount = memberConsultationRepository.countByStatus(Status.COMPLETED);
+
+        return ConsultCompletedResponse.toDto(adminConsultation, totalCount);
     }
 
     @Transactional(readOnly = true)
@@ -63,7 +65,9 @@ public class AdminConsultationService {
                 memberConsultationRepository.checkExtraConsultation(
                         memberConsultation.getMedium().name());
 
-        return ConsultPendingResponse.toDto(memberConsultation, extra);
+        long totalCount = memberConsultationRepository.countByStatus(Status.PENDING);
+
+        return ConsultPendingResponse.toDto(memberConsultation, extra, totalCount);
     }
 
     @Transactional(readOnly = true)

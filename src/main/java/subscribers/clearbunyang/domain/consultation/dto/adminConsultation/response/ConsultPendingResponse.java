@@ -30,7 +30,10 @@ public class ConsultPendingResponse {
 
     private Boolean addConsultation;
 
-    public static ConsultPendingResponse toDto(MemberConsultation consultation, Boolean extra) {
+    private long totalCount;
+
+    public static ConsultPendingResponse toDto(
+            MemberConsultation consultation, Boolean extra, long totalCount) {
         return ConsultPendingResponse.builder()
                 .memberName(consultation.getMemberName())
                 .propertyName(consultation.getProperty().getName())
@@ -40,6 +43,7 @@ public class ConsultPendingResponse {
                 .memberMessage(consultation.getMemberMessage())
                 .consultantMessage(consultation.getAdminConsultation().getConsultMessage())
                 .addConsultation(extra)
+                .totalCount(totalCount)
                 .build();
     }
 }

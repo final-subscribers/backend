@@ -29,6 +29,25 @@ public class ConsultCompletedResponse {
 
     private String consultMessage; // 상담원 메모
 
+    private long totalCount;
+
+    public static ConsultCompletedResponse toDto(AdminConsultation consultation, long totalCount) {
+        return ConsultCompletedResponse.builder()
+                .name(consultation.getMemberConsultation().getMemberName())
+                .phoneNumber(consultation.getMemberConsultation().getPhoneNumber())
+                .createdAt(LocalDate.from(consultation.getMemberConsultation().getCreatedAt()))
+                .completedAt(consultation.getCompletedAt())
+                .memberMessage(consultation.getMemberConsultation().getMemberMessage())
+                .tier(consultation.getTier())
+                .consultMessage(consultation.getConsultMessage())
+                .totalCount(totalCount)
+                .build();
+    }
+
+    public static ConsultCompletedResponse toDto(String consultMessage) {
+        return ConsultCompletedResponse.builder().consultMessage(consultMessage).build();
+    }
+
     public static ConsultCompletedResponse toDto(AdminConsultation consultation) {
         return ConsultCompletedResponse.builder()
                 .name(consultation.getMemberConsultation().getMemberName())
@@ -39,9 +58,5 @@ public class ConsultCompletedResponse {
                 .tier(consultation.getTier())
                 .consultMessage(consultation.getConsultMessage())
                 .build();
-    }
-
-    public static ConsultCompletedResponse toDto(String consultMessage) {
-        return ConsultCompletedResponse.builder().consultMessage(consultMessage).build();
     }
 }
