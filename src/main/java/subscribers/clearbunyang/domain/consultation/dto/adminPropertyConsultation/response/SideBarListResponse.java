@@ -17,16 +17,12 @@ public class SideBarListResponse {
 
     private List<SideBarCompletedResponse> sideBarCompletedResponseList;
 
-    private SideBarSelectedPropertyResponse sideBarSelectedPropertyResponse;
-
     public static SideBarListResponse toDto(
             List<SideBarPendingResponse> pendingList,
-            List<SideBarCompletedResponse> completedList,
-            SideBarSelectedPropertyResponse selectedProperty) {
+            List<SideBarCompletedResponse> completedList) {
         return SideBarListResponse.builder()
                 .sideBarPendingResponseList(pendingList)
                 .sideBarCompletedResponseList(completedList)
-                .sideBarSelectedPropertyResponse(selectedProperty)
                 .build();
     }
 }

@@ -57,24 +57,27 @@ public class AdminPropertyConsultationService {
         memberConsultationRepository.save(memberConsultation);
     }
 
-    @Cacheable(value = "sidebarList", keyGenerator = "keyGenerator")
+    @Cacheable(value = "sidebarList")
     @Transactional(readOnly = true)
-    public SideBarListResponse getSideBarList(Long propertyId) {
+    public SideBarListResponse getSideBarList() {
         LocalDate today = LocalDate.now();
         Pageable pageable = PageRequest.of(0, 20);
 
         List<SideBarPendingResponse> sideBarPendingResponse =
                 getPendingPropertiesDto(today, pageable);
-        List<SideBarCompletedResponse> completedSummaryResponse =
+        List<SideBarCompletedResponse> sideBarCompletedResponses =
                 getCompletedPropertiesDto(today, pageable);
+
+        return SideBarListResponse.toDto(sideBarPendingResponse, sideBarCompletedResponses);
+    }
+
+    @Cacheable(value = "selectedSidebar", keyGenerator = "keyGenerator")
+    @Transactional(readOnly = true)
+    public SideBarSelectedPropertyResponse getSideBarSelectedProperty(Long propertyId) {
 
         Property property = getProperty(propertyId);
 
-        SideBarSelectedPropertyResponse sideBarSelectedPropertyResponse =
-                SideBarSelectedPropertyResponse.toDto(property);
-
-        return SideBarListResponse.toDto(
-                sideBarPendingResponse, completedSummaryResponse, sideBarSelectedPropertyResponse);
+        return SideBarSelectedPropertyResponse.toDto(property);
     }
 
     @Cacheable(value = "ConsultPendingList", keyGenerator = "customKeyGenerator")

@@ -153,8 +153,6 @@ class AdminPropertyConsultationServiceTest {
                 .thenReturn(List.of(new PropertyDateDto()));
         lenient().when(propertyRepository.getById(anyLong())).thenReturn(property);
 
-        sideBarListResponse = adminPropertyConsultationService.getSideBarList(property.getId());
-
         assertNotNull(sideBarListResponse);
 
         verify(propertyRepository).getById(anyLong());

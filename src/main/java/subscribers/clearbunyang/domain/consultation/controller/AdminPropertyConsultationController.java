@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import subscribers.clearbunyang.domain.consultation.dto.adminPropertyConsultation.request.NewCustomerAdditionRequest;
 import subscribers.clearbunyang.domain.consultation.dto.adminPropertyConsultation.response.ConsultCompletedListResponse;
 import subscribers.clearbunyang.domain.consultation.dto.adminPropertyConsultation.response.ConsultPendingListResponse;
-import subscribers.clearbunyang.domain.consultation.dto.adminPropertyConsultation.response.SideBarListResponse;
+import subscribers.clearbunyang.domain.consultation.dto.adminPropertyConsultation.response.SideBarSelectedPropertyResponse;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
 import subscribers.clearbunyang.domain.consultation.service.AdminPropertyConsultationService;
 import subscribers.clearbunyang.global.dto.PagedDto;
@@ -38,11 +38,12 @@ public class AdminPropertyConsultationController {
         adminPropertyConsultationService.createNewCustomerAddition(propertyId, request);
     }
 
-    @Operation(summary = "사이드바 조회")
+    @Operation(summary = "사이드바에 있는 매물 조회")
     @GetMapping("/sidebar")
-    public SideBarListResponse getSidebar(@PathVariable Long propertyId) {
+    public SideBarSelectedPropertyResponse getSideBarSelectedProperty(
+            @PathVariable Long propertyId) {
 
-        return adminPropertyConsultationService.getSideBarList(propertyId);
+        return adminPropertyConsultationService.getSideBarSelectedProperty(propertyId);
     }
 
     @Operation(summary = "상담 대기 리스트 조회")
