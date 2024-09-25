@@ -31,6 +31,7 @@ import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.global.config.SecurityConfig;
 import subscribers.clearbunyang.global.dto.PagedDto;
+import subscribers.clearbunyang.global.dto.PagedDtoWithTotalCount;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.security.AuthenticationFilterMocking;
 import subscribers.clearbunyang.security.annotation.WithMockCustomAdmin;
@@ -194,12 +195,13 @@ public class AdminPropertyControllerTest extends AuthenticationFilterMocking {
                                 .endDate(LocalDate.now().plusDays(20))
                                 .build());
 
-        PagedDto<MyPropertyTableResponse> pagedDto =
-                PagedDto.<MyPropertyTableResponse>builder()
+        PagedDtoWithTotalCount<MyPropertyTableResponse> pagedDto =
+                PagedDtoWithTotalCount.<MyPropertyTableResponse>extendedBuilder()
                         .pageSize(4)
                         .totalPages(1)
                         .currentPage(0)
                         .contents(tableResponseDTOList)
+                        .totalCount(17L)
                         .build();
 
         when(propertyService.getTables(anyInt(), anyInt(), anyLong())).thenReturn(pagedDto);

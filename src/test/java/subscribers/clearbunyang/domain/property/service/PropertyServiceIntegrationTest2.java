@@ -93,15 +93,15 @@ public class PropertyServiceIntegrationTest2 {
 
         int currentPage = 1;
         int size = 3;
-        PagedDto<MyPropertyTableResponse> cards =
+        PagedDto<MyPropertyTableResponse> tables =
                 propertyService.getTables(currentPage, size, savedAdmin.getId());
 
-        assertThat(cards.getTotalPages()).isEqualTo((savedProperties.size() + size - 1) / size);
+        assertThat(tables.getTotalPages()).isEqualTo((savedProperties.size() + size - 1) / size);
         int startIdx = savedProperties.size() - 1 - (currentPage * size);
-        for (int i = 0; i < cards.getContents().size(); i++) {
-            assertThat(cards.getContents().get(i).getName())
+        for (int i = 0; i < tables.getContents().size(); i++) {
+            assertThat(tables.getContents().get(i).getName())
                     .isEqualTo(savedProperties.get(startIdx - i).getName());
         }
-        assertThat(cards.getContents().get(startIdx).getConsultationPendingCount()).isEqualTo(1);
+        assertThat(tables.getContents().get(startIdx).getConsultationPendingCount()).isEqualTo(1);
     }
 }
