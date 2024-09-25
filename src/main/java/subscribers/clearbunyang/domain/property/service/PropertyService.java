@@ -22,16 +22,14 @@ import subscribers.clearbunyang.domain.consultation.repository.MemberConsultatio
 import subscribers.clearbunyang.domain.likes.repository.LikesRepository;
 import subscribers.clearbunyang.domain.likes.service.LikesService;
 import subscribers.clearbunyang.domain.property.dto.request.*;
-import subscribers.clearbunyang.domain.property.dto.response.KeywordResponse;
-import subscribers.clearbunyang.domain.property.dto.response.MyPropertyCardResponse;
-import subscribers.clearbunyang.domain.property.dto.response.MyPropertyTableResponse;
-import subscribers.clearbunyang.domain.property.dto.response.PropertyDetailsResponse;
+import subscribers.clearbunyang.domain.property.dto.response.*;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.entity.enums.KeywordType;
 import subscribers.clearbunyang.domain.property.repository.AreaRepository;
 import subscribers.clearbunyang.domain.property.repository.KeywordRepository;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
 import subscribers.clearbunyang.global.dto.PagedDto;
+import subscribers.clearbunyang.global.dto.PagedDtoWithTotalCount;
 import subscribers.clearbunyang.global.exception.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 import subscribers.clearbunyang.global.file.dto.FileRequestDTO;
@@ -163,7 +161,8 @@ public class PropertyService {
      * @return
      */
     @Transactional(readOnly = true)
-    public PagedDto<MyPropertyTableResponse> getTables(int page, int size, Long adminId) {
+    public PagedDtoWithTotalCount<MyPropertyTableResponse> getTables(
+            int page, int size, Long adminId) {
         PageRequest pageRequest =
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "endDate", "createdAt"));
         Page<Property> pages = propertyRepository.findByAdmin_Id(adminId, pageRequest);
@@ -180,7 +179,7 @@ public class PropertyService {
                                         obj -> (Long) obj[1] // Pending count
                                         ));
 
-        List<MyPropertyTableResponse> cardResponseDTO =
+        List<MyPropertyTableResponse> tableResponses =
                 pages.getContent().stream()
                         .map(
                                 property -> {
@@ -189,7 +188,8 @@ public class PropertyService {
                                     return MyPropertyTableResponse.toDTO(property, pendingCount);
                                 })
                         .collect(Collectors.toList());
-        return PagedDto.toDTO(page, size, pages.getTotalPages(), cardResponseDTO);
+        return PagedDtoWithTotalCount.toDTO(
+                page, size, pages.getTotalPages(), pages.getTotalElements(), tableResponses);
     }
 
     /**

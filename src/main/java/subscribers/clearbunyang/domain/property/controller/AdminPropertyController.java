@@ -13,6 +13,7 @@ import subscribers.clearbunyang.domain.property.dto.response.MyPropertyCardRespo
 import subscribers.clearbunyang.domain.property.dto.response.MyPropertyTableResponse;
 import subscribers.clearbunyang.domain.property.service.PropertyService;
 import subscribers.clearbunyang.global.dto.PagedDto;
+import subscribers.clearbunyang.global.dto.PagedDtoWithTotalCount;
 import subscribers.clearbunyang.global.security.details.CustomUserDetails;
 
 @RestController
@@ -66,7 +67,7 @@ public class AdminPropertyController {
      */
     @Operation(summary = "매물관리-두번째 페이지네이션")
     @GetMapping("/my-properties/table")
-    public PagedDto<MyPropertyTableResponse> getTablesByOffset(
+    public PagedDtoWithTotalCount<MyPropertyTableResponse> getTablesByOffset(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "4") int size,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
