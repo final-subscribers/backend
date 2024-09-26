@@ -63,5 +63,8 @@ public interface MemberConsultationRepository extends JpaRepository<MemberConsul
             "SELECT mc.property.id, COUNT(mc) FROM MemberConsultation mc WHERE mc.property.id IN :propertyIds AND mc.status = :status GROUP BY mc.property.id")
     List<Object[]> countPendingByPropertyIds(List<Long> propertyIds, Status status);
 
-    long countByStatus(Status Status);
+    @Query(
+            "SELECT COUNT(mc) FROM MemberConsultation mc WHERE mc.status = :status AND mc.property.id = :propertyId")
+    long countByStatusByPropertyId(
+            @Param("status") Status status, @Param("propertyId") Long propertyId);
 }

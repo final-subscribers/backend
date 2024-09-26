@@ -100,7 +100,8 @@ public class AdminPropertyConsultationService {
         ConsultPendingListResponse consultPendingListResponse =
                 ConsultPendingListResponse.toDto(summaryResponseList);
 
-        long totalCount = memberConsultationRepository.countByStatus(Status.PENDING);
+        long totalCount =
+                memberConsultationRepository.countByStatusByPropertyId(Status.PENDING, propertyId);
 
         return PagedDtoWithTotalCount.toDTO(
                 page,
@@ -134,7 +135,9 @@ public class AdminPropertyConsultationService {
         ConsultCompletedListResponse counselCompletedListResponse =
                 ConsultCompletedListResponse.toDto(summaryList);
 
-        long totalCount = memberConsultationRepository.countByStatus(Status.COMPLETED);
+        long totalCount =
+                memberConsultationRepository.countByStatusByPropertyId(
+                        Status.COMPLETED, propertyId);
 
         return PagedDtoWithTotalCount.toDTO(
                 page,
