@@ -46,7 +46,7 @@ public class AdminPropertyConsultationService {
     @Transactional
     @CacheEvict(
             value = {"ConsultPendingList", "ConsultCompletedList"},
-            key = "#propertyId")
+            allEntries = true)
     public void createNewCustomerAddition(Long propertyId, NewCustomerAdditionRequest request) {
         Property property = getProperty(propertyId);
 
