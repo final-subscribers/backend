@@ -16,6 +16,8 @@ import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
 @Getter
 public class ConsultPendingSummaryResponse {
 
+    private Long memberConsultationId;
+
     private LocalDate preferredAt;
 
     private LocalDate createdAt;
@@ -31,6 +33,7 @@ public class ConsultPendingSummaryResponse {
     public static ConsultPendingSummaryResponse toDto(
             MemberConsultation memberConsultations, Boolean addConsultation) {
         return ConsultPendingSummaryResponse.builder()
+                .memberConsultationId(memberConsultations.getId())
                 .preferredAt(memberConsultations.getPreferredAt())
                 .createdAt(LocalDate.from(memberConsultations.getCreatedAt()))
                 .consultant(memberConsultations.getAdminConsultation().getConsultant())

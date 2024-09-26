@@ -14,6 +14,10 @@ import subscribers.clearbunyang.domain.consultation.entity.MemberConsultation;
 @Builder
 public class ConsultPendingResponse {
 
+    private Long adminConsultationId;
+
+    private Long memberConsultationId;
+
     private String memberName; // 고객 name
 
     private String propertyName; // 매물 이름
@@ -32,6 +36,8 @@ public class ConsultPendingResponse {
 
     public static ConsultPendingResponse toDto(MemberConsultation consultation, Boolean extra) {
         return ConsultPendingResponse.builder()
+                .memberConsultationId(consultation.getId())
+                .adminConsultationId(consultation.getAdminConsultation().getId())
                 .memberName(consultation.getMemberName())
                 .propertyName(consultation.getProperty().getName())
                 .phoneNumber(consultation.getPhoneNumber())

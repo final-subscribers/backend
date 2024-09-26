@@ -15,6 +15,10 @@ import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
 @Builder
 public class ConsultCompletedResponse {
 
+    private Long adminConsultationId;
+
+    private Long memberConsultationId;
+
     private String name; // 고객 이름
 
     private String phoneNumber; // 전화번호
@@ -35,6 +39,8 @@ public class ConsultCompletedResponse {
 
     public static ConsultCompletedResponse toDto(AdminConsultation consultation) {
         return ConsultCompletedResponse.builder()
+                .adminConsultationId(consultation.getId())
+                .memberConsultationId(consultation.getMemberConsultation().getId())
                 .name(consultation.getMemberConsultation().getMemberName())
                 .phoneNumber(consultation.getMemberConsultation().getPhoneNumber())
                 .createdAt(LocalDate.from(consultation.getMemberConsultation().getCreatedAt()))

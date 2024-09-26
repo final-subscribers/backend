@@ -16,6 +16,8 @@ import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
 @Builder
 public class ConsultCompletedSummaryResponse {
 
+    private Long adminConsultationId;
+
     private String name;
 
     private String consultant;
@@ -30,6 +32,7 @@ public class ConsultCompletedSummaryResponse {
 
     public static ConsultCompletedSummaryResponse toDto(AdminConsultation consultation) {
         return ConsultCompletedSummaryResponse.builder()
+                .adminConsultationId(consultation.getId())
                 .name(consultation.getMemberConsultation().getMemberName())
                 .consultant(consultation.getConsultant())
                 .createdAt(consultation.getMemberConsultation().getCreatedAt())
