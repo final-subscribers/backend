@@ -30,7 +30,7 @@ import subscribers.clearbunyang.domain.consultation.repository.AdminConsultation
 import subscribers.clearbunyang.domain.consultation.repository.MemberConsultationRepository;
 import subscribers.clearbunyang.domain.property.entity.Property;
 import subscribers.clearbunyang.domain.property.repository.PropertyRepository;
-import subscribers.clearbunyang.global.dto.PagedDto;
+import subscribers.clearbunyang.global.dto.PagedDtoWithTotalCount;
 import subscribers.clearbunyang.global.exception.InvalidValueException;
 import subscribers.clearbunyang.global.exception.errorCode.ErrorCode;
 
@@ -82,7 +82,7 @@ public class AdminPropertyConsultationService {
 
     @Cacheable(value = "ConsultPendingList", keyGenerator = "customKeyGenerator")
     @Transactional(readOnly = true)
-    public PagedDto<ConsultPendingListResponse> getConsultPendingListResponse(
+    public PagedDtoWithTotalCount<ConsultPendingListResponse> getConsultPendingListResponse(
             Long propertyId,
             String search,
             String consultant,
@@ -100,16 +100,19 @@ public class AdminPropertyConsultationService {
         ConsultPendingListResponse consultPendingListResponse =
                 ConsultPendingListResponse.toDto(summaryResponseList);
 
-        return PagedDto.toDTO(
+        long totalCount = memberConsultationRepository.countByStatus(Status.PENDING);
+
+        return PagedDtoWithTotalCount.toDTO(
                 page,
                 size,
                 adminConsultationPage.getTotalPages(),
+                totalCount,
                 List.of(consultPendingListResponse));
     }
 
     @Cacheable(value = "ConsultCompletedList", keyGenerator = "customKeyGenerator")
     @Transactional(readOnly = true)
-    public PagedDto<ConsultCompletedListResponse> getConsultCompletedListResponse(
+    public PagedDtoWithTotalCount<ConsultCompletedListResponse> getConsultCompletedListResponse(
             Long propertyId,
             String search,
             Tier tier,
@@ -131,10 +134,13 @@ public class AdminPropertyConsultationService {
         ConsultCompletedListResponse counselCompletedListResponse =
                 ConsultCompletedListResponse.toDto(summaryList);
 
-        return PagedDto.toDTO(
+        long totalCount = memberConsultationRepository.countByStatus(Status.COMPLETED);
+
+        return PagedDtoWithTotalCount.toDTO(
                 page,
                 size,
                 adminConsultationPage.getTotalPages(),
+                totalCount,
                 List.of(counselCompletedListResponse));
     }
 

@@ -31,7 +31,7 @@ public class AdminConsultationService {
     private final MemberConsultationRepository memberConsultationRepository;
     private final PropertyRepository propertyRepository;
 
-    // 상담사 고정값
+    // 상담사 고정값 TODO refactor 어디로 분리할까...
     private final List<ConsultantResponse> consultantListResponses =
             List.of(
                     new ConsultantResponse("a1-1"),

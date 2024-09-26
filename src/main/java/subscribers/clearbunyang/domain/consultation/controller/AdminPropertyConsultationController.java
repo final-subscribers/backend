@@ -19,7 +19,7 @@ import subscribers.clearbunyang.domain.consultation.dto.adminPropertyConsultatio
 import subscribers.clearbunyang.domain.consultation.dto.adminPropertyConsultation.response.SideBarSelectedPropertyResponse;
 import subscribers.clearbunyang.domain.consultation.entity.enums.Tier;
 import subscribers.clearbunyang.domain.consultation.service.AdminPropertyConsultationService;
-import subscribers.clearbunyang.global.dto.PagedDto;
+import subscribers.clearbunyang.global.dto.PagedDtoWithTotalCount;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,7 +48,7 @@ public class AdminPropertyConsultationController {
 
     @Operation(summary = "상담 대기 리스트 조회")
     @GetMapping("/pending")
-    public PagedDto<ConsultPendingListResponse> getConsultPendingList(
+    public PagedDtoWithTotalCount<ConsultPendingListResponse> getConsultPendingList(
             @PathVariable Long propertyId,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String consultant,
@@ -56,7 +56,7 @@ public class AdminPropertyConsultationController {
             @RequestParam(required = false, value = "page", defaultValue = "0") int page,
             @RequestParam(required = false, value = "size", defaultValue = "5") int size) {
 
-        PagedDto<ConsultPendingListResponse> response =
+        PagedDtoWithTotalCount<ConsultPendingListResponse> response =
                 adminPropertyConsultationService.getConsultPendingListResponse(
                         propertyId, search, consultant, preferredAt, page, size);
 
@@ -65,7 +65,7 @@ public class AdminPropertyConsultationController {
 
     @Operation(summary = "상담 완료 리스트 조회")
     @GetMapping("/completed")
-    public PagedDto<ConsultCompletedListResponse> getConsultCompletedList(
+    public PagedDtoWithTotalCount<ConsultCompletedListResponse> getConsultCompletedList(
             @PathVariable(required = false) Long propertyId,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Tier tier,
@@ -74,7 +74,7 @@ public class AdminPropertyConsultationController {
             @RequestParam(required = false, value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "5") int size) {
 
-        PagedDto<ConsultCompletedListResponse> response =
+        PagedDtoWithTotalCount<ConsultCompletedListResponse> response =
                 adminPropertyConsultationService.getConsultCompletedListResponse(
                         propertyId, search, tier, consultant, preferredAt, page, size);
 
