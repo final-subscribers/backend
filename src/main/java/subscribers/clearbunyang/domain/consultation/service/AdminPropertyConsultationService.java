@@ -103,12 +103,10 @@ public class AdminPropertyConsultationService {
         long totalCount =
                 memberConsultationRepository.countByStatusByPropertyId(Status.PENDING, propertyId);
 
+        int totalPages = (int) Math.ceil((double) totalCount / size);
+
         return PagedDtoWithTotalCount.toDTO(
-                page,
-                size,
-                adminConsultationPage.getTotalPages(),
-                totalCount,
-                List.of(consultPendingListResponse));
+                page, size, totalPages, totalCount, List.of(consultPendingListResponse));
     }
 
     @Cacheable(value = "ConsultCompletedList", keyGenerator = "customKeyGenerator")

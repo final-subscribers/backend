@@ -52,7 +52,7 @@ public class AdminPropertyConsultationController {
             @PathVariable Long propertyId,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String consultant,
-            @RequestParam(required = false, name = "preferred_at") LocalDate preferredAt,
+            @RequestParam(required = false, name = "preferredAt") LocalDate preferredAt,
             @RequestParam(required = false, value = "page", defaultValue = "0") int page,
             @RequestParam(required = false, value = "size", defaultValue = "5") int size) {
 
@@ -70,7 +70,7 @@ public class AdminPropertyConsultationController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Tier tier,
             @RequestParam(required = false) String consultant,
-            @RequestParam(required = false, name = "preferred_at") LocalDate preferredAt,
+            @RequestParam(required = false, name = "preferredAt") LocalDate preferredAt,
             @RequestParam(required = false, value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "5") int size) {
 
