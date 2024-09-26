@@ -100,13 +100,12 @@ public class AdminPropertyConsultationService {
         ConsultPendingListResponse consultPendingListResponse =
                 ConsultPendingListResponse.toDto(summaryResponseList);
 
-        long totalCount =
-                memberConsultationRepository.countByStatusByPropertyId(Status.PENDING, propertyId);
-
-        int totalPages = (int) adminConsultationPage.getTotalElements();
-
         return PagedDtoWithTotalCount.toDTO(
-                page, size, totalPages, totalCount, List.of(consultPendingListResponse));
+                page,
+                size,
+                adminConsultationPage.getTotalPages(),
+                adminConsultationPage.getTotalElements(),
+                List.of(consultPendingListResponse));
     }
 
     @Cacheable(value = "ConsultCompletedList", keyGenerator = "customKeyGenerator")
@@ -133,14 +132,12 @@ public class AdminPropertyConsultationService {
         ConsultCompletedListResponse counselCompletedListResponse =
                 ConsultCompletedListResponse.toDto(summaryList);
 
-        long totalCount =
-                memberConsultationRepository.countByStatusByPropertyId(
-                        Status.COMPLETED, propertyId);
-
-        int totalPages = (int) adminConsultationPage.getTotalElements();
-
         return PagedDtoWithTotalCount.toDTO(
-                page, size, totalPages, totalCount, List.of(counselCompletedListResponse));
+                page,
+                size,
+                adminConsultationPage.getTotalPages(),
+                adminConsultationPage.getTotalElements(),
+                List.of(counselCompletedListResponse));
     }
 
     private Property getProperty(Long propertyId) {
