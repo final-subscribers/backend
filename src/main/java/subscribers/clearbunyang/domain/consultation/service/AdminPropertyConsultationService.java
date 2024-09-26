@@ -103,7 +103,7 @@ public class AdminPropertyConsultationService {
         long totalCount =
                 memberConsultationRepository.countByStatusByPropertyId(Status.PENDING, propertyId);
 
-        int totalPages = (int) Math.ceil((double) totalCount / size);
+        int totalPages = (int) adminConsultationPage.getTotalElements();
 
         return PagedDtoWithTotalCount.toDTO(
                 page, size, totalPages, totalCount, List.of(consultPendingListResponse));
@@ -137,12 +137,10 @@ public class AdminPropertyConsultationService {
                 memberConsultationRepository.countByStatusByPropertyId(
                         Status.COMPLETED, propertyId);
 
+        int totalPages = (int) adminConsultationPage.getTotalElements();
+
         return PagedDtoWithTotalCount.toDTO(
-                page,
-                size,
-                adminConsultationPage.getTotalPages(),
-                totalCount,
-                List.of(counselCompletedListResponse));
+                page, size, totalPages, totalCount, List.of(counselCompletedListResponse));
     }
 
     private Property getProperty(Long propertyId) {
