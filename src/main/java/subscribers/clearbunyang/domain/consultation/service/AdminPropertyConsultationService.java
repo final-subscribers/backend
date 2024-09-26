@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import subscribers.clearbunyang.domain.consultation.dto.adminConsultation.response.ConsultantResponse;
 import subscribers.clearbunyang.domain.consultation.dto.adminPropertyConsultation.request.NewCustomerAdditionRequest;
 import subscribers.clearbunyang.domain.consultation.dto.adminPropertyConsultation.response.ConsultCompletedListResponse;
 import subscribers.clearbunyang.domain.consultation.dto.adminPropertyConsultation.response.ConsultCompletedSummaryResponse;
@@ -43,6 +44,15 @@ public class AdminPropertyConsultationService {
     private final MemberConsultationRepository memberConsultationRepository;
     private final PropertyRepository propertyRepository;
 
+    // 상담사 고정값 TODO refactor 어디로 분리할까...
+    private final List<ConsultantResponse> consultantListResponses =
+            List.of(
+                    new ConsultantResponse("a1-1"),
+                    new ConsultantResponse("a1-2"),
+                    new ConsultantResponse("a1-3"),
+                    new ConsultantResponse("a1-4"),
+                    new ConsultantResponse("a1-5"));
+
     @Transactional
     @CacheEvict(
             value = {"ConsultPendingList", "ConsultCompletedList"},
@@ -50,6 +60,13 @@ public class AdminPropertyConsultationService {
     public void createNewCustomerAddition(Long propertyId, NewCustomerAdditionRequest request) {
         Property property = getProperty(propertyId);
 
+        boolean isValidConsultant =
+                consultantListResponses.stream()
+                        .anyMatch(c -> c.getConsultant().equals(request.getConsultant()));
+
+        if (!isValidConsultant) {
+            throw new InvalidValueException(ErrorCode.BAD_REQUEST);
+        }
         AdminConsultation consultant = createAdminConsultation(request);
 
         MemberConsultation memberConsultation =
