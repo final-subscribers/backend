@@ -80,7 +80,7 @@ public class AuthServiceTest {
         when(adminRepository.existsByEmail("user@example.com")).thenReturn(true);
         when(adminRepository.findByEmail("user@example.com")).thenReturn(Optional.of(new Admin()));
 
-        String result = authService.logout(request, response);
+        String result = authService.logout(request);
 
         assertEquals(logoutRedirectUri, result);
     }
@@ -95,7 +95,7 @@ public class AuthServiceTest {
                 .when(jwtTokenProvider.getEmailFromToken(anyString(), any(JwtTokenType.class)))
                 .thenThrow(new InvalidValueException(ErrorCode.INVALID_ACCESS_TOKEN));
 
-        assertThrows(InvalidValueException.class, () -> authService.logout(request, response));
+        assertThrows(InvalidValueException.class, () -> authService.logout(request));
     }
 
     @Test
