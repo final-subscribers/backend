@@ -40,5 +40,6 @@ application.yaml
 application-*.yaml
 gradle.properties
 
+src/generated/
 src/main/generated/
 src/main/java/subscribers/clearbunyang/global/service/DBInit.java
