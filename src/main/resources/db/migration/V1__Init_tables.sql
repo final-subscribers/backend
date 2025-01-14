@@ -1,4 +1,3 @@
-CREATE SCHEMA IF NOT EXISTS cheongyak;
 USE cheongyak;
 
 CREATE TABLE `admin`
