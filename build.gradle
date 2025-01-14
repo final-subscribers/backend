@@ -85,11 +85,9 @@ tasks {
                     .withFluentSetters(true)
                     .withRecords(true)
 
-/*
             withStrategy(
                     new Strategy().withName("jooq.custom.generator.JPrefixGeneratorStrategy")
             )
-*/
 
             database.withForcedTypes(
                     new ForcedType()
@@ -119,8 +117,8 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
-//    jooqCodegen project(':jooq-custom')
-    jooqCodegen "mysql:mysql-connector-java:8.0.29"
+    jooqCodegen project(':jooq-custom')
+//    jooqCodegen "mysql:mysql-connector-java:8.0.29"
     jooqCodegen "org.jooq:jooq:${jooqVersion}"
     jooqCodegen "org.jooq:jooq-meta:${jooqVersion}"
     jooqCodegen "org.jooq:jooq-codegen:${jooqVersion}"
