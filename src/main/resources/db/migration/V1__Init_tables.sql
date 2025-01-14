@@ -55,19 +55,6 @@ CREATE TABLE file
     CONSTRAINT pk_file PRIMARY KEY (id)
 );
 
-CREATE TABLE keyword
-(
-    id            BIGINT AUTO_INCREMENT NOT NULL,
-    created_at    datetime NULL,
-    updated_at    datetime NULL,
-    json_value    JSON   NOT NULL,
-    name          VARCHAR(255) NULL,
-    type          VARCHAR(255) NULL,
-    is_searchable BIT(1) NOT NULL,
-    property_id   BIGINT NOT NULL,
-    CONSTRAINT pk_keyword PRIMARY KEY (id)
-);
-
 CREATE TABLE likes
 (
     id          BIGINT AUTO_INCREMENT NOT NULL,
@@ -150,9 +137,6 @@ ALTER TABLE file
 
 ALTER TABLE file
     ADD CONSTRAINT FK_FILE_ON_PROPERTY FOREIGN KEY (property_id) REFERENCES property (id);
-
-ALTER TABLE keyword
-    ADD CONSTRAINT FK_KEYWORD_ON_PROPERTY FOREIGN KEY (property_id) REFERENCES property (id);
 
 ALTER TABLE likes
     ADD CONSTRAINT FK_LIKES_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (id);
