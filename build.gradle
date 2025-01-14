@@ -1,3 +1,4 @@
+import org.jooq.meta.jaxb.*
 import org.liquibase.gradle.LiquibaseTask
 
 buildscript {
@@ -6,6 +7,9 @@ buildscript {
     }
     dependencies {
         classpath 'org.liquibase:liquibase-core:4.26.0'
+    }
+    ext {
+        jooqVersion = '3.19.5'
     }
 }
 
@@ -16,6 +20,7 @@ plugins {
     id 'com.diffplug.spotless' version '6.11.0'
     id "it.nicolasfarabegoli.conventional-commits" version "3.1.3" // 커밋 컨벤션 강제 플러그인
     id 'org.liquibase.gradle' version '3.0.0'
+    id 'dev.monosoul.jooq-docker' version '6.0.14'
 }
 
 group = 'subscribers'
@@ -31,7 +36,98 @@ repositories {
     mavenCentral()
 }
 
+def db_url = project.findProperty("DB_URL") ?: ""
+def db_name = project.findProperty("DB_NAME") ?: ""
+def db_username= project.findProperty("DB_USERNAME") ?: ""
+def db_password= project.findProperty("DB_PASSWORD") ?: ""
+def db_driver = project.findProperty("DB_DRIVER") ?: ""
+def reference_url= project.findProperty("REFERENCE_URL") ?: ""
+def reference_username = project.findProperty("REFERENCE_USERNAME") ?: ""
+def reference_password = project.findProperty("REFERENCE_PASSWORD") ?: ""
+def image_name = project.findProperty("IMAGE_NAME") ?: ""
+def container_port= (project.findProperty("CONTAINER_PORT") ?: "") as Integer
+
+jooq {
+    version = "${jooqVersion}"
+    withContainer {
+        image {
+            name = image_name
+            envVars = [
+                    MYSQL_ROOT_PASSWORD: db_password,
+                    MYSQL_DATABASE     : db_name
+            ]
+        }
+
+        db {
+            username = db_username
+            password = db_password
+            name = db_name
+            port = container_port
+            jdbc {
+                schema = "jdbc:mysql"
+                driverClassName = "com.mysql.cj.jdbc.Driver"
+            }
+        }
+    }
+}
+
+tasks {
+    generateJooqClasses {
+        schemas.set([db_name.toString()])
+        outputDirectory.set(project.layout.projectDirectory.dir("src/generated"))
+        includeFlywayTable.set(false)
+
+        usingJavaConfig {
+            generate = new Generate()
+                    .withJavaTimeTypes(true)
+                    .withDeprecated(false)
+                    .withDaos(true)
+                    .withFluentSetters(true)
+                    .withRecords(true)
+
+/*
+            withStrategy(
+                    new Strategy().withName("jooq.custom.generator.JPrefixGeneratorStrategy")
+            )
+*/
+
+            database.withForcedTypes(
+                    new ForcedType()
+                            .withUserType("java.lang.Long")
+                            .withTypes("int unsigned"),
+                    new ForcedType()
+                            .withUserType("java.lang.Integer")
+                            .withTypes("tinyint unsigned"),
+                    new ForcedType()
+                            .withUserType("java.lang.Integer")
+                            .withTypes("smallint unsigned")
+            )
+        }
+    }
+}
+
 dependencies {
+    implementation "org.jooq:jooq:${jooqVersion}"
+    implementation('org.springframework.boot:spring-boot-starter-jooq') {
+        exclude group: 'org.jooq'
+    }
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+//    jooqCodegen project(':jooq-custom')
+    jooqCodegen "mysql:mysql-connector-java:8.0.29"
+    jooqCodegen "org.jooq:jooq:${jooqVersion}"
+    jooqCodegen "org.jooq:jooq-meta:${jooqVersion}"
+    jooqCodegen "org.jooq:jooq-codegen:${jooqVersion}"
+
+    jooqCodegen 'org.flywaydb:flyway-core:10.8.1'
+    jooqCodegen 'org.flywaydb:flyway-mysql:10.8.1'
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -95,6 +191,14 @@ dependencies {
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src/main/java", "src/generated"]
+        }
+    }
+}
+
 tasks.named('test') {
     useJUnitPlatform()
 }
@@ -103,13 +207,6 @@ bootJar {
     archiveFileName = 'subscribers.jar'
 }
 
-def db_url = project.findProperty("DB_URL") ?: ""
-def db_username= project.findProperty("DB_USERNAME") ?: ""
-def db_password= project.findProperty("DB_PASSWORD") ?: ""
-def db_driver = project.findProperty("DB_DRIVER") ?: ""
-def reference_url= project.findProperty("REFERENCE_URL") ?: ""
-def reference_username = project.findProperty("REFERENCE_USERNAME") ?: ""
-def reference_password = project.findProperty("REFERENCE_PASSWORD") ?: ""
 
 liquibase {
     def changeLogName = getChangeLogFileName()
